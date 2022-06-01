@@ -9,8 +9,8 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Setting />} />
-        <Route path="/dmWindow" element={<DanmuWindow />} />
+        <Route path="/index.html" element={<Setting />} />
+        <Route path="/index.html#dmWindow" element={<DanmuWindow />} />
       </Routes>
     </BrowserRouter>
   );

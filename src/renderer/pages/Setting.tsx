@@ -7,7 +7,6 @@ import styles from '../styles/setting.module.scss';
 import SettingInputItem from '../components/SettingInputItem';
 import { catConfigItem } from '../components/CatCat';
 // import '../samples/electron-store'
-import { store } from '../electron-store';
 import SettingSwitchItem from '../components/SettingSwitchItem';
 // const catConfig = window.catConfig
 // catConfig.setDataPath('F://catConfig.json')
@@ -58,7 +57,7 @@ const Setting = () => {
 
   const setRoomId = (room: any) => {};
   const commonInputItemSave = (skey: any, value: string) => {
-    store.set(skey, value);
+    window.electron.store.set(skey, value);
     if (skey === 'roomid') {
       setCatConfigData({
         ...catConfigData,
@@ -75,13 +74,15 @@ const Setting = () => {
   }, [catConfigData.roomid]);
   const commonSwitchItemSave = (skey: any, value: any) => {
     console.info(value.target.checke);
-    store.set(skey, value.target.checked);
+    window.electron.store.set(skey, value.target.checked);
   };
 
   useEffect(() => {
     // init data
     console.info('init data');
-    const arr = catConfigItem.map((item) => store.get(item.name));
+    const arr = catConfigItem.map((item) =>
+      window.electron.store.get(item.name)
+    );
     // eslint-disable-next-line promise/catch-or-return
     Promise.all(arr).then((e) => {
       console.log(e);

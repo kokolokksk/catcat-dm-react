@@ -5,10 +5,11 @@ import {
   getNewSessionId,
   transformMsg,
 } from '../components/CatCat';
-import { store } from '../electron-store';
+
 import Danmu from '../components/Danmu';
 import ComeInDisplay from '../components/ComeInDisplay';
 import ChatContainer from '../components/ChatContainer';
+import { channel } from 'diagnostics_channel';
 
 const DanmuWindow = () => {
   const [allDmList, setAllDmList] = useState<any[]>([]);
@@ -73,7 +74,9 @@ const DanmuWindow = () => {
       //         count()
       //       }, 1000)
       // }
-      const arr = catConfigItem.map((item) => store.get(item.name));
+      const arr = catConfigItem.map((item) =>
+        window.electron.store.get(item.name)
+      );
       // eslint-disable-next-line promise/catch-or-return
       // eslint-disable-next-line promise/always-return
       // eslint-disable-next-line promise/catch-or-return
@@ -87,7 +90,10 @@ const DanmuWindow = () => {
           }
         });
         // set is on top
-        window.ipcRenderer.send('setOnTop', muaConfig.alwaysOnTop); // .getCurrentWindow().setAlwaysOnTop(true)
+        window.electron.ipcRenderer.sendMessage(
+          'setOnTop',
+          muaConfig.alwaysOnTop
+        ); // .getCurrentWindow().setAlwaysOnTop(true)
         connectLive();
         return '';
       });

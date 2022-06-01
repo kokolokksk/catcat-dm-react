@@ -16,6 +16,8 @@ import '../styles/slider-menu.css';
 import CatCatSign from './CatCatSign';
 import MenuItem from './MenuItem';
 
+// eslint-disable-next-line import/order
+
 const SliderMenu = (prop: any | undefined) => {
   console.info(prop);
   const dataProp = {
@@ -48,7 +50,8 @@ const SliderMenu = (prop: any | undefined) => {
   const initialRef = React.useRef()
 
   const startDanmuWindow = ()=> {
-    window.ipcRenderer.send('createDmWindow')
+    console.info(window.electron.store)
+    window.ipcRenderer.send('createDmWindow',[])
   }
    startDanmuWindow()
     return (

@@ -21,4 +21,4 @@
 // }
 
 // export default EditableControls
-export {}
+export {};

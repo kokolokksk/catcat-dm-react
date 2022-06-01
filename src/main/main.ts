@@ -13,14 +13,22 @@ import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { LiveWS } from 'bilibili-live-ws';
-import MenuBuilder from './menu';
+import Store from 'electron-store';
 import { resolveHtmlPath } from './util';
 
 require('electron-referer')('https://www.bilibili.com/');
 const send = require('bilibili-live-danmaku-api');
 
 let live: LiveWS;
+const store = new Store();
 
+// IPC listener
+ipcMain.on('electron-store-get', async (event, val) => {
+  event.returnValue = store.get(val);
+});
+ipcMain.on('electron-store-set', async (event, key, val) => {
+  store.set(key, val);
+});
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -30,7 +38,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-// let dm: BrowserWindow | null = null;
+let dm: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -84,6 +92,8 @@ const createWindow = async () => {
     frame: true,
     transparent: true,
     webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
       webSecurity: false,
       // preload: join(__dirname, '../preload/index.cjs'),
     },
@@ -119,6 +129,112 @@ const createWindow = async () => {
   // eslint-disable-next-line
   new AppUpdater();
 };
+
+const createDMWindow = async () => {
+  if (isDebug) {
+    await installExtensions();
+  }
+
+  const RESOURCES_PATH = app.isPackaged
+    ? path.join(process.resourcesPath, 'assets')
+    : path.join(__dirname, '../../assets');
+
+  const getAssetPath = (...paths: string[]): string => {
+    return path.join(RESOURCES_PATH, ...paths);
+  };
+
+  dm = new BrowserWindow({
+    title: 'Danmu Windwow',
+    height: 600,
+    useContentSize: false,
+    width: 455,
+    frame: false,
+    transparent: true,
+    webPreferences: {
+      webSecurity: false,
+      // preload: join(__dirname, '../preload/index.cjs'),
+    },
+  });
+
+  dm.loadURL(resolveHtmlPath('index.html#dmWindow'));
+
+  dm.on('ready-to-show', () => {
+    if (!dm) {
+      throw new Error('"dm" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      dm.minimize();
+    } else {
+      dm.show();
+    }
+  });
+
+  dm.on('closed', () => {
+    if (!live.closed) {
+      live.close();
+    }
+    dm = null;
+  });
+
+  // const menuBuilder = new MenuBuilder(mainWindow);
+  // menuBuilder.buildMenu();
+
+  // Open urls in the user's browser
+  dm.webContents.setWindowOpenHandler((edata) => {
+    shell.openExternal(edata.url);
+    return { action: 'deny' };
+  });
+
+  // Remove this if your app does not use auto updates
+  // eslint-disable-next-line
+ // new AppUpdater();
+};
+
+ipcMain.on('createDmWindow', function (arg) {
+  if (dm == null) {
+    createDMWindow();
+  }
+});
+ipcMain.on('setOnTop', (event, arg) => {
+  dm?.setAlwaysOnTop(arg[0]);
+});
+
+ipcMain.on('sendDanmu', (event, arg) => {
+  try {
+    send({
+      msg: arg.value,
+      roomid: arg.roomid,
+      SESSDATA: arg.SESSDATA,
+      csrf: arg.csrf,
+      // extra
+    });
+  } catch (err) {
+    // console.error(err);
+  }
+});
+
+ipcMain.on('onLive', (event, arg) => {
+  if (live) {
+    live.close();
+  }
+  console.info('new liveWs instance added');
+  live = new LiveWS(Number(arg.roomid));
+  live.on('open', () => {
+    dm?.webContents.send(
+      'main-process-message',
+      'trying connect to server······'
+    );
+  });
+  live.on('live', () => {
+    dm?.webContents.send('main-process-message', 'success connected server');
+  });
+  live.on('heartbeat', (online) => {
+    dm?.webContents.send('update-online', online);
+  });
+  live.on('msg', (data) => {
+    dm?.webContents.send('update-msg', data);
+  });
+});
 
 /**
  * Add event listeners...
