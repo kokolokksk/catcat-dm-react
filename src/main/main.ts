@@ -8,12 +8,18 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-import path from 'path';
+import path, { join } from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { LiveWS } from 'bilibili-live-ws';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+
+require('electron-referer')('https://www.bilibili.com/');
+const send = require('bilibili-live-danmaku-api');
+
+let live: LiveWS;
 
 export default class AppUpdater {
   constructor() {
@@ -24,6 +30,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+// let dm: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -70,14 +77,15 @@ const createWindow = async () => {
   };
 
   mainWindow = new BrowserWindow({
-    show: false,
-    width: 1024,
-    height: 728,
-    icon: getAssetPath('icon.png'),
+    title: 'Setting Windwow',
+    height: 650,
+    useContentSize: false,
+    width: 600,
+    frame: true,
+    transparent: true,
     webPreferences: {
-      preload: app.isPackaged
-        ? path.join(__dirname, 'preload.js')
-        : path.join(__dirname, '../../.erb/dll/preload.js'),
+      webSecurity: false,
+      // preload: join(__dirname, '../preload/index.cjs'),
     },
   });
 
@@ -98,8 +106,8 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  // const menuBuilder = new MenuBuilder(mainWindow);
+  // menuBuilder.buildMenu();
 
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {

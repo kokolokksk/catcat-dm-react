@@ -1,0 +1,40 @@
+.danmuContainer {
+    align-items: center;
+    font-family: 'Consolas','zxfyyt','YouYuan';
+    width: 90vw;
+    height: 10vh;
+    display: flex;
+    margin-left: 5vw;
+    margin-top: 1vh;
+    margin-right: 5vw;
+    margin-bottom: 1vh;
+    background-color: rgb(248, 248, 238);
+}
+.comeinContainer{
+    
+    background-color: transparent;
+    z-index: 2;
+    }
+.avatar {
+    height: 5vh;
+    border-radius: 50%;
+}
+.fansAndNickname {
+    align-self: center;
+    font-size:smaller;
+    display: flex-root;
+    // background-color: lightgray;
+}
+.danmuContent {
+    margin-left: 2vw;
+    align-self: center;
+    // background-color: white;
+}
+.dmName{
+    font-family: "YouYuan";
+    font-size: 10pt;
+    color: rgb(32, 32, 32);
+    z-index: 3;
+    transition: all 1s ease-in 0;
+    transform: translateY(2vh);
+      }

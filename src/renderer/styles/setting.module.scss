@@ -1,0 +1,23 @@
+.page{
+    display: flex;
+    flex:1;
+    height: 100vh;
+    background-color: rgb(241, 241, 241);
+    overflow-y: auto;
+  }
+  .setting{
+    width: 100vw;
+    height: 100vh;
+    /* font-family: "Consolas","Microsoft YaHei",sans-serif; */
+    margin-left: 10px;
+   }
+   .line {
+    height: 5px;
+    width: 1px;
+    margin-top: 5px;
+  }
+  .setting_input_item {
+   margin-bottom: 4vh;
+   display: inline;
+   line-height: 2;
+  }

@@ -1,0 +1,15 @@
+/**
+* thanks this:
+* https://codepen.io/ejalomo/pen/MjJybd 
+*/
+#of
+{
+    position: fixed;
+    font-size: 40px;
+    line-height: 1;
+    -ms-transform: rotate(332deg);
+    -webkit-transform: rotate(332deg);
+    transform: rotate(324deg);
+    margin-left: 2vw;
+    bottom: 20vh;
+}

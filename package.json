@@ -1,5 +1,10 @@
 {
-  "description": "A foundation for scalable desktop apps",
+  "name": "catcat-dm-react",
+  "productName": "catcat-dm-react",
+  "version": "0.0.1",
+  "description": "catcat-dm-react.",
+  "author": "Loveloliii <loli@loli.monster>",
+  "license": "MIT",
   "keywords": [
     "electron",
     "boilerplate",
@@ -19,19 +24,6 @@
     "type": "git",
     "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
   },
-  "license": "MIT",
-  "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
-  },
-  "contributors": [
-    {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
-    }
-  ],
   "main": "./src/main/main.ts",
   "scripts": {
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
@@ -108,14 +100,34 @@
     }
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.0.0",
+    "@chakra-ui/react": "^2.1.0",
+    "@chakra-ui/theme": "^2.0.2",
+    "@chakra-ui/theme-tools": "^2.0.0",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@uiw/react-color-colorful": "^1.0.10",
+    "axios": "^0.27.2",
+    "bilibili-live-danmaku-api": "^1.1.0",
+    "bilibili-live-ws": "^6.2.1",
+    "electron-json-storage": "^4.5.0",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.7",
+    "electron-referer": "^0.3.0",
     "electron-updater": "^5.0.1",
+    "framer-motion": "^6",
+    "got": "^12.1.0",
+    "lottie-web": "^5.9.4",
+    "pako": "^2.0.4",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "react-router-dom": "^6.3.0"
+    "react-icons": "^4.3.1",
+    "react-router-dom": "^6.3.0",
+    "url": "^0.11.0",
+    "webpack-merge": "^5.8.0"
   },
   "devDependencies": {
+    "@types/electron-json-storage": "^4.5.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.6",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/jest-dom": "^5.16.4",

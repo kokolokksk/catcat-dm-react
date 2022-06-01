@@ -1,0 +1,8 @@
+diff --git a/node_modules/bilibili-live-danmaku-api/index.d.ts b/node_modules/bilibili-live-danmaku-api/index.d.ts
+new file mode 100644
+index 0000000..7840713
+--- /dev/null
++++ b/node_modules/bilibili-live-danmaku-api/index.d.ts
+@@ -0,0 +1 @@
++declare module 'bilibili-live-danmaku-api';
+\ No newline at end of file

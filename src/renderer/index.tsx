@@ -1,13 +1,19 @@
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { ChakraProvider } from '@chakra-ui/react';
 import App from './App';
+import './electron-store';
+import './preload-module';
+import './styles/index.css';
 
-const container = document.getElementById('root')!;
-const root = createRoot(container);
-root.render(<App />);
+const root = createRoot(document.getElementById('root')!);
 
-// calling IPC exposed from preload script
-window.electron.ipcRenderer.once('ipc-example', (arg) => {
-  // eslint-disable-next-line no-console
-  console.log(arg);
-});
-window.electron.ipcRenderer.sendMessage('ipc-example', ['ping']);
+root.render(
+  <StrictMode>
+    <ChakraProvider>
+      <App />
+    </ChakraProvider>
+  </StrictMode>
+);
+
+// window.removeLoading();

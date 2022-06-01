@@ -1,0 +1,86 @@
+.m_bg_top {
+
+}
+
+.root {
+   
+  -moz-box-shadow: 8px 8px 8px gray;
+		-webkit-box-shadow: 8px 8px 8px gray;
+		box-shadow: 1px 1px 8px gray;
+    border-radius:1%;
+    -webkit-background-size: 50px 50px;
+		-moz-background-size: 50px 50px;
+		background-size: 50px 50px;
+    margin: 2px;
+    display: flex;
+    height: 99vh;
+    width: 99vw;
+    flex-flow: wrap;
+}
+
+.online {
+  height: 5vh;
+    background-color: transparent;
+    color: #000000;
+    font-family:  'Consolas','zxfyyt','YouYuan';
+    z-index: 5;
+  }
+
+  .comeinLastMinute {
+    left: 10%;
+    position:fixed;
+    top:6%;
+    background-color: transparent;
+    font-family:  'Consolas','zxfyyt','YouYuan';
+    color: #000000;
+    z-index: 5;
+  }
+
+  .c_bg{
+    overflow: overlay;
+    /* padding-top: 20vh; */
+    height: 72vh;
+    z-index: 1;
+    -webkit-app-region: drag;
+    width: 99%;
+    flex-wrap: wrap;
+    /* background-image: repeating-radial-gradient(circle at 50% 50%,#e98892 20px, #e98892 20px, #e98892 40px, #e98892 40px, #e98892 60px, #e98892 60px, #e98892 80px, #e98892 80px, #e98892 100px); */
+    background: transparent;
+    }
+
+    ::-webkit-scrollbar {
+        display: none;
+      }
+
+
+
+
+
+     
+
+      .dmName{
+        font-family: "YouYuan";
+        font-size: 10pt;
+        color: rgb(32, 32, 32);
+        /* display: flex; */
+        /* margin-bottom: 5px; */
+        /* align-items: center; */
+        /* display: inline-block; */
+        align-content: center;
+        /* background-color: teal; */
+        height: 15%;
+        width: 100%;
+        z-index: 3;
+        transition: all 1s ease-in 0;
+        transform: translateY(2vh);
+      }
+
+      .chatContainer {
+        -webkit-app-region: no-drag;
+        background-color: transparent;
+        align-content: center;
+       
+        width: 99%;
+     
+        z-index: 2;
+      }
