@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import DanmuWindow from './pages/DanmuWindow';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import RouteConfig from './route/RouteConfig';
 import Setting from './pages/Setting';
 
 const App = () => {
@@ -9,8 +9,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/index.html" element={<Setting />} />
-        <Route path="/index.html#dmWindow" element={<DanmuWindow />} />
+        <Route path="/*" element={<RouteConfig />} />
       </Routes>
     </BrowserRouter>
   );

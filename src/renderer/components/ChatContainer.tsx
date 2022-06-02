@@ -7,15 +7,8 @@ import {
   Input,
   InputRightElement,
   Button,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
 } from '@chakra-ui/react';
-import React, { SetStateAction, useState } from 'react';
+import { SetStateAction, useState } from 'react';
 
 const ChatContainer = (prop: any | undefined) => {
   const [value, setValue] = useState('');
@@ -63,6 +56,11 @@ const ChatContainer = (prop: any | undefined) => {
     alert(edit);
     setEdit(edit);
   };
+  const handleKeyDown = (event: { keyCode: number }) => {
+    if (event.keyCode === 13) {
+      handleClick();
+    }
+  };
   return (
     <>
       <InputGroup>
@@ -76,6 +74,7 @@ const ChatContainer = (prop: any | undefined) => {
           placeholder="Say Something"
           value={value}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
         />
         <InputRightElement>
           <Button color="green.500" onClick={handleClick}>
@@ -90,5 +89,5 @@ const ChatContainer = (prop: any | undefined) => {
 export default ChatContainer;
 
 function send(arg0: { value: string; roomid: any; SESSDATA: any; csrf: any }) {
-  window.ipcRenderer.send('sendDanmu', arg0);
+  window.electron.ipcRenderer.sendMessage('sendDanmu', [arg0]);
 }

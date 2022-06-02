@@ -73,7 +73,7 @@ const Setting = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [catConfigData.roomid]);
   const commonSwitchItemSave = (skey: any, value: any) => {
-    console.info(value.target.checke);
+    console.info(value.target.checked);
     window.electron.store.set(skey, value.target.checked);
   };
 
@@ -86,6 +86,7 @@ const Setting = () => {
     // eslint-disable-next-line promise/catch-or-return
     Promise.all(arr).then((e) => {
       console.log(e);
+      // eslint-disable-next-line array-callback-return
       e.map((item: any, index: number) => {
         if (typeof item === catConfigItem[index].type) {
           console.info(item);

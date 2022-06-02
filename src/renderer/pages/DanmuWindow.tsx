@@ -9,7 +9,6 @@ import {
 import Danmu from '../components/Danmu';
 import ComeInDisplay from '../components/ComeInDisplay';
 import ChatContainer from '../components/ChatContainer';
-import { channel } from 'diagnostics_channel';
 
 const DanmuWindow = () => {
   const [allDmList, setAllDmList] = useState<any[]>([]);
@@ -25,7 +24,7 @@ const DanmuWindow = () => {
   };
 
   const connectLive = () => {
-    window.ipcRenderer.send('onLive', muaConfig);
+    window.electron.ipcRenderer.sendMessage('onLive', [muaConfig]);
     window.danmuApi.onUpdateOnliner((_event: any, value: any) => {
       muaConfig.count = value;
       setMuaConfig({

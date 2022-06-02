@@ -12,6 +12,15 @@ const { appendLoading, removeLoading } = useLoading();
 // })();
 
 contextBridge.exposeInMainWorld('electron', {
+  store: {
+    get(val: any) {
+      return ipcRenderer.sendSync('electron-store-get', val);
+    },
+    set(property: any, val: any) {
+      ipcRenderer.send('electron-store-set', property, val);
+    },
+    // Other method you want to add like has(), reset(), etc.
+  },
   ipcRenderer: {
     sendMessage(channel: string, args: unknown[]) {
       ipcRenderer.send(channel, args);
@@ -39,19 +48,7 @@ contextBridge.exposeInMainWorld('danmuApi', {
   onUpdateMsg: (
     callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
   ) => ipcRenderer.on('update-msg', callback),
-});
-
-// `exposeInMainWorld` can't detect attributes and methods of `prototype`, manually patching it.
-contextBridge.exposeInMainWorld('electron', {
-  store: {
-    get(val: any) {
-      return ipcRenderer.sendSync('electron-store-get', val);
-    },
-    set(property: any, val: any) {
-      ipcRenderer.send('electron-store-set', property, val);
-    },
-    // Other method you want to add like has(), reset(), etc.
-  },
-  // Any other methods you want to expose in the window object.
-  // ...
+  mainProcessMessage: (
+    callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+  ) => ipcRenderer.on('main-process-message', callback),
 });

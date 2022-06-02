@@ -9,12 +9,12 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path, { join } from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, globalShortcut } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { LiveWS } from 'bilibili-live-ws';
 import Store from 'electron-store';
-import { resolveHtmlPath } from './util';
+import { getHTMLPathBySearchKey, resolveHtmlPath } from './util';
 
 require('electron-referer')('https://www.bilibili.com/');
 const send = require('bilibili-live-danmaku-api');
@@ -22,8 +22,12 @@ const send = require('bilibili-live-danmaku-api');
 let live: LiveWS;
 const store = new Store();
 
+let mainWindow: BrowserWindow | null = null;
+let dm: BrowserWindow | null = null;
+
 // IPC listener
 ipcMain.on('electron-store-get', async (event, val) => {
+  mainWindow?.webContents.send('main-process-message', store.path);
   event.returnValue = store.get(val);
 });
 ipcMain.on('electron-store-set', async (event, key, val) => {
@@ -36,9 +40,6 @@ export default class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
-
-let mainWindow: BrowserWindow | null = null;
-let dm: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -93,14 +94,19 @@ const createWindow = async () => {
     transparent: true,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
       webSecurity: false,
-      // preload: join(__dirname, '../preload/index.cjs'),
+      preload: app.isPackaged
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
-
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
-
+  mainWindow.setMenuBarVisibility(false);
+  mainWindow.loadURL(getHTMLPathBySearchKey('main'));
+  mainWindow.webContents.send(
+    'main-process-message',
+    resolveHtmlPath('index.html')
+  );
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
@@ -127,7 +133,16 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
+  globalShortcut.register('CommandOrControl+Shift+M', () => {
+    console.log('CommandOrControl+Shift+M is pressed');
+    if (mainWindow != null && dm == null) {
+      mainWindow.webContents.openDevTools();
+    }
+    if (dm != null) {
+      dm.webContents.openDevTools();
+    }
+  });
 };
 
 const createDMWindow = async () => {
@@ -152,11 +167,13 @@ const createDMWindow = async () => {
     transparent: true,
     webPreferences: {
       webSecurity: false,
-      // preload: join(__dirname, '../preload/index.cjs'),
+      preload: app.isPackaged
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
 
-  dm.loadURL(resolveHtmlPath('index.html#dmWindow'));
+  dm.loadURL(getHTMLPathBySearchKey('dmWindow'));
 
   dm.on('ready-to-show', () => {
     if (!dm) {
@@ -170,9 +187,7 @@ const createDMWindow = async () => {
   });
 
   dm.on('closed', () => {
-    if (!live.closed) {
-      live.close();
-    }
+    live.close();
     dm = null;
   });
 
@@ -202,10 +217,10 @@ ipcMain.on('setOnTop', (event, arg) => {
 ipcMain.on('sendDanmu', (event, arg) => {
   try {
     send({
-      msg: arg.value,
-      roomid: arg.roomid,
-      SESSDATA: arg.SESSDATA,
-      csrf: arg.csrf,
+      msg: arg[0].value,
+      roomid: arg[0].roomid,
+      SESSDATA: arg[0].SESSDATA,
+      csrf: arg[0].csrf,
       // extra
     });
   } catch (err) {
@@ -214,11 +229,12 @@ ipcMain.on('sendDanmu', (event, arg) => {
 });
 
 ipcMain.on('onLive', (event, arg) => {
+  console.info(arg);
   if (live) {
     live.close();
   }
   console.info('new liveWs instance added');
-  live = new LiveWS(Number(arg.roomid));
+  live = new LiveWS(Number(arg[0].roomid));
   live.on('open', () => {
     dm?.webContents.send(
       'main-process-message',

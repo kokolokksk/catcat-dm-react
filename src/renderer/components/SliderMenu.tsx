@@ -51,9 +51,8 @@ const SliderMenu = (prop: any | undefined) => {
 
   const startDanmuWindow = ()=> {
     console.info(window.electron.store)
-    window.ipcRenderer.send('createDmWindow',[])
+    window.electron.ipcRenderer.sendMessage('createDmWindow',[])
   }
-   startDanmuWindow()
     return (
       // eslint-disable-next-line react/jsx-no-comment-textnodes
       <>

@@ -11,11 +11,14 @@ declare global {
         set: (key: string, val: any) => void;
         // any other methods you've defined...
       };
+      ipcRenderer: {
+        sendMessage: (channel: string, args: unknown[]) => void;
+      };
     };
-    ipcRenderer: import('electron').IpcRenderer;
     danmuApi: {
       onUpdateOnliner: (arg0: (_event: any, value: any) => void) => void;
       onUpdateMsg: (arg0: (_event: any, data: any) => void) => void;
+      mainProcessMessage: (arg0: (_event: any, data: any) => void) => void;
     };
     removeLoading: () => void;
   }

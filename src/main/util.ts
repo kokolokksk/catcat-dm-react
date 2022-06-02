@@ -13,6 +13,22 @@ if (process.env.NODE_ENV === 'development') {
   };
 } else {
   resolveHtmlPath = (htmlFileName: string) => {
-    return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
+    return `file://${path.join(__dirname, '..', '/renderer/', htmlFileName)}`;
+  };
+}
+
+export let getHTMLPathBySearchKey: (htmlFileName: string) => string;
+
+if (process.env.NODE_ENV === 'development') {
+  const port = process.env.PORT || 1212;
+  getHTMLPathBySearchKey = (searchKey: string) => {
+    return `http://localhost:${port}${`/?${searchKey}`}`;
+  };
+} else {
+  getHTMLPathBySearchKey = (searchKey: string) => {
+    return `file://${path.resolve(
+      __dirname,
+      `../renderer/index.html?${searchKey}`
+    )}`;
   };
 }
