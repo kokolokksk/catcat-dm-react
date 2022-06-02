@@ -1,13 +1,10 @@
 {
-  "name": "electron-react-boilerplate",
-  "version": "4.6.0",
-  "description": "A foundation for scalable desktop apps",
+  "name": "catcat-dm-react",
+  "productName": "catcat-dm-react",
+  "version": "0.0.1",
+  "description": "catcat-dm-react.",
+  "author": "Loveloliii <loli@loli.monster>",
   "license": "MIT",
-  "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
-  },
   "main": "./dist/main/main.js",
   "scripts": {
     "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
