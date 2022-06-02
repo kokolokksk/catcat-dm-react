@@ -211,7 +211,9 @@ ipcMain.on('createDmWindow', function (arg) {
   }
 });
 ipcMain.on('setOnTop', (event, arg) => {
-  dm?.setAlwaysOnTop(arg[0]);
+  if (arg) {
+    dm?.setAlwaysOnTop(arg[0]);
+  }
 });
 
 ipcMain.on('sendDanmu', (event, arg) => {

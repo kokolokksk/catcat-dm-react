@@ -57,13 +57,15 @@ const Setting = () => {
 
   const setRoomId = (room: any) => {};
   const commonInputItemSave = (skey: any, value: string) => {
-    window.electron.store.set(skey, value);
+    let t: unknown = value;
     if (skey === 'roomid') {
+      t = Number(value);
       setCatConfigData({
         ...catConfigData,
-        roomid: value,
+        roomid: Number(t),
       });
     }
+    window.electron.store.set(skey, t);
   };
   useEffect(() => {
     if (catConfigData.roomid) {

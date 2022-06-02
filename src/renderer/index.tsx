@@ -9,11 +9,9 @@ window.danmuApi.mainProcessMessage((_event: any, value: any) => {
   console.info(value);
 });
 root.render(
-  <StrictMode>
-    <ChakraProvider>
-      <App />
-    </ChakraProvider>
-  </StrictMode>
+  <ChakraProvider>
+    <App />
+  </ChakraProvider>
 );
 
 // window.removeLoading();
