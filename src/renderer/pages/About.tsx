@@ -19,24 +19,12 @@ const About = () => {
             <div className={styles.name}>Version:</div>
             <div className={styles.value}>{pack.version}</div>
           </div>
-          {/* <div className={styles.item}>
-                  <div className={styles.name}>Electron:</div>
-                  <div className={styles.value}>{process.versions.electron }</div>
-                </div>
-                <div className={styles.item}>
-                  <div className={styles.name}>Node:</div>
-                  <div className={styles.value}>{process.versions.node }</div>
-                </div>
-                <div className={styles.item}>
-                  <div className={styles.name}>Platform:</div>
-                  <div className={styles.value}>{require('os').platform() }</div>
-                </div> */}
           <div className={styles.item}>
             <div className={styles.name}>GitHub地址:</div>
             <div className={styles.value && styles.title}>
               <a
                 target="_blank"
-                href="https://github.com/loveloliii/catcat-dm-react"
+                href="https://github.com/kokolokksk/catcat-dm-react"
                 rel="noreferrer"
               >
                 -{'>'}CatCatDm{'<'}-
