@@ -246,11 +246,15 @@ ipcMain.on('onLive', (event, arg) => {
   live.on('live', () => {
     dm?.webContents.send('main-process-message', 'success connected server');
   });
-  live.on('heartbeat', (online) => {
+  live.on('heartbeat', (online: any) => {
     dm?.webContents.send('update-online', online);
   });
-  live.on('msg', (data) => {
-    dm?.webContents.send('update-msg', data);
+  let tempData: any;
+  live.on('msg', (data: any) => {
+    if (tempData !== data) {
+      dm?.webContents.send('update-msg', data);
+      tempData = data;
+    }
   });
 });
 
