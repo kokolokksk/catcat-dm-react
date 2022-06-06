@@ -58,7 +58,7 @@ const SliderMenu = (prop: any | undefined) => {
       toast({
         title: '',
         description: '🐱🐱🐱🐱🐱🐱❤❤❤❤❤❤🐱🐱🐱🐱🐱🐱🐱',
-        status: 'success',
+        status: undefined,
         duration: 2000,
         isClosable: false,
       });

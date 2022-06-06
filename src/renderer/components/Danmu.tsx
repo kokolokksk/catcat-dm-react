@@ -2,6 +2,7 @@ import { Avatar } from '@chakra-ui/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import styles from '../styles/danmuc.module.scss';
+import { giftData } from '../components/CatCat';
 
 const Danmu = (prop: any) => {
   const data = {
@@ -9,11 +10,18 @@ const Danmu = (prop: any) => {
   };
   console.info(data);
   const [isDisplayble, setIsDisplayble] = useState('inline');
+  const [isGiftImgDisplayble, setIsGiftImgDisplayble] = useState('none');
+  const [containerClass, setContainerClass] = useState(styles.danmuContainer);
   const [avatarFace, setAvatarFace] = useState('');
+  const [giftImg, setGiftImg] = useState('');
   const faceImg = '';
   const changeDisplay = () => {
     setIsDisplayble('none');
   };
+  const changeGiftDisplay = () => {
+    setIsGiftImgDisplayble('none');
+  };
+  let danmuClass;
   useEffect(() => {
     if (data.data.type === 1) {
       const uid = data.data.origin.info[2][0];
@@ -39,13 +47,20 @@ const Danmu = (prop: any) => {
     }
     if (data.data.type === 2) {
       setAvatarFace(data.data.origin.data.face);
+      giftData.forEach((item) => {
+        if (item.name === data.data.giftName) {
+          setGiftImg(item.img);
+        }
+      });
       setIsDisplayble('inline');
+      setIsGiftImgDisplayble('inline');
+      setContainerClass(styles.giftContainer);
     }
     // eslint-disable-next-line prettier/prettier
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <div className={styles.danmuContainer}>
+    <div className={containerClass}>
       <img
         alt=""
         className={styles.avatar}
@@ -61,6 +76,14 @@ const Danmu = (prop: any) => {
         {/* <div className={styles.fans}>1</div> */}
       </div>
       <div className={styles.danmuContent}>{data.content}</div>
+      <img
+        alt=""
+        className={styles.avatar}
+        style={{ display: isGiftImgDisplayble }}
+        key={giftImg}
+        onError={changeGiftDisplay}
+        src={giftImg}
+      />
     </div>
   );
 };
