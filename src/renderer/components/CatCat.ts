@@ -57,6 +57,7 @@ const catConfigItem = [
   { name: 'v1', type: 'string' },
   { name: 'v2', type: 'string' },
   { name: 'fansDisplay', type: 'boolean' },
+  { name: 'darkMode', type: 'boolean' },
 ];
 
 const giftData = [

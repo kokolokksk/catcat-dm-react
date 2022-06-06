@@ -15,6 +15,9 @@ declare global {
         sendMessage: (channel: string, args: unknown[]) => void;
       };
     };
+    darkMode: {
+      toggle: (arg0: (_event: any, args: unknown[]) => void) => boolean;
+    };
     danmuApi: {
       onUpdateOnliner: (arg0: (_event: any, value: any) => void) => void;
       onUpdateMsg: (arg0: (_event: any, data: any) => void) => void;

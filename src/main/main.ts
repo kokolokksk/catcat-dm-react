@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path, { join } from 'path';
-import { app, BrowserWindow, shell, ipcMain, globalShortcut } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, globalShortcut, nativeTheme } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { LiveWS } from 'bilibili-live-ws';
@@ -229,7 +229,20 @@ ipcMain.on('sendDanmu', (event, arg) => {
     // console.error(err);
   }
 });
+ipcMain.on('dark-mode:toggle', (event, arg) => {
+  console.info('come in dark toggle');
+  console.info(nativeTheme.themeSource);
+  if (arg) {
+    nativeTheme.themeSource = 'light';
+  } else {
+    nativeTheme.themeSource = 'dark';
+  }
+  return nativeTheme.shouldUseDarkColors;
+});
 
+ipcMain.handle('dark-mode:system', () => {
+  nativeTheme.themeSource = 'system';
+});
 ipcMain.on('onLive', (event, arg) => {
   console.info(arg);
   if (live) {

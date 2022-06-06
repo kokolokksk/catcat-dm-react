@@ -1,3 +1,4 @@
+import { Link } from '@chakra-ui/react';
 import styles from '../styles/about.module.scss';
 import pack from '../../../package.json';
 
@@ -22,13 +23,13 @@ const About = () => {
           <div className={styles.item}>
             <div className={styles.name}>GitHub地址:</div>
             <div className={styles.value && styles.title}>
-              <a
+              <Link
                 target="_blank"
                 href="https://github.com/kokolokksk/catcat-dm-react"
                 rel="noreferrer"
               >
                 -{'>'}CatCatDm{'<'}-
-              </a>
+              </Link>
             </div>
           </div>
         </div>

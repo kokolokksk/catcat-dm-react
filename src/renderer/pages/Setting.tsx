@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import { Flex, Divider } from '@chakra-ui/react';
+import { Flex, Divider, useColorMode } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import SliderMenu from '../components/SliderMenu';
@@ -67,6 +67,7 @@ const Setting = () => {
     }
     window.electron.store.set(skey, t);
   };
+  const { colorMode, toggleColorMode } = useColorMode(); // 注意这里是对象解构，不是数组解构
   useEffect(() => {
     if (catConfigData.roomid) {
       load(catConfigData.roomid);
@@ -74,11 +75,18 @@ const Setting = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [catConfigData.roomid]);
-  const commonSwitchItemSave = (skey: any, value: any) => {
+  const commonSwitchItemSave = async (skey: any, value: any) => {
     console.info(value.target.checked);
     window.electron.store.set(skey, value.target.checked);
+    if (skey === 'darkMode') {
+      toggleColorMode();
+      // const isDarkMode = window.darkMode.toggle(value.target.checked);
+      window.electron.ipcRenderer.sendMessage(
+        'dark-mode:toggle',
+        value.target.checked
+      );
+    }
   };
-
   useEffect(() => {
     // init data
     console.info('init data');
@@ -128,6 +136,7 @@ const Setting = () => {
         nickname={catConfigData.nickname}
         faceImg={catConfigData.faceImg}
       />
+      <Divider orientation="vertical" />
       <div className={styles.page}>
         <div className={styles.setting}>
           <SettingInputItem
@@ -170,6 +179,13 @@ const Setting = () => {
             v={catConfigData.fansDisplay || false}
             c={commonSwitchItemSave}
             skey="fansDisplay"
+          />
+          <Divider />
+          <SettingSwitchItem
+            name="深浅模式"
+            v={catConfigData.darkMode || false}
+            c={commonSwitchItemSave}
+            skey="darkMode"
           />
           {/* <Divider/>
         <SettingSwitchItem name='TTS' v={catConfigData.tts || false} c={commonSwitchItemSave} skey={'tts'}/>

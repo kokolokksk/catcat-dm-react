@@ -3,7 +3,7 @@
 }
 
 .root {
-   
+
   -moz-box-shadow: 8px 8px 8px gray;
 		-webkit-box-shadow: 8px 8px 8px gray;
 		box-shadow: 1px 1px 8px gray;
@@ -21,7 +21,7 @@
 .online {
   height: 5vh;
     background-color: transparent;
-    color: #000000;
+    //color: #000000;
     font-family:  'Consolas','zxfyyt','YouYuan';
     z-index: 5;
   }
@@ -32,7 +32,7 @@
     top:6%;
     background-color: transparent;
     font-family:  'Consolas','zxfyyt','YouYuan';
-    color: #000000;
+   // color: #000000;
     z-index: 5;
   }
 
@@ -56,7 +56,7 @@
 
 
 
-     
+
 
       .dmName{
         font-family: "YouYuan";
@@ -79,8 +79,8 @@
         -webkit-app-region: no-drag;
         background-color: transparent;
         align-content: center;
-       
+
         width: 99%;
-     
+
         z-index: 2;
       }

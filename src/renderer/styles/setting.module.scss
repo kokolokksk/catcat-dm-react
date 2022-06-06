@@ -2,13 +2,13 @@
     display: flex;
     flex:1;
     height: 100vh;
-    background-color: rgb(241, 241, 241);
+    // background-color: rgb(241, 241, 241);
     overflow-y: auto;
   }
   .setting{
     width: 100vw;
     height: 100vh;
-    /* font-family: "Consolas","Microsoft YaHei",sans-serif; */
+    font-family: "Consolas","Microsoft YaHei",sans-serif;
     margin-left: 10px;
    }
    .line {

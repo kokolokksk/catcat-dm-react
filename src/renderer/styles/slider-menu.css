@@ -2,7 +2,7 @@
 .menu-container{
     flex-direction: column;
     display: flex;
-    justify-content:space-between; 
+    justify-content:space-between;
     height: 100vh;
   }
   .menu-photo{
@@ -14,8 +14,8 @@
     height: 30vh;
   }
   .slider-menu {
-    width: 25vw;
-    border-right: solid #efefef;
+    /* width: 25vw;
+    border-right: solid teal; */
   }
   .menu-list{
     position: fixed;
@@ -23,9 +23,9 @@
     height: 50vh;
     transition: all 0.1s ease-in-out;
   }
-  .menu_swtich{ 
+  .menu_swtich{
     align-self: flex-end;
-    
+
     width: 18vw;
   }
   .photo{
@@ -47,15 +47,15 @@
      width: 10vw;
      justify-content: center;
   }
-  
-  
+
+
   .menu-photo img{
     width: 20vw;
     height: 20vw;
   }
   .menu-photo p{
     width: 100%;
-     
+
   }
   .menu {
     width: 30vw;
@@ -63,19 +63,19 @@
     transition: all 0.1s ease-in-out;
     background-color: rgb(255, 255, 255);
   }
-  
+
   .menu_hide .menu-item-container span{
     display: none;
   }
-  
+
   .menu_hide .menu-photo{
     height: 15vh;
   }
-   
+
   .menu_hide .menu_swtich{
     width: 10vw;
     bottom: 10vh;
-  } 
+  }
   .menu_hide .menu-photo img{
     width: 12vw;
     height: 12vw;
