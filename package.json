@@ -180,7 +180,6 @@
     "webpack-merge": "^5.8.0"
   },
   "build": {
-    "electron-builder": "23.0.3",
     "productName": "CatCatDM",
     "appId": "monster.loli.CatCatDm",
     "asar": true,
@@ -240,12 +239,12 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
+      "owner": "kokolokksk",
+      "repo": "catcat-dm-react"
     }
   },
   "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
+    "url": ""
   },
   "devEngines": {
     "node": ">=14.x",
