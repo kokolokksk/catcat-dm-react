@@ -171,7 +171,6 @@ const createDMWindow = async () => {
     useContentSize: false,
     width: 455,
     frame: false,
-    alwaysOnTop: true,
     transparent: true,
     webPreferences: {
       webSecurity: false,
