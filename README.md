@@ -1,7 +1,6 @@
 [![Build/release](https://github.com/kokolokksk/catcat-dm-react/actions/workflows/build.yml/badge.svg?branch=v1.2.5)](https://github.com/kokolokksk/catcat-dm-react/actions/workflows/build.yml)
 [![HitCount](http://hits.dwyl.com/kokolokksk/catcat-dm-react.svg)](http://hits.dwyl.com/kokolokksk/catcat-dm-react)
 ![](https://img.shields.io/github/stars/kokolokksk/catcat-dm-react?color=green&style=flat-square)
-![](https://star-history.com/#kokolokksk/catcat-dm-react&Date)
 # CatCatDM React
 
 > CatCatDM! React!
@@ -60,3 +59,8 @@
 
 ### 交流
 issue 或者 神秘代码（319833969）
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=kokolokksk/catcat-dm-react&type=Date)](https://star-history.com/#kokolokksk/catcat-dm-react&Date)
+
