@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import styles from '../styles/danmu.module.scss';
 import {
   catConfigItem,
@@ -22,7 +23,26 @@ const DanmuWindow = () => {
     const copyOne = cc;
     return copyOne;
   };
-
+  function uploadDanmu(dm: { [K: string]: any }) {
+    if (muaConfig.catdb) {
+      if (muaConfig.clientId) {
+        axios({
+          method: 'post',
+          url: `https://db.loli.monster/cat/dm/addDanMu?clientId=${muaConfig.clientId}&roomId=${muaConfig.roomid}`,
+          data: dm,
+          headers: { 'content-type': 'application/json' },
+        })
+          // eslint-disable-next-line func-names
+          // eslint-disable-next-line promise/always-return
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+    }
+  }
   const connectLive = () => {
     window.electron.ipcRenderer.sendMessage('onLive', [muaConfig]);
     window.danmuApi.onUpdateOnliner((_event: any, value: any) => {
@@ -34,6 +54,7 @@ const DanmuWindow = () => {
     window.danmuApi.onUpdateMsg(async (_event: any, data: any) => {
       const dm = await transformMsg(data);
       if (dm) {
+        uploadDanmu(dm);
         console.info(dm);
         if (dm.type !== 3) {
           tenpDmList.push(dm);
