@@ -1,7 +1,7 @@
 {
   "name": "catcat-dm-react",
   "productName": "catcat-dm-react",
-  "version": "1.4.9",
+  "version": "1.5.0",
   "description": "catcat-dm-react.",
   "author": "Loveloliii <loli@loli.monster>",
   "license": "MIT",
@@ -180,6 +180,7 @@
     "webpack-merge": "^5.8.0"
   },
   "build": {
+    "electron-builder": "23.0.3",
     "productName": "CatCatDM",
     "appId": "monster.loli.CatCatDm",
     "asar": true,
