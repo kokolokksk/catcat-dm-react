@@ -171,6 +171,7 @@ const createDMWindow = async () => {
     useContentSize: false,
     width: 455,
     frame: false,
+    alwaysOnTop: true,
     transparent: true,
     webPreferences: {
       webSecurity: false,
@@ -217,12 +218,6 @@ ipcMain.on('createDmWindow', function (arg) {
     createDMWindow();
   }
 });
-ipcMain.on('setOnTop', (event, arg) => {
-  if (arg) {
-    dm?.setAlwaysOnTop(arg[0]);
-  }
-});
-
 ipcMain.on('sendDanmu', (event, arg) => {
   try {
     send({
@@ -281,6 +276,11 @@ ipcMain.on('onLive', (event, arg) => {
   });
 });
 
+ipcMain.on('setOnTop:setting', (event, arg) => {
+  if (arg) {
+    dm?.setAlwaysOnTop(arg[0]);
+  }
+});
 /**
  * Add event listeners...
  */

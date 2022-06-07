@@ -86,6 +86,12 @@ const Setting = () => {
         value.target.checked
       );
     }
+    if (skey === 'alwaysOnTop') {
+      // set is on top
+      window.electron.ipcRenderer.sendMessage('setOnTop:setting', [
+        value.target.checked,
+      ]);
+    }
   };
   useEffect(() => {
     // init data
@@ -167,7 +173,7 @@ const Setting = () => {
             skey="catdb"
           />
           <Divider />
-          <SettingSwitchItem
+          {/* <SettingSwitchItem
             name="波浪"
             v={catConfigData.waveD || false}
             c={commonSwitchItemSave}
@@ -180,7 +186,7 @@ const Setting = () => {
             c={commonSwitchItemSave}
             skey="fansDisplay"
           />
-          <Divider />
+          <Divider /> */}
           <SettingSwitchItem
             name="深浅模式"
             v={catConfigData.darkMode || false}

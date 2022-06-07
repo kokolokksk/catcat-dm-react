@@ -110,14 +110,13 @@ const DanmuWindow = () => {
             muaConfig[catConfigItem[index].name] = item;
           }
         });
-        // set is on top
-        window.electron.ipcRenderer.sendMessage(
-          'setOnTop',
-          muaConfig.alwaysOnTop
-        ); // .getCurrentWindow().setAlwaysOnTop(true)
         connectLive();
         return '';
       });
+      // set is on top
+      window.electron.ipcRenderer.sendMessage('setOnTop', [
+        muaConfig.alwaysOnTop,
+      ]); // .getCurrentWindow().setAlwaysOnTop(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
