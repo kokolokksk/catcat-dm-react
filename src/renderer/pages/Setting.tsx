@@ -67,7 +67,7 @@ const Setting = () => {
     }
     window.electron.store.set(skey, t);
   };
-  const { colorMode, toggleColorMode } = useColorMode(); // 注意这里是对象解构，不是数组解构
+  const { colorMode, toggleColorMode } = useColorMode();
   useEffect(() => {
     if (catConfigData.roomid) {
       load(catConfigData.roomid);

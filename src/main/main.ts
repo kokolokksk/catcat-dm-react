@@ -9,7 +9,14 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path, { join } from 'path';
-import { app, BrowserWindow, shell, ipcMain, globalShortcut, nativeTheme } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  ipcMain,
+  globalShortcut,
+  nativeTheme,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { LiveWS } from 'bilibili-live-ws';
@@ -245,11 +252,14 @@ ipcMain.handle('dark-mode:system', () => {
 });
 ipcMain.on('onLive', (event, arg) => {
   console.info(arg);
-  if (live) {
+  if (!live) {
+    console.info('new liveWs instance added');
+    live = new LiveWS(Number(arg[0].roomid));
+  } else {
     live.close();
+    console.info('old closed and new liveWs instance added');
+    live = new LiveWS(Number(arg[0].roomid));
   }
-  console.info('new liveWs instance added');
-  live = new LiveWS(Number(arg[0].roomid));
   live.on('open', () => {
     dm?.webContents.send(
       'main-process-message',
@@ -279,6 +289,9 @@ app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   if (process.platform !== 'darwin') {
+    if (live) {
+      live.close();
+    }
     app.quit();
   }
 });
@@ -286,6 +299,9 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
+    if (live) {
+      live.close();
+    }
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the

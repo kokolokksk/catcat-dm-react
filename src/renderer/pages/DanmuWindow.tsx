@@ -31,9 +31,10 @@ const DanmuWindow = () => {
         ...copyObj(muaConfig),
       });
     });
-    window.danmuApi.onUpdateMsg((_event: any, data: any) => {
-      const dm = transformMsg(data);
-      if (JSON.stringify(dm) !== '{}') {
+    window.danmuApi.onUpdateMsg(async (_event: any, data: any) => {
+      const dm = await transformMsg(data);
+      if (dm) {
+        console.info(dm);
         if (dm.type !== 3) {
           tenpDmList.push(dm);
           console.info(tenpDmList);
@@ -108,15 +109,15 @@ const DanmuWindow = () => {
         <div className={styles.comeinLastMinute} />
         <div className={styles.c_bg}>
           <div style={{ transform: `translateY(${autoHeight}vh)` }}>
-            {allDmList.map((dm: any, index: any) => {
+            {allDmList.map((danmu: any, index: any) => {
               return (
                 // eslint-disable-next-line react/no-array-index-key
-                <div key={`${index}1`}>
+                <div key={danmu.timestamp + danmu.uid + getNewSessionId()}>
                   {' '}
                   <Danmu
-                    nickname={dm.nickname}
-                    content={dm.content}
-                    data={dm}
+                    nickname={danmu.nickname}
+                    content={danmu.content}
+                    data={danmu}
                   />
                 </div>
               );
