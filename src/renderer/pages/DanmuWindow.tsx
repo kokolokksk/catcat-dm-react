@@ -82,6 +82,15 @@ const DanmuWindow = () => {
     console.info(muaConfig.count);
   }, [muaConfig.count]);
   useEffect(() => {
+    // set is on top
+    if (muaConfig.alwaysOnTop) {
+      window.electron.ipcRenderer.sendMessage('setOnTop:setting', [
+        [muaConfig.alwaysOnTop],
+      ]); // .getCurrentWindow().setAlwaysOnTop(true)
+    }
+    console.info(muaConfig.alwaysOnTop);
+  }, [muaConfig.alwaysOnTop]);
+  useEffect(() => {
     if (!muaConfig.started) {
       console.info('init danmu data');
       muaConfig.sessionId = getNewSessionId();
@@ -113,10 +122,6 @@ const DanmuWindow = () => {
         connectLive();
         return '';
       });
-      // set is on top
-      window.electron.ipcRenderer.sendMessage('setOnTop', [
-        muaConfig.alwaysOnTop,
-      ]); // .getCurrentWindow().setAlwaysOnTop(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
