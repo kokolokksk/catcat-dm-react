@@ -439,15 +439,23 @@ const transformMsg = async (data: any | undefined) => {
       console.error('is GUARD_BUY');
       console.error(data);
       danmu.type = 4;
+      danmu.content = '购买了舰长';
       danmu.nickname = data.data.username;
       break;
     case 'USER_TOAST_MSG':
       console.error('is USER_TOAST_MSG');
       console.error(data);
       break;
+    case 'NOTICE_MSG':
+      console.error('is NOTICE_MSG');
+      console.error(data);
+      break;
     case 'SUPER_CHAT_MESSAGE':
       console.error('is SUPER_CHAT_MESSAGE');
       console.error(data);
+      danmu.type = 6;
+      danmu.content = 'sc';
+      danmu.nickname = data.data.username;
       break;
     default:
       danmu = undefined;

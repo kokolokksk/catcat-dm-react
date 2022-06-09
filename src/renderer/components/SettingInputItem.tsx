@@ -56,7 +56,13 @@ const SettingInputItem = (prop: any | undefined) => {
         {/* Here is the custom input */}
         <Flex>
           {data.name}:
-          <EditablePreview fontFamily="consolas" color="orange" />
+          <EditablePreview
+            fontFamily="consolas"
+            color="orange"
+            maxWidth="50%"
+            overflowWrap="initial"
+            overflow="hidden"
+          />
           {/* width='50%' overflow='hidden' display='inline' */}
           <Input as={EditableInput} />
           <EditableControls />

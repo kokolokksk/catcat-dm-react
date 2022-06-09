@@ -227,7 +227,7 @@ ipcMain.on('sendDanmu', (event, arg) => {
       // extra
     });
   } catch (err) {
-    // console.error(err);
+    console.error(err);
   }
 });
 ipcMain.on('dark-mode:toggle', (event, arg) => {
