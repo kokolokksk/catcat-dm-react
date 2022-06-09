@@ -355,6 +355,69 @@ const getNewSessionId = () => {
   return stringBuilder;
 };
 
+async function handleDanMuMSG(data: any, danmu: { [K: string]: any }) {
+  danmu.type = 1;
+  danmu.origin = data;
+  // eslint-disable-next-line prefer-destructuring
+  danmu.uid = data.info[2][0];
+  // eslint-disable-next-line prefer-destructuring
+  danmu.nickname = data.info[2][1];
+  // eslint-disable-next-line prefer-destructuring
+  danmu.content = data.info[1];
+  danmu.noBorder = true;
+  emotionData.forEach((item) => {
+    if (item.name === danmu?.content) {
+      danmu.type = 2;
+      danmu.content = '';
+      danmu.giftImg = item.img;
+    }
+  });
+  // eslint-disable-next-line prefer-destructuring
+  danmu.timestamp = data.info[9].ts;
+  // eslint-disable-next-line prefer-destructuring
+  danmu.fansLevel = data.info[3][0];
+  // eslint-disable-next-line prefer-destructuring
+  danmu.fansName = data.info[3][1];
+  await axios({
+    url: `https://api.live.bilibili.com/live_user/v1/Master/info?uid=${danmu.uid}`,
+  })
+    // eslint-disable-next-line func-names
+    // eslint-disable-next-line promise/always-return
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    // eslint-disable-next-line func-names
+    // eslint-disable-next-line promise/always-return
+    .then(function (response1) {
+      console.info(response1);
+      // eslint-disable-next-line promise/always-return
+      if (danmu) {
+        danmu.avatarFace = response1.data.data.info.face;
+      }
+    })
+    // eslint-disable-next-line func-names
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
+function handleSENDGIFT(data: any, danmu: { [K: string]: any }) {
+  console.info('is gift msg');
+  danmu.type = 2;
+  danmu.noBorder = false;
+  danmu.origin = data;
+  danmu.giftName = data.data.giftName;
+  danmu.giftType = data.data.giftType;
+  danmu.uid = data.data.uid;
+  danmu.nickname = data.data.uname;
+  danmu.timestamp = data.data.timestamp;
+  danmu.content = `赠送了${data.data.giftName}`;
+  danmu.avatarFace = data.data.face;
+  giftData.forEach((item) => {
+    if (item.name === danmu?.giftName) {
+      danmu.giftImg = item.img;
+    }
+  });
+}
+
 const transformMsg = async (data: any | undefined) => {
   let danmu: { [K: string]: any } | undefined = {};
   // console.info(data)
@@ -362,70 +425,29 @@ const transformMsg = async (data: any | undefined) => {
   // eslint-disable-next-line default-case
   switch (data.cmd) {
     case 'DANMU_MSG':
-      danmu.type = 1;
-      danmu.origin = data;
-      // eslint-disable-next-line prefer-destructuring
-      danmu.uid = data.info[2][0];
-      // eslint-disable-next-line prefer-destructuring
-      danmu.nickname = data.info[2][1];
-      // eslint-disable-next-line prefer-destructuring
-      danmu.content = data.info[1];
-      danmu.noBorder = true;
-      emotionData.forEach((item) => {
-        if (item.name === danmu?.content) {
-          danmu.type = 2;
-          danmu.content = '';
-          danmu.giftImg = item.img;
-        }
-      });
-      // eslint-disable-next-line prefer-destructuring
-      danmu.timestamp = data.info[9].ts;
-      // eslint-disable-next-line prefer-destructuring
-      danmu.fansLevel = data.info[3][0];
-      // eslint-disable-next-line prefer-destructuring
-      danmu.fansName = data.info[3][1];
-      await axios({
-        url: `https://api.live.bilibili.com/live_user/v1/Master/info?uid=${danmu.uid}`,
-      })
-        // eslint-disable-next-line func-names
-        // eslint-disable-next-line promise/always-return
-        // eslint-disable-next-line @typescript-eslint/no-shadow
-        // eslint-disable-next-line func-names
-        // eslint-disable-next-line promise/always-return
-        .then(function (response1) {
-          console.info(response1);
-          // eslint-disable-next-line promise/always-return
-          if (danmu) {
-            danmu.avatarFace = response1.data.data.info.face;
-          }
-        })
-        // eslint-disable-next-line func-names
-        .catch(function (error) {
-          console.log(error);
-        });
+      await handleDanMuMSG(data, danmu);
       break;
     case 'SEND_GIFT':
-      console.info('is gift msg');
-      danmu.type = 2;
-      danmu.noBorder = false;
-      danmu.origin = data;
-      danmu.giftName = data.data.giftName;
-      danmu.giftType = data.data.giftType;
-      danmu.uid = data.data.uid;
-      danmu.nickname = data.data.uname;
-      danmu.timestamp = data.data.timestamp;
-      danmu.content = `赠送了${data.data.giftName}`;
-      danmu.avatarFace = data.data.face;
-      giftData.forEach((item) => {
-        if (item.name === danmu?.giftName) {
-          danmu.giftImg = item.img;
-        }
-      });
+      handleSENDGIFT(data, danmu);
       break;
     case 'INTERACT_WORD':
       danmu.type = 3;
       danmu.uid = data.data.uid;
       danmu.nickname = data.data.uname;
+      break;
+    case 'GUARD_BUY':
+      console.error('is GUARD_BUY');
+      console.error(data);
+      danmu.type = 4;
+      danmu.nickname = data.data.username;
+      break;
+    case 'USER_TOAST_MSG':
+      console.error('is USER_TOAST_MSG');
+      console.error(data);
+      break;
+    case 'SUPER_CHAT_MESSAGE':
+      console.error('is SUPER_CHAT_MESSAGE');
+      console.error(data);
       break;
     default:
       danmu = undefined;
