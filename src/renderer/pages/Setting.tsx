@@ -161,14 +161,14 @@ const Setting = () => {
           <Divider />
           <SettingSwitchItem
             name="弹幕窗口置顶"
-            v={catConfigData.alwaysOnTop || false}
+            v={catConfigData.alwaysOnTop}
             c={commonSwitchItemSave}
             skey="alwaysOnTop"
           />
           <Divider />
           <SettingSwitchItem
             name="弹幕上传"
-            v={catConfigData.catdb || false}
+            v={catConfigData.catdb}
             c={commonSwitchItemSave}
             skey="catdb"
           />

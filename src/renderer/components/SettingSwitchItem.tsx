@@ -5,6 +5,7 @@ const SettingSwitchItem = (prop: any | undefined) => {
   const data = {
     ...prop,
   };
+  console.info(data.v);
   return (
     <div className={styles.setting_input_item}>
       <p className={styles.line} />
@@ -19,8 +20,8 @@ const SettingSwitchItem = (prop: any | undefined) => {
         </FormLabel>
         <Switch
           id="email-alerts"
-          defaultValue={data.v}
           key={data.v}
+          defaultChecked={data.v}
           onChange={(text) => data.c(data.skey, text)}
           size="md"
           colorScheme="orange"
