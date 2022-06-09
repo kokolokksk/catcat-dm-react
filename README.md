@@ -1,4 +1,4 @@
-![](../assets/icon.png)
+![](./assets/icon.png)
 
 [![Build/release](https://github.com/kokolokksk/catcat-dm-react/actions/workflows/build.yml/badge.svg?branch=v1.2.5)](https://github.com/kokolokksk/catcat-dm-react/actions/workflows/build.yml)
 [![HitCount](http://hits.dwyl.com/kokolokksk/catcat-dm-react.svg)](http://hits.dwyl.com/kokolokksk/catcat-dm-react)
