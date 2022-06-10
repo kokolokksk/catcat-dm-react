@@ -96,7 +96,7 @@ const createWindow = async () => {
     title: 'Setting Windwow',
     height: 650,
     useContentSize: false,
-    width: 600,
+    width: 700,
     frame: true,
     transparent: true,
     webPreferences: {

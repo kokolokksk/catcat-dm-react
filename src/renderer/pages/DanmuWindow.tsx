@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useColorMode } from '@chakra-ui/react';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
 import styles from '../styles/danmu.module.scss';
 import {
   catConfigItem,
@@ -10,7 +12,6 @@ import {
 import Danmu from '../components/Danmu';
 import ComeInDisplay from '../components/ComeInDisplay';
 import ChatContainer from '../components/ChatContainer';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
 
 const DanmuWindow = () => {
   const [allDmList, setAllDmList] = useState<any[]>([]);
@@ -53,7 +54,7 @@ const DanmuWindow = () => {
       });
     });
     window.danmuApi.onUpdateMsg(async (_event: any, data: any) => {
-      const dm = await transformMsg(data);
+      const dm = await transformMsg(data, muaConfig.proxyApi);
       if (dm) {
         uploadDanmu(dm);
         console.info(dm);
@@ -136,22 +137,22 @@ const DanmuWindow = () => {
         <div className={styles.c_bg}>
           <div style={{ transform: `translateY(${autoHeight}vh)` }}>
             {/* <TransitionGroup> */}
-              {allDmList.map((danmu: any, index: any) => {
-                return (
-                  // eslint-disable-next-line react/no-array-index-key
-                  // <CSSTransition classNames="friend" timeout={300} key={danmu.timestamp + danmu.uid + getNewSessionId()}>
-                    <div key={danmu.timestamp + danmu.uid + getNewSessionId()}>
-                      {' '}
-                      <Danmu
-                        nickname={danmu.nickname}
-                        content={danmu.content}
-                        data={danmu}
-                      />
-                    </div>
-                  // </CSSTransition>
-                );
-                //    faceImg={danmu.origin.data.face}
-              })}
+            {allDmList.map((danmu: any, index: any) => {
+              return (
+                // eslint-disable-next-line react/no-array-index-key
+                // <CSSTransition classNames="friend" timeout={300} key={danmu.timestamp + danmu.uid + getNewSessionId()}>
+                <div key={danmu.timestamp + danmu.uid + getNewSessionId()}>
+                  {' '}
+                  <Danmu
+                    nickname={danmu.nickname}
+                    content={danmu.content}
+                    data={danmu}
+                  />
+                </div>
+                // </CSSTransition>
+              );
+              //    faceImg={danmu.origin.data.face}
+            })}
             {/* </TransitionGroup> */}
           </div>
         </div>

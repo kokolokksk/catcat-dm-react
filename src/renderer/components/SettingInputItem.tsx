@@ -7,6 +7,7 @@ import {
   EditablePreview,
   Flex,
   Input,
+  useColorMode,
   useEditableControls,
 } from '@chakra-ui/react';
 import styles from '../styles/setting.module.scss';
@@ -15,6 +16,7 @@ const SettingInputItem = (prop: any | undefined) => {
   const data = {
     ...prop,
   };
+  const { colorMode, toggleColorMode } = useColorMode();
   function EditableControls() {
     const {
       isEditing,
@@ -58,7 +60,7 @@ const SettingInputItem = (prop: any | undefined) => {
           {data.name}:
           <EditablePreview
             fontFamily="consolas"
-            color="orange"
+            color={colorMode === 'dark' ? 'orange' : 'teal'}
             maxWidth="50%"
             overflowWrap="initial"
             overflow="hidden"

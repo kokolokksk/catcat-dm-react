@@ -68,6 +68,7 @@ const Setting = () => {
     window.electron.store.set(skey, t);
   };
   const { colorMode, toggleColorMode } = useColorMode();
+  console.info(colorMode);
   useEffect(() => {
     if (catConfigData.roomid) {
       load(catConfigData.roomid);
@@ -192,6 +193,13 @@ const Setting = () => {
             v={catConfigData.darkMode || false}
             c={commonSwitchItemSave}
             skey="darkMode"
+          />
+          <Divider />
+          <SettingSwitchItem
+            name="使用代理服务器请求弹幕用户头像"
+            v={catConfigData.proxyApi || true}
+            c={commonSwitchItemSave}
+            skey="proxyApi"
           />
           {/* <Divider/>
         <SettingSwitchItem name='TTS' v={catConfigData.tts || false} c={commonSwitchItemSave} skey={'tts'}/>
