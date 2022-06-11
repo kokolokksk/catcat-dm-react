@@ -157,6 +157,58 @@ const giftData = [
     name: '节奏风暴',
     img: 'https://i0.hdslb.com/bfs/live/99c26fd0cf591a7639e862ed1f20bbc337578ce3.webp',
   },
+  {
+    name: 'BLS能量石',
+    img: 'https://i0.hdslb.com/bfs/live/4ce8119c246f17fcad311e4c2b1feec97b41d060.webp',
+  },
+  {
+    name: 'PK票',
+    img: 'https://i0.hdslb.com/bfs/live/6da3775ae5b7169836a3df68909dbb2292d3776d.webp',
+  },
+  {
+    name: '心动卡',
+    img: 'https://i0.hdslb.com/bfs/live/9e8a419973840fae4e62089476a0c39d367788e1.webp',
+  },
+  {
+    name: '泡泡机',
+    img: 'https://i0.hdslb.com/bfs/live/412f3820c32233fb69293f2f1185fe742918c842.webp',
+  },
+  {
+    name: '爱的魔力',
+    img: 'https://i0.hdslb.com/bfs/live/b927abad4749f050b3a5fb514aa5c64861e0ecc1.webp',
+  },
+  {
+    name: '摩天轮',
+    img: 'https://i0.hdslb.com/bfs/live/c69a34217f4b60ca99804fa54d675483703fdaab.webp',
+  },
+  {
+    name: '转运锦鲤',
+    img: 'https://i0.hdslb.com/bfs/live/182e990a43dc1f6b9b03fb77d478856cdb5410e9.webp',
+  },
+  {
+    name: '领航者飞船',
+    img: 'https://i0.hdslb.com/bfs/live/3ae0aec459c1ff6e2dc82146fb6ac5f730386117.webp',
+  },
+  {
+    name: '海湾之旅',
+    img: 'https://i0.hdslb.com/bfs/live/a4667de09de544d776a62f1cc9d2d0678fc06dab.webp',
+  },
+  {
+    name: '海底历险记',
+    img: 'https://i0.hdslb.com/bfs/live/0df23fb6a6dcae2f6cccd8a6646766e1f1f9e99a.webp',
+  },
+  {
+    name: '友谊的小船',
+    img: 'https://i0.hdslb.com/bfs/live/24a007b0299c5e7f652d9eec0e0a51afd5a652f3.webp',
+  },
+  {
+    name: '冲浪',
+    img: 'https://i0.hdslb.com/bfs/live/a717aee458bc31fa4737d0b2fffe89d9b56f410c.webp',
+  },
+  {
+    name: '鸿运小电视',
+    img: 'https://i0.hdslb.com/bfs/live/5a02f041d03912d589b8abba6b8680c6b52bc09b.webp',
+  },
 ];
 
 const emotionData = [
@@ -370,10 +422,20 @@ async function handleDanMuMSG(data: any, danmu: { [K: string]: any }, proxyApi :
     danmu.type = 2
   }
   if (danmu.content.indexOf("cat4") != -1) {
-    danmu.type = 4
+    danmu.type = 4;
+    danmu.giftName = "舰长";
+    danmu.price = '198000';
+    danmu.origin = data;
+    danmu.content = '续费了1个舰长';
   }
   if (danmu.content.indexOf("cat5") != -1) {
-    danmu.type = 5
+    danmu.type = 5;
+    danmu.giftName = 'sc';
+    danmu.content = 'sc测试';
+    danmu.price = 30000;
+    danmu.color = '#A3F6FF';
+    danmu.borderColor = '#DBFFFD';
+    danmu.priceColor = '#7DA4BD';
   }
   danmu.noBorder = true;
   emotionData.forEach((item) => {
@@ -434,7 +496,7 @@ function handleSENDGIFT(data: any, danmu: { [K: string]: any }) {
   danmu.nickname = data.data.uname;
   danmu.timestamp = data.data.timestamp;
   danmu.content = `赠送了${data.data.num}个${data.data.giftName}`;
-  danmu.price = data.data.num * data.data.price;
+  danmu.price = data.data.num * data.data.discount_price;
   danmu.avatarFace = data.data.face;
   giftData.forEach((item) => {
     if (item.name === danmu?.giftName) {
@@ -507,9 +569,11 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
       danmu.uid = data.data.uid;
       setFace(danmu, proxyApi);
       danmu.username = data.data.username;
+      danmu.giftName = data.data.gift_name;
+      danmu.num = data.data.num;
       danmu.price = data.data.price * data.data.num;
       danmu.origin = data;
-      danmu.content = '续费的'+ data.data.num +'个'+data.data.gift_name;
+      danmu.content = '续费了'+ data.data.num +'个'+data.data.gift_name;
       danmu.nickname = data.data.username;
       break;
     case 'USER_TOAST_MSG':
@@ -595,6 +659,7 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
       danmu.ts = data.data.ts;
       danmu.price = data.data.price * data.data.rate;
       danmu.color = data.data.message_font_color;
+      danmu.borderColor = data.data.background_color;
       danmu.origin = data
       break;
     default:

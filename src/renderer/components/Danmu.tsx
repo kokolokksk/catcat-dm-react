@@ -12,10 +12,13 @@ const Danmu = (prop: any) => {
   console.info(data);
   const [isDisplayble, setIsDisplayble] = useState('inline');
   const [isGiftImgDisplayble, setIsGiftImgDisplayble] = useState('none');
+  const [isGiftPriceDisplayble, setIsGiftPriceDisplayble] = useState('none');
   const [containerClass, setContainerClass] = useState(styles.danmuContainer);
+  const { superChatContainer, gbContainer } = styles;
   const [avatarFace, setAvatarFace] = useState('');
   const [giftImg, setGiftImg] = useState('');
   const faceImg = '';
+  const [scBorder, setScBorder] = useState('');
   const changeDisplay = () => {
     setIsDisplayble('none');
   };
@@ -34,7 +37,19 @@ const Danmu = (prop: any) => {
       if (!data?.data?.noBorder) {
         setContainerClass(styles.giftContainer);
       }
+      if (data.data.price <= 0) {
+        setIsGiftPriceDisplayble('none');
+      } else {
+        setIsGiftPriceDisplayble('inline');
+      }
+    } else if (data.data.type === 3) {
+      console.info('3');
+    } else if (data.data.type === 4) {
+      console.info('4');
+    } else {
+      console.info('5');
     }
+    setScBorder(`solid 1px teal`);
     // 舰长
     // if (data.data.type === 4) {
 
@@ -91,9 +106,20 @@ const Danmu = (prop: any) => {
         onError={changeGiftDisplay}
         src={data.data.giftImg}
       />
+      <div
+        style={{
+          color: 'orange',
+          backgroundColor: '#6F4D76',
+          border: 'solid 1px teal',
+          display: isGiftPriceDisplayble,
+        }}
+      >
+        <small>￥</small>
+        <b>{data.data.price / 1000}</b>
+      </div>
     </div>
   ) : data?.data.type === 4 ? (
-    <div className={containerClass}>
+    <div className={gbContainer}>
       <img
         alt=""
         className={styles.avatar}
@@ -102,15 +128,25 @@ const Danmu = (prop: any) => {
         src={data.data.avatarFace}
       />
       <div className={styles.fansAndNickname}>
-        <div className={styles.nickname}> {data.nickname}4</div>
+        <div className={styles.nickname}> {data.nickname}</div>
       </div>
       <div className={styles.fansAndNickname}>
         {/* <div className={styles.fans}>1</div> */}
       </div>
       <div className={styles.danmuContent}>{data.content}</div>
+      <div
+        style={{
+          color: 'orange',
+          backgroundColor: '#6F4D76',
+          border: 'solid 1px teal',
+        }}
+      >
+        <small>￥</small>
+        <b>{data.data.price / 1000}</b>
+      </div>
     </div>
   ) : (
-    <div className={containerClass}>
+    <div className={superChatContainer} style={{ border: scBorder }}>
       <img
         alt=""
         className={styles.avatar}
@@ -119,12 +155,22 @@ const Danmu = (prop: any) => {
         src={data.data.avatarFace}
       />
       <div className={styles.fansAndNickname}>
-        <div className={styles.nickname}> {data.nickname}5</div>
+        <div className={styles.nickname}> {data.nickname}</div>
       </div>
       <div className={styles.fansAndNickname}>
         {/* <div className={styles.fans}>1</div> */}
       </div>
-      <div className={styles.danmuContent}>{data.content}</div>
+      <div className={styles.superChatContent}>{data.content}</div>
+      <div
+        style={{
+          color: 'orange',
+          backgroundColor: '#6F4D76',
+          border: 'solid 1px teal',
+        }}
+      >
+        <small>￥</small>
+        <b>{data.data.price / 1000}</b>
+      </div>
     </div>
   );
 };
