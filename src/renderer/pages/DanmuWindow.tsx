@@ -55,7 +55,7 @@ const DanmuWindow = () => {
     });
     window.danmuApi.onUpdateMsg(async (_event: any, data: any) => {
       const dm = await transformMsg(data, muaConfig.proxyApi);
-      if (dm) {
+      if (dm && dm.content) {
         uploadDanmu(dm);
         console.info(dm);
         if (dm.type !== 3) {
