@@ -61,7 +61,7 @@ const catConfigItem = [
   { name: 'v2', type: 'string' },
   { name: 'fansDisplay', type: 'boolean' },
   { name: 'darkMode', type: 'boolean' },
-  { name: 'proxyApi', type: 'boolean'},
+  { name: 'proxyApi', type: 'boolean' },
 ];
 
 const giftData = [
@@ -409,7 +409,42 @@ const getNewSessionId = () => {
   return stringBuilder;
 };
 
-async function handleDanMuMSG(data: any, danmu: { [K: string]: any }, proxyApi : boolean) {
+async function setFace(danmu: any, proxyApi: boolean) {
+  let url = `https://db.loli.monster/cat/client/getUserInfo?uid=${danmu.uid}`;
+  if (!proxyApi) {
+    url = `https://api.live.bilibili.com/live_user/v1/Master/info?uid=${danmu.uid}`;
+  }
+  await axios({
+    url,
+    // https://api.live.bilibili.com/live_user/v1/Master/info?uid=${danmu.uid}
+  })
+    // eslint-disable-next-line func-names
+    // eslint-disable-next-line promise/always-return
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    // eslint-disable-next-line func-names
+    // eslint-disable-next-line promise/always-return
+    .then(function (response1) {
+      // eslint-disable-next-line promise/always-return
+      if (danmu) {
+        if (proxyApi) {
+          danmu.avatarFace = response1.data.face;
+        } else {
+          danmu.avatarFace = response1.data.data.info.face;
+        }
+        // response1.data.data.info.face
+      }
+    })
+    // eslint-disable-next-line func-names
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
+async function handleDanMuMSG(
+  data: any,
+  danmu: { [K: string]: any },
+  proxyApi: boolean
+) {
   danmu.type = 1;
   danmu.origin = data;
   // eslint-disable-next-line prefer-destructuring
@@ -418,17 +453,17 @@ async function handleDanMuMSG(data: any, danmu: { [K: string]: any }, proxyApi :
   danmu.nickname = data.info[2][1];
   // eslint-disable-next-line prefer-destructuring
   danmu.content = data.info[1];
-  if (danmu.content.indexOf("cat2") != -1) {
-    danmu.type = 2
+  if (danmu.content.indexOf('cat2') !== -1) {
+    danmu.type = 2;
   }
-  if (danmu.content.indexOf("cat4") != -1) {
+  if (danmu.content.indexOf('cat4') !== -1) {
     danmu.type = 4;
-    danmu.giftName = "舰长";
-    danmu.price = '198000';
+    danmu.giftName = '提督';
+    danmu.price = '1998000';
     danmu.origin = data;
-    danmu.content = '续费了1个舰长';
+    danmu.content = '续费了1个提督';
   }
-  if (danmu.content.indexOf("cat5") != -1) {
+  if (danmu.content.indexOf('cat5') !== -1) {
     danmu.type = 5;
     danmu.giftName = 'sc';
     danmu.content = 'sc测试';
@@ -454,37 +489,6 @@ async function handleDanMuMSG(data: any, danmu: { [K: string]: any }, proxyApi :
   await setFace(danmu, proxyApi);
 }
 
-async function setFace(danmu:any, proxyApi:boolean) {
-  let url = `https://db.loli.monster/cat/client/getUserInfo?uid=${danmu.uid}`
-  if(!proxyApi){
-    url = `https://api.live.bilibili.com/live_user/v1/Master/info?uid=${danmu.uid}`
-  }
-  await axios({
-    url: url,
-    // https://api.live.bilibili.com/live_user/v1/Master/info?uid=${danmu.uid}
-  })
-    // eslint-disable-next-line func-names
-    // eslint-disable-next-line promise/always-return
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    // eslint-disable-next-line func-names
-    // eslint-disable-next-line promise/always-return
-    .then(function (response1) {
-      // eslint-disable-next-line promise/always-return
-      if (danmu) {
-        if (proxyApi) {
-          danmu.avatarFace = response1.data.face;
-        }else {
-          danmu.avatarFace = response1.data.data.info.face
-        }
-        // response1.data.data.info.face
-      }
-    })
-    // eslint-disable-next-line func-names
-    .catch(function (error) {
-      console.log(error);
-    });
-}
-
 function handleSENDGIFT(data: any, danmu: { [K: string]: any }) {
   console.info('is gift msg');
   danmu.type = 2;
@@ -502,7 +506,7 @@ function handleSENDGIFT(data: any, danmu: { [K: string]: any }) {
     if (item.name === danmu?.giftName) {
       danmu.giftImg = item.img;
     }
-  })
+  });
 }
 
 const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
@@ -523,45 +527,45 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
       danmu.nickname = data.data.uname;
       break;
     case 'GUARD_BUY':
-    //   {
-    //     "cmd": "GUARD_BUY",
-    //     "data": {
-    //         "uid": xxx,
-    //         "username": "xxx",
-    //         "guard_level": 3,
-    //         "num": 1,
-    //         "price": 198000,
-    //         "gift_id": 10003,
-    //         "gift_name": "舰长",
-    //         "start_time": 1654828049,
-    //         "end_time": 1654828049
-    //     }
-    // }
-  //   {
-  //     "cmd": "USER_TOAST_MSG",
-  //     "data": {
-  //         "anchor_show": true,
-  //         "color": "#00D1F1",
-  //         "dmscore": 90,
-  //         "effect_id": 397,
-  //         "end_time": 1654828049,
-  //         "guard_level": 3,
-  //         "is_show": 0,
-  //         "num": 1,
-  //         "op_type": 3,
-  //         "payflow_id": "2206101026467132167746887",
-  //         "price": 138000,
-  //         "role_name": "舰长",
-  //         "start_time": 1654828049,
-  //         "svga_block": 0,
-  //         "target_guard_count": 133,
-  //         "toast_msg": "<%xxx%> 自动续费了舰长",
-  //         "uid": xxx,
-  //         "unit": "月",
-  //         "user_show": true,
-  //         "username": "xxx"
-  //     }
-  // }
+      //   {
+      //     "cmd": "GUARD_BUY",
+      //     "data": {
+      //         "uid": xxx,
+      //         "username": "xxx",
+      //         "guard_level": 3,
+      //         "num": 1,
+      //         "price": 198000,
+      //         "gift_id": 10003,
+      //         "gift_name": "舰长",
+      //         "start_time": 1654828049,
+      //         "end_time": 1654828049
+      //     }
+      // }
+      //   {
+      //     "cmd": "USER_TOAST_MSG",
+      //     "data": {
+      //         "anchor_show": true,
+      //         "color": "#00D1F1",
+      //         "dmscore": 90,
+      //         "effect_id": 397,
+      //         "end_time": 1654828049,
+      //         "guard_level": 3,
+      //         "is_show": 0,
+      //         "num": 1,
+      //         "op_type": 3,
+      //         "payflow_id": "2206101026467132167746887",
+      //         "price": 138000,
+      //         "role_name": "舰长",
+      //         "start_time": 1654828049,
+      //         "svga_block": 0,
+      //         "target_guard_count": 133,
+      //         "toast_msg": "<%xxx%> 自动续费了舰长",
+      //         "uid": xxx,
+      //         "unit": "月",
+      //         "user_show": true,
+      //         "username": "xxx"
+      //     }
+      // }
       console.error('is GUARD_BUY');
       console.error(data);
       danmu.type = 4;
@@ -570,10 +574,20 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
       setFace(danmu, proxyApi);
       danmu.username = data.data.username;
       danmu.giftName = data.data.gift_name;
+      // if (danmu.giftName === '舰长') {
+      //   danmu.giftImg =
+      //     'https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/icon-l-3.402ac8f..png';
+      // } else if (danmu.giftName === '提督') {
+      //   danmu.giftImg =
+      //     'https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/icon-l-2.6f68d77..png';
+      // } else if (danmu.giftName === '总督') {
+      //   danmu.giftImg =
+      //     'https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/icon-l-1.fde1190..png';
+      // }
       danmu.num = data.data.num;
       danmu.price = data.data.price * data.data.num;
       danmu.origin = data;
-      danmu.content = '续费了'+ data.data.num +'个'+data.data.gift_name;
+      danmu.content = `续费了${data.data.num}个${data.data.gift_name}`;
       danmu.nickname = data.data.username;
       break;
     case 'USER_TOAST_MSG':
@@ -585,74 +599,74 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
       console.error(data);
       break;
     case 'SUPER_CHAT_MESSAGE':
-    //   {
-    //     "cmd": "SUPER_CHAT_MESSAGE",
-    //     "data": {
-    //         "background_bottom_color": "#427D9E",
-    //         "background_color": "#DBFFFD",
-    //         "background_color_end": "#29718B",
-    //         "background_color_start": "#4EA4C5",
-    //         "background_icon": "",
-    //         "background_image": "https://i0.hdslb.com/bfs/live/a712efa5c6ebc67bafbe8352d3e74b820a00c13e.png",
-    //         "background_price_color": "#7DA4BD",
-    //         "color_point": 0.7,
-    //         "dmscore": 72,
-    //         "end_time": 1654847874,
-    //         "gift": {
-    //             "gift_id": 12000,
-    //             "gift_name": "醒目留言",
-    //             "num": 1
-    //         },
-    //         "id": 4242153,
-    //         "is_ranked": 1,
-    //         "is_send_audit": 1,
-    //         "medal_info": {
-    //             "anchor_roomid": 7777,
-    //             "anchor_uname": "xxx",
-    //             "guard_level": 0,
-    //             "icon_id": 0,
-    //             "is_lighted": 1,
-    //             "medal_color": "#6154c",
-    //             "medal_color_border": 398668,
-    //             "medal_color_end": 6850801,
-    //             "medal_color_start": 398668,
-    //             "medal_level": 27,
-    //             "medal_name": "xxx",
-    //             "special": "",
-    //             "target_id": 8739477
-    //         },
-    //         "message": "xxx",
-    //         "message_font_color": "#A3F6FF",
-    //         "message_trans": "",
-    //         "price": 50,
-    //         "rate": 1000,
-    //         "start_time": 1654847754,
-    //         "time": 120,
-    //         "token": "3A11DB43",
-    //         "trans_mark": 0,
-    //         "ts": 1654847754,
-    //         "uid": xxx,
-    //         "user_info": {
-    //             "face": "xxx",
-    //             "face_frame": "",
-    //             "guard_level": 0,
-    //             "is_main_vip": 0,
-    //             "is_svip": 0,
-    //             "is_vip": 0,
-    //             "level_color": "#61c05a",
-    //             "manager": 0,
-    //             "name_color": "#666666",
-    //             "title": "0",
-    //             "uname": "xxx",
-    //             "user_level": 19
-    //         }
-    //     },
-    //     "roomid": xxx
-    // }
+      //   {
+      //     "cmd": "SUPER_CHAT_MESSAGE",
+      //     "data": {
+      //         "background_bottom_color": "#427D9E",
+      //         "background_color": "#DBFFFD",
+      //         "background_color_end": "#29718B",
+      //         "background_color_start": "#4EA4C5",
+      //         "background_icon": "",
+      //         "background_image": "https://i0.hdslb.com/bfs/live/a712efa5c6ebc67bafbe8352d3e74b820a00c13e.png",
+      //         "background_price_color": "#7DA4BD",
+      //         "color_point": 0.7,
+      //         "dmscore": 72,
+      //         "end_time": 1654847874,
+      //         "gift": {
+      //             "gift_id": 12000,
+      //             "gift_name": "醒目留言",
+      //             "num": 1
+      //         },
+      //         "id": 4242153,
+      //         "is_ranked": 1,
+      //         "is_send_audit": 1,
+      //         "medal_info": {
+      //             "anchor_roomid": 7777,
+      //             "anchor_uname": "xxx",
+      //             "guard_level": 0,
+      //             "icon_id": 0,
+      //             "is_lighted": 1,
+      //             "medal_color": "#6154c",
+      //             "medal_color_border": 398668,
+      //             "medal_color_end": 6850801,
+      //             "medal_color_start": 398668,
+      //             "medal_level": 27,
+      //             "medal_name": "xxx",
+      //             "special": "",
+      //             "target_id": 8739477
+      //         },
+      //         "message": "xxx",
+      //         "message_font_color": "#A3F6FF",
+      //         "message_trans": "",
+      //         "price": 50,
+      //         "rate": 1000,
+      //         "start_time": 1654847754,
+      //         "time": 120,
+      //         "token": "3A11DB43",
+      //         "trans_mark": 0,
+      //         "ts": 1654847754,
+      //         "uid": xxx,
+      //         "user_info": {
+      //             "face": "xxx",
+      //             "face_frame": "",
+      //             "guard_level": 0,
+      //             "is_main_vip": 0,
+      //             "is_svip": 0,
+      //             "is_vip": 0,
+      //             "level_color": "#61c05a",
+      //             "manager": 0,
+      //             "name_color": "#666666",
+      //             "title": "0",
+      //             "uname": "xxx",
+      //             "user_level": 19
+      //         }
+      //     },
+      //     "roomid": xxx
+      // }
       console.error('is SUPER_CHAT_MESSAGE');
       console.error(data);
       danmu.type = 5;
-      danmu.giftName = data.data.gift.gift_name
+      danmu.giftName = data.data.gift.gift_name;
       danmu.content = data.data.message;
       danmu.avatarFace = data.data.user_info.face;
       danmu.nickname = data.data.user_info.uname;
@@ -660,7 +674,7 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
       danmu.price = data.data.price * data.data.rate;
       danmu.color = data.data.message_font_color;
       danmu.borderColor = data.data.background_color;
-      danmu.origin = data
+      danmu.origin = data;
       break;
     default:
       danmu = undefined;
