@@ -472,6 +472,7 @@ async function handleDanMuMSG(
     danmu.borderColor = '#DBFFFD';
     danmu.priceColor = '#7DA4BD';
   }
+  danmu.price = 0;
   danmu.noBorder = true;
   emotionData.forEach((item) => {
     if (item.name === danmu?.content) {

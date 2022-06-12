@@ -30,6 +30,7 @@ const Danmu = (prop: any) => {
     // danmu
     if (data?.data.type === 1) {
       setIsDisplayble('inline');
+      setIsGiftImgDisplayble('none');
       setContainerClass(styles.danmuContainer);
     } else if (data?.data?.type === 2) {
       setIsDisplayble('inline');
