@@ -12,6 +12,7 @@ import {
 import Danmu from '../components/Danmu';
 import ComeInDisplay from '../components/ComeInDisplay';
 import ChatContainer from '../components/ChatContainer';
+import { stringify } from 'querystring';
 
 const DanmuWindow = () => {
   const [allDmList, setAllDmList] = useState<any[]>([]);
@@ -55,7 +56,7 @@ const DanmuWindow = () => {
     });
     window.danmuApi.onUpdateMsg(async (_event: any, data: any) => {
       const dm = await transformMsg(data, muaConfig.proxyApi);
-      if (dm && typeof dm.content !== 'undefined') {
+      if (dm && stringify(dm.data) !== '{}') {
         uploadDanmu(dm);
         console.info(dm);
         if (dm.type !== 3) {

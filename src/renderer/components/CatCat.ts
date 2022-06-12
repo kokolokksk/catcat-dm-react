@@ -594,10 +594,12 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
     case 'USER_TOAST_MSG':
       console.error('is USER_TOAST_MSG');
       console.error(data);
+      danmu = undefined;
       break;
     case 'NOTICE_MSG':
       console.error('is NOTICE_MSG');
       console.error(data);
+      danmu = undefined;
       break;
     case 'SUPER_CHAT_MESSAGE':
       //   {
