@@ -125,19 +125,19 @@ const Danmu = (prop: any) => {
         data.data.giftName === '舰长'
           ? {
               backgroundImage:
-                'linear-gradient(90deg,rgba(255,255,255,0) 0,#fff 100%),url(//s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/bg-3.5bf39ce..png)',
+                'linear-gradient(90deg,rgba(255,255,255,0) 0,#fff 100%),url(https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/bg-3.5bf39ce..png)',
               filter: 'drop-shadow(-9px 4px 10px rgba(131,184,255,.51))',
             }
           : data.data.giftName === '提督'
           ? {
               backgroundImage:
-                'linear-gradient(90deg,rgba(255,255,255,0) 0,#fff 100%),url(//s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/bg-2.013eeff..png)',
+                'linear-gradient(90deg,rgba(255,255,255,0) 0,#fff 100%),url(https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/bg-2.013eeff..png)',
               filter: 'drop-shadow(-9px 4px 10px rgba(215,134,255,.37))',
             }
           : data.data.giftName === '总督'
           ? {
               backgroundImage:
-                'linear-gradient(90deg,rgba(255,255,255,0) 0,#fff 100%),url(//s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/bg-1.61830d7..png)',
+                'linear-gradient(90deg,rgba(255,255,255,0) 0,#fff 100%),url(https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/bg-1.61830d7..png)',
               filter: 'drop-shadow(-9px 4px 10px rgba(215,134,255,.37))',
             }
           : {}
@@ -166,7 +166,7 @@ const Danmu = (prop: any) => {
                 backgroundSize: 'contain',
                 display: 'inline',
                 backgroundImage:
-                  'url(//s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/star.d40d9a4..png),url(//s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/icon-l-3.402ac8f..png)',
+                  'url(//https:s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/star.d40d9a4..png),url(https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/icon-l-3.402ac8f..png)',
               }
             : data.data.giftName === '提督'
             ? {
@@ -174,7 +174,7 @@ const Danmu = (prop: any) => {
                 backgroundSize: 'contain',
                 display: 'inline',
                 backgroundImage:
-                  'url(//s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/star.d40d9a4..png),url(//s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/icon-l-2.6f68d77..png)',
+                  'url(https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/star.d40d9a4..png),url(https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/icon-l-2.6f68d77..png)',
               }
             : data.data.giftName === '总督'
             ? {
@@ -182,7 +182,7 @@ const Danmu = (prop: any) => {
                 backgroundSize: 'contain',
                 display: 'inline',
                 backgroundImage:
-                  'url(//s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/star.d40d9a4..png),url(//s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/icon-l-1.fde1190..png)',
+                  'url(https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/star.d40d9a4..png),url(https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/icon-l-1.fde1190..png)',
               }
             : {}
         }
