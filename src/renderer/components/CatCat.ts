@@ -453,6 +453,7 @@ async function handleDanMuMSG(
   danmu.nickname = data.info[2][1];
   // eslint-disable-next-line prefer-destructuring
   danmu.content = data.info[1];
+  danmu.price = 0;
   if (danmu.content.indexOf('cat2') !== -1) {
     danmu.type = 2;
   }
@@ -472,7 +473,6 @@ async function handleDanMuMSG(
     danmu.borderColor = '#DBFFFD';
     danmu.priceColor = '#7DA4BD';
   }
-  danmu.price = 0;
   danmu.noBorder = true;
   emotionData.forEach((item) => {
     if (item.name === danmu?.content) {
