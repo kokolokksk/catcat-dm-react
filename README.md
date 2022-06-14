@@ -17,7 +17,8 @@
 - ~~现已可以通过[catcat-data-web](https://db.loli.monster)查看历史弹幕！(需要开启弹幕上传。)
 - ~~Ctrl+Shift+F5 重载弹幕窗口。~~
 >dom版
- -  
+ - ![./zread/setting.png](./zread/setting.png)
+ - ![./zread/dm.png](./zread/dm.png)
 
 - [下载地址](https://github.com/kokolokksk/catcat-dm-react/releases/latest)
 ## Windows
