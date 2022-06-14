@@ -570,7 +570,7 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
       console.error('is GUARD_BUY');
       console.error(data);
       danmu.type = 4;
-      danmu.ts = data.data.start_time;
+      danmu.timestamp = data.data.start_time;
       danmu.uid = data.data.uid;
       setFace(danmu, proxyApi);
       danmu.username = data.data.username;
@@ -673,7 +673,7 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
       danmu.content = data.data.message;
       danmu.avatarFace = data.data.user_info.face;
       danmu.nickname = data.data.user_info.uname;
-      danmu.ts = data.data.ts;
+      danmu.timestamp = data.data.ts;
       danmu.price = data.data.price * data.data.rate;
       danmu.color = data.data.message_font_color;
       danmu.borderColor = data.data.background_color;
