@@ -9,9 +9,10 @@ const Danmu = (prop: any) => {
   const data = {
     ...prop,
   };
-  console.info(data);
+  // console.info(data);
   const [isDisplayble, setIsDisplayble] = useState('inline');
   const [isGiftImgDisplayble, setIsGiftImgDisplayble] = useState('none');
+  const [isChatImgDisplayble, setIsChatImgDisplayble] = useState('none');
   const [isGiftPriceDisplayble, setIsGiftPriceDisplayble] = useState('none');
   const [containerClass, setContainerClass] = useState(styles.danmuContainer);
   const { superChatContainer, gbContainer } = styles;
@@ -25,6 +26,9 @@ const Danmu = (prop: any) => {
   const changeGiftDisplay = () => {
     setIsGiftImgDisplayble('none');
   };
+  const changeChatDisplay = () => {
+    setIsChatImgDisplayble('none');
+  };
   let danmuClass;
   useEffect(() => {
     // danmu
@@ -35,8 +39,8 @@ const Danmu = (prop: any) => {
     } else if (data?.data?.type === 2) {
       setIsDisplayble('inline');
       setIsGiftImgDisplayble('inline');
-      if (!data?.data?.noBorder) {
-        setContainerClass(styles.giftContainer);
+      if (data?.data?.noBorder) {
+        setContainerClass(styles.danmuContainer);
       }
       if (data.data.price <= 0) {
         setIsGiftPriceDisplayble('none');
@@ -77,14 +81,14 @@ const Danmu = (prop: any) => {
       <img
         alt=""
         className={styles.avatar}
-        style={{ display: isGiftImgDisplayble }}
+        style={{ display: isChatImgDisplayble }}
         key={data.data.giftImg}
-        onError={changeGiftDisplay}
+        onError={changeChatDisplay}
         src={data.data.giftImg}
       />
     </div>
   ) : data?.data.type === 2 ? (
-    <div className={styles.giftContainer}>
+    <div className={containerClass}>
       <img
         alt=""
         className={styles.avatar}

@@ -21,6 +21,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { LiveWS } from 'bilibili-live-ws';
 import Store from 'electron-store';
+import { randomUUID } from 'crypto';
 import { getHTMLPathBySearchKey, resolveHtmlPath } from './util';
 
 require('electron-referer')('https://www.bilibili.com/');
@@ -170,7 +171,7 @@ const createDMWindow = async () => {
     height: 600,
     useContentSize: false,
     width: 455,
-    frame: false,
+    frame: true,
     transparent: true,
     webPreferences: {
       webSecurity: false,
@@ -179,7 +180,7 @@ const createDMWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
-
+  dm.setMenuBarVisibility(false);
   dm.loadURL(getHTMLPathBySearchKey('dmWindow'));
 
   dm.on('ready-to-show', () => {
@@ -269,6 +270,7 @@ ipcMain.on('onLive', (event, arg) => {
   let tempData: any;
   live.on('msg', (data: any) => {
     if (tempData !== data) {
+      data.keyy = randomUUID();
       dm?.webContents.send('update-msg', data);
       tempData = data;
     }

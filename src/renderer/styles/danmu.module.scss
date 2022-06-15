@@ -6,15 +6,14 @@
 
   -moz-box-shadow: 8px 8px 8px gray;
 		-webkit-box-shadow: 8px 8px 8px gray;
-		box-shadow: 1px 1px 8px gray;
+		box-shadow: 1px 1px 0px gray;
     border-radius:1%;
     -webkit-background-size: 50px 50px;
 		-moz-background-size: 50px 50px;
 		background-size: 50px 50px;
-    margin: 2px;
     display: flex;
-    height: 99vh;
-    width: 99vw;
+    height: 100vh;
+    width: 100vw;
     flex-flow: wrap;
 }
 
@@ -27,9 +26,8 @@
   }
 
   .comeinLastMinute {
-    left: 10%;
-    position:fixed;
-    top:6%;
+    right: 1%;
+    position: fixed;
     background-color: transparent;
     font-family:  'Consolas','zxfyyt','YouYuan';
    // color: #000000;
@@ -39,18 +37,21 @@
   .c_bg{
     overflow: overlay;
     /* padding-top: 20vh; */
+    overflow: hidden;
     height: 72vh;
     z-index: 1;
-    -webkit-app-region: drag;
-    width: 99%;
+    width: 100%;
     flex-wrap: wrap;
+    -webkit-app-region: drag;
     /* background-image: repeating-radial-gradient(circle at 50% 50%,#e98892 20px, #e98892 20px, #e98892 40px, #e98892 40px, #e98892 60px, #e98892 60px, #e98892 80px, #e98892 80px, #e98892 100px); */
     background: transparent;
     }
-
-    ::-webkit-scrollbar {
-        display: none;
-      }
+    .drag {
+      -webkit-app-region: drag;
+    }
+    ::-webkit-scrollbar{
+      display: none;
+    }
 
 
 

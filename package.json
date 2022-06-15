@@ -1,7 +1,7 @@
 {
   "name": "catcat-dm-react",
   "productName": "catcat-dm-react",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "catcat-dm-react.",
   "author": "Loveloliii <loli@loli.monster>",
   "license": "MIT",
@@ -106,6 +106,7 @@
     "framer-motion": "^6",
     "got": "^12.1.0",
     "lottie-web": "^5.9.4",
+    "mobx-react": "^7.5.0",
     "pako": "^2.0.4",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",

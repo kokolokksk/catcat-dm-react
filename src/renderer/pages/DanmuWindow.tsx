@@ -1,8 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { useColorMode } from '@chakra-ui/react';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
+import { UnorderedList, useColorMode } from '@chakra-ui/react';
+import { stringify } from 'querystring';
+import {
+  TransitionGroup,
+  CSSTransition,
+  Transition,
+} from 'react-transition-group';
 import styles from '../styles/danmu.module.scss';
+import '../styles/dm_a.css';
 import {
   catConfigItem,
   getNewSessionId,
@@ -12,16 +18,40 @@ import {
 import Danmu from '../components/Danmu';
 import ComeInDisplay from '../components/ComeInDisplay';
 import ChatContainer from '../components/ChatContainer';
-import { stringify } from 'querystring';
 
 const DanmuWindow = () => {
-  const [allDmList, setAllDmList] = useState<any[]>([]);
-  const tenpDmList: { [K: string]: any }[] = [];
+  const listHeight = useRef(null);
+  const [comeinLastMinute, setComeInLastMinute] = useState(0);
+  let count = 0;
+  const countReset = () => {
+    const t = new Date();
+    if (t.getSeconds() === 0) {
+      console.info('try reset count');
+      count = 0;
+      setComeInLastMinute(count);
+    }
+  };
+  setInterval(() => {
+    countReset();
+  }, 1000);
+  const obj: { [K: string]: any } = {};
+  const initMsg: { [K: string]: any } = {
+    keyy: 0,
+    type: 1,
+    uid: 123,
+    content: '初始化弹幕列表···',
+    nickname: 'CatCat',
+    timestamp: '1231',
+    price: 0,
+  };
+  const [allDmList, setAllDmList] = useState({
+    list: [initMsg],
+    autoHeight: 0,
+  });
   // eslint-disable-next-line prefer-const
   let [comeInLisnt, setComeInLisnt] = useState<any[]>([]);
-  const obj: { [K: string]: any } = {};
   const [muaConfig, setMuaConfig] = useState(obj);
-  const [autoHeight] = useState(0);
+  let autoHeight; // [autoHeight, setAutoHeight] = useState(0);
   const copyObj = (cc: any) => {
     const copyOne = cc;
     return copyOne;
@@ -38,7 +68,7 @@ const DanmuWindow = () => {
           // eslint-disable-next-line func-names
           // eslint-disable-next-line promise/always-return
           .then(function (response) {
-            console.log(response);
+            // console.log(response);
           })
           .catch(function (error) {
             console.log(error);
@@ -53,32 +83,6 @@ const DanmuWindow = () => {
       setMuaConfig({
         ...copyObj(muaConfig),
       });
-    });
-    window.danmuApi.onUpdateMsg(async (_event: any, data: any) => {
-      const dm = await transformMsg(data, muaConfig.proxyApi);
-      if (dm && stringify(dm.data) !== '{}') {
-        uploadDanmu(dm);
-        console.info(dm);
-        if (dm.type !== 3) {
-          tenpDmList.push(dm);
-          console.info(tenpDmList);
-
-          if (dm.length > 32) {
-            if (tenpDmList.length > 6) {
-              tenpDmList.shift();
-            }
-          } else if (tenpDmList.length > 6) {
-            tenpDmList.shift();
-          }
-          setAllDmList([...tenpDmList]);
-        } else {
-          comeInLisnt = [];
-          // setComeInLisnt([...comeInLisnt,dm])
-          setComeInLisnt([...comeInLisnt, dm]);
-        }
-
-        // console.info(dm)
-      }
     });
   };
   useEffect(() => {
@@ -126,35 +130,71 @@ const DanmuWindow = () => {
         return '';
       });
     }
+    window.danmuApi.onUpdateMsg(async (_event: any, data: any) => {
+      // eslint-disable-next-line no-plusplus
+      // eslint-disable-next-line eqeqeq
+      const dm = await transformMsg(data, muaConfig.proxyApi);
+      if (dm && stringify(dm.data) !== '{}') {
+        uploadDanmu(dm);
+        if (dm.type !== 3) {
+          dm.keyy = data.keyy;
+          allDmList.list.push(dm);
+          console.info(listHeight);
+          setAllDmList(() => ({
+            autoHeight: 310 - listHeight?.current?.clientHeight,
+            list: allDmList.list,
+          }));
+        } else {
+          comeInLisnt = [];
+          // setComeInLisnt([...comeInLisnt,dm])githubtrans translateYtranslateY
+          setComeInLisnt([...comeInLisnt, dm]);
+          // eslint-disable-next-line no-plusplus
+          count++;
+          setComeInLastMinute(count);
+        }
+
+        // console.info(dm)
+      }
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return (
     <>
       <div className={styles.root}>
         <div className={styles.m_bg_top} />
-        <div className={styles.online}>{`人气: ${muaConfig.count}`}</div>
-        <div className={styles.comeinLastMinute} />
+        <div className={styles.online}>
+          {`人气: `}
+          <span style={{ color: 'orange' }}>{muaConfig.count}</span>
+        </div>
+        <div className={styles.comeinLastMinute}>
+          <span>进入/分钟：</span>
+          <span style={{ color: 'orange' }}>{comeinLastMinute}</span>
+        </div>
         <div className={styles.c_bg}>
-          <div style={{ transform: `translateY(${autoHeight}vh)` }}>
-            {/* <TransitionGroup> */}
-            {allDmList.map((danmu: any, index: any) => {
-              return (
-                // eslint-disable-next-line react/no-array-index-key
-                // <CSSTransition classNames="friend" timeout={300} key={danmu.timestamp + danmu.uid + getNewSessionId()}>
-                <div key={danmu.timestamp + danmu.uid + getNewSessionId()}>
-                  {' '}
-                  <Danmu
-                    nickname={danmu.nickname}
-                    content={danmu.content}
-                    data={danmu}
-                  />
-                </div>
-                // </CSSTransition>
-              );
-              //    faceImg={danmu.origin.data.face}
-            })}
-            {/* </TransitionGroup> */}
+          <div
+            style={{
+              transform: `translateY(${allDmList.autoHeight}px)`,
+              transition: 'transform 1s ease-in-out',
+              transformOrigin: '0px',
+            }}
+          >
+            <TransitionGroup>
+              <div ref={listHeight}>
+                {allDmList.list.map((danmu: any, index: any) => (
+                  <CSSTransition
+                    key={`danmu${danmu.keyy}`}
+                    timeout={1}
+                    classNames="item"
+                  >
+                    <Danmu
+                      nickname={danmu.nickname}
+                      content={danmu.content}
+                      data={danmu}
+                    />
+                  </CSSTransition>
+                ))}
+              </div>
+            </TransitionGroup>
           </div>
         </div>
         <>
