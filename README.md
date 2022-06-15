@@ -9,7 +9,8 @@
 > >The meta-electron-catcat-bilibili-danmu application!
 
 ### 说明
- 哔哩哔哩 直播弹幕姬
+ 哔哩哔哩直播 弹幕姬：
+  查看直播间弹幕，发送弹幕。
 
 - 发送弹幕需要设置 ```SESSDATA```(```SESSDATA```) 与 ```csrf```(```bili_jct```)，登陆哔哩哔哩后 F12 复制cookies中的 ```SESSDATA``` 与 ```bili_jct``` 对应键值
 - ~~tts 需要Azure平台相应key~~ 尚未实现
