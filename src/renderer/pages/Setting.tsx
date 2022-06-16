@@ -197,9 +197,23 @@ const Setting = () => {
           <Divider />
           <SettingSwitchItem
             name="使用代理服务器请求弹幕用户头像"
-            v={catConfigData.proxyApi || true}
+            v={catConfigData.proxyApi || false}
             c={commonSwitchItemSave}
             skey="proxyApi"
+          />
+          <Divider />
+          <SettingSwitchItem
+            name="TTS感谢礼物"
+            v={catConfigData.ttsGift || false}
+            c={commonSwitchItemSave}
+            skey="ttsGift"
+          />
+          <Divider />
+          <SettingSwitchItem
+            name="TTS阅读弹幕"
+            v={catConfigData.ttsDanmu || false}
+            c={commonSwitchItemSave}
+            skey="ttsDanmu"
           />
           {/* <Divider/>
         <SettingSwitchItem name='TTS' v={catConfigData.tts || false} c={commonSwitchItemSave} skey={'tts'}/>
@@ -218,6 +232,13 @@ const Setting = () => {
             v={catConfigData.csrf || '-'}
             c={commonInputItemSave}
             skey="csrf"
+          />
+          <Divider />
+          <SettingInputItem
+            name="TTS KEY"
+            v={catConfigData.ttsKey || '-'}
+            c={commonInputItemSave}
+            skey="ttsKey"
           />
           <Divider />
           {/* <ColorSelectContainer c={commonInputItemSave}/> */}

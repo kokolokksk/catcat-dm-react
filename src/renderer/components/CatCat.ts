@@ -43,8 +43,9 @@ import { stringify } from 'querystring';
 const catConfigItem = [
   { name: 'roomid', type: 'number' },
   { name: 'clientId', type: 'string' },
-  { name: 'tts', type: 'boolean' },
+  { name: 'ttsDanmu', type: 'boolean' },
   { name: 'ttsGift', type: 'boolean' },
+  { name: 'ttsKey', type: 'string' },
   { name: 'waveD', type: 'boolean' },
   { name: 'alwaysOnTop', type: 'boolean' },
   { name: 'catdb', type: 'boolean' },

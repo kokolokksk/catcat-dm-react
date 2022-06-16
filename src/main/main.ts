@@ -226,8 +226,12 @@ ipcMain.on('sendDanmu', (event, arg) => {
       SESSDATA: arg[0].SESSDATA,
       csrf: arg[0].csrf,
       // extra
+    }).catch((e: any) => {
+      console.info(e);
+      dm?.webContents.send('main-process-message', e);
+      dm?.webContents.send('msg-tips', e);
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
   }
 });

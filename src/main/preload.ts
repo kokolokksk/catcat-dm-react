@@ -51,6 +51,9 @@ contextBridge.exposeInMainWorld('danmuApi', {
   mainProcessMessage: (
     callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
   ) => ipcRenderer.on('main-process-message', callback),
+  msgTips: (
+    callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+  ) => ipcRenderer.on('msg-tips', callback),
 });
 contextBridge.exposeInMainWorld('darkMode', {
   toggle: () => ipcRenderer.invoke('dark-mode:toggle'),
