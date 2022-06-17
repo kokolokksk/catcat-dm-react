@@ -68,6 +68,8 @@ class DanmuWindow extends React.Component {
 
   speakStatus = false;
 
+  ttsOk = false;
+
   speakDMList: Array<BiliBiliDanmu> = [];
 
   speechConfig!: {
@@ -147,7 +149,9 @@ class DanmuWindow extends React.Component {
     console.info('renderer dw');
     setInterval(() => {
       console.info('try to read');
-      this.speakDanmuReal(null);
+      if (this.ttsOk) {
+        this.speakDanmuReal(null);
+      }
     }, 2000);
     const countReset = () => {
       const t = new Date();
@@ -190,7 +194,9 @@ class DanmuWindow extends React.Component {
           this.setState({
             allDmList,
           });
-          this.speakDanmuReal(dm);
+          if (this.ttsOk) {
+            this.speakDanmuReal(dm);
+          }
         } else {
           comeInList.splice(0);
           comeInList.push(dm);
@@ -211,14 +217,26 @@ class DanmuWindow extends React.Component {
   componentWillUnmount() {}
 
   load = () => {
-    if (true) {
-      this.speechConfig = this.sdk.SpeechConfig.fromSubscription(
-        'b431d048b5234ec187ffb676ea939ad1',
-        'eastasia'
-      );
-      this.speechConfig.speechSynthesisLanguage = 'zh-cn';
-      this.speechConfig.speechSynthesisVoiceName = 'zh-CN-XiaoxiaoNeural';
-    }
+    new Promise((resolve) => {
+      resolve(window.electron.store.get('ttsKey'));
+    })
+      .then((res) => {
+        if (res && res !== '') {
+          this.speechConfig = this.sdk.SpeechConfig.fromSubscription(
+            'b431d048b5234ec187ffb676ea939ad1',
+            'eastasia'
+          );
+          this.speechConfig.speechSynthesisLanguage = 'zh-cn';
+          this.speechConfig.speechSynthesisVoiceName = 'zh-CN-XiaoxiaoNeural';
+          this.ttsOk = true;
+        } else {
+          this.ttsOk = false;
+        }
+        return '';
+      })
+      .catch((e) => {
+        console.info(e);
+      });
     console.info('init danmu data');
   };
 
