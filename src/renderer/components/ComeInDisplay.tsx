@@ -1,3 +1,4 @@
+import { BiliBiliDanmu } from 'renderer/@types/catcat';
 import styles from '../styles/danmuc.module.scss';
 
 const ComeInDisplay = (prop: any) => {
@@ -7,7 +8,7 @@ const ComeInDisplay = (prop: any) => {
   return (
     <>
       <div className={styles.comeinContainer}>
-        {data.data.map((comein: any, index: any) => {
+        {data.data.map((comein: BiliBiliDanmu, index: number) => {
           return (
             // eslint-disable-next-line react/no-array-index-key
             <div key={index} className={styles.dmName}>

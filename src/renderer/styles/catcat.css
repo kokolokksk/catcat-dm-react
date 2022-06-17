@@ -1,6 +1,6 @@
 /**
 * thanks this:
-* https://codepen.io/ejalomo/pen/MjJybd 
+* https://codepen.io/ejalomo/pen/MjJybd
 */
 #of
 {
@@ -10,6 +10,6 @@
     -ms-transform: rotate(332deg);
     -webkit-transform: rotate(332deg);
     transform: rotate(324deg);
-    margin-left: 2vw;
+    margin-left: 4vw;
     bottom: 20vh;
 }

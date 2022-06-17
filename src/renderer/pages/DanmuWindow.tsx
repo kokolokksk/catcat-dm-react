@@ -46,7 +46,7 @@ type StateType = {
   comeInLastMinute: number;
   count: number;
   allDmList: { list: BiliBiliDanmu[]; autoHeight: number };
-  comeInList: BiliBiliDanmu[];
+  comeInList: Array<BiliBiliDanmu>;
   muaConfig: MuaConfig;
 };
 
@@ -203,9 +203,10 @@ class DanmuWindow extends React.Component {
           // setComeInLisnt([...comeInLisnt,dm])githubtrans translateYtranslateY
           this.setState({ comeInList });
           // eslint-disable-next-line no-plusplus
-          this.count++;
+          const { comeInLastMinute } = this.state;
+          console.info(comeInLastMinute);
           this.setState({
-            comeInList: this.count,
+            comeInLastMinute: comeInLastMinute + 1,
           });
         }
 
@@ -249,8 +250,7 @@ class DanmuWindow extends React.Component {
       .then((res) => {
         window.electron.ipcRenderer.sendMessage('onLive', [res]);
         window.danmuApi.onUpdateOnliner((_event: any, value: any) => {
-          muaConfig.count = value;
-          this.setState({ muaConfig });
+          this.setState({ count: value });
         });
         return '';
       })
@@ -363,7 +363,7 @@ class DanmuWindow extends React.Component {
           </div>
           <div className={styles.comeinLastMinute}>
             <span>进入/分钟：</span>
-            <span style={{ color: 'orange' }}>{comeInLastMinute}</span>
+            <span style={{ color: 'orange' }}>{comeInLastMinute || 0}</span>
           </div>
           <div className={styles.c_bg}>
             <div
