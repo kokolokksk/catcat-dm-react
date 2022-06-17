@@ -223,7 +223,7 @@ class DanmuWindow extends React.Component {
       .then((res) => {
         if (res && res !== '') {
           this.speechConfig = this.sdk.SpeechConfig.fromSubscription(
-            'b431d048b5234ec187ffb676ea939ad1',
+            res,
             'eastasia'
           );
           this.speechConfig.speechSynthesisLanguage = 'zh-cn';
