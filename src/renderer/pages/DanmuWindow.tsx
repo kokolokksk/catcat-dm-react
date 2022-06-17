@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { UnorderedList, useColorMode, Toast } from '@chakra-ui/react';
+import { createStandaloneToast } from '@chakra-ui/toast';
 import { stringify } from 'querystring';
 import {
   TransitionGroup,
   CSSTransition,
   Transition,
 } from 'react-transition-group';
-import { render } from 'react-dom';
 import { BiliBiliDanmu } from 'renderer/@types/catcat';
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
@@ -57,7 +56,7 @@ interface DanmuWindow {
   state: StateType;
   props: PropType;
 }
-
+const { ToastContainer, toast } = createStandaloneToast();
 class DanmuWindow extends React.Component {
   listHeightRef: any = '';
 
@@ -166,13 +165,8 @@ class DanmuWindow extends React.Component {
       countReset();
     }, 1000);
     this.connectLive();
-    if (muaConfig.alwaysOnTop) {
-      window.electron.ipcRenderer.sendMessage('setOnTop:setting', [
-        [muaConfig.alwaysOnTop],
-      ]); // .getCurrentWindow().setAlwaysOnTop(true)
-    }
     window.danmuApi.msgTips((_event: any, data: any) => {
-      Toast({
+      toast({
         title: '提示',
         description: data,
         status: 'error',
@@ -213,6 +207,15 @@ class DanmuWindow extends React.Component {
         // console.info(dm)
       }
     });
+  }
+
+  componentDidUpdate(prevProps: any, prevState: any) {
+    // FIXME bad usage
+    if (prevState?.muaConfig?.alwaysOnTop) {
+      window.electron.ipcRenderer.sendMessage('setOnTop:setting', [
+        [prevState?.muaConfig?.alwaysOnTop],
+      ]); // .getCurrentWindow().setAlwaysOnTop(true)
+    }
   }
 
   componentWillUnmount() {}
