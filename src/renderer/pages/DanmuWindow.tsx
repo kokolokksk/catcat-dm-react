@@ -8,6 +8,7 @@ import {
   Transition,
 } from 'react-transition-group';
 import { render } from 'react-dom';
+import { BiliBiliDanmu } from 'renderer/@types/catcat';
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
 import {
@@ -20,14 +21,33 @@ import Danmu from '../components/Danmu';
 import ComeInDisplay from '../components/ComeInDisplay';
 import ChatContainer from '../components/ChatContainer';
 
-type StateType = {
-  comeinLastMinute: number;
+interface MuaConfig {
+  roomid: number;
+  clientId?: string;
+  ttsDanmu?: boolean;
+  ttsGift?: boolean;
+  ttsKey?: string;
+  alwaysOnTop?: boolean;
+  catdb?: boolean;
+  dmTs?: string;
+  SESSDATA?: string;
+  csrf?: string;
+  v1?: string;
+  v2?: string;
+  fansDisplay?: string;
+  darkMode?: boolean;
+  proxyApi?: boolean;
+  sessionId?: string;
+  started?: boolean;
   count: number;
-  allDmList: { list: { [K: string]: any }; autoHeight: number };
-  comeInList: { [K: string]: any };
-  muaConfig: {
-    [K: string]: any;
-  };
+}
+
+type StateType = {
+  comeInLastMinute: number;
+  count: number;
+  allDmList: { list: BiliBiliDanmu[]; autoHeight: number };
+  comeInList: BiliBiliDanmu[];
+  muaConfig: MuaConfig;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -46,12 +66,16 @@ class DanmuWindow extends React.Component {
   // eslint-disable-next-line global-require
   sdk = require('microsoft-cognitiveservices-speech-sdk');
 
+  speakStatus = false;
+
+  speakDMList: Array<BiliBiliDanmu> = [];
+
   speechConfig!: {
     speechSynthesisLanguage: string;
-    speechSynthesisVoiceName: any;
+    speechSynthesisVoiceName: string;
   };
 
-  initMsg: { [K: string]: any } = {
+  initMsg: BiliBiliDanmu = {
     keyy: 0,
     type: 1,
     uid: 123,
@@ -62,120 +86,131 @@ class DanmuWindow extends React.Component {
   };
 
   constructor(props) {
+    const muaConfig: MuaConfig = {
+      count: 0,
+      roomid: 0,
+      clientId: '',
+      ttsDanmu: false,
+      ttsGift: false,
+      ttsKey: '',
+      alwaysOnTop: false,
+      catdb: false,
+      dmTs: '',
+      SESSDATA: '',
+      csrf: '',
+      v1: '',
+      v2: '',
+      fansDisplay: '',
+      darkMode: false,
+      proxyApi: false,
+      sessionId: getNewSessionId(),
+      started: true,
+    };
     super(props);
-    this.load();
+    const arr = catConfigItem.map((item) =>
+      window.electron.store.get(item.name)
+    );
+    // eslint-disable-next-line promise/catch-or-return
+    // eslint-disable-next-line promise/always-return
+    Promise.all(arr)
+      .then((e) => {
+        console.log(e);
+        // eslint-disable-next-line array-callback-return
+        e.map((item: unknown, index: number) => {
+          if (typeof item === catConfigItem[index].type) {
+            console.info(item);
+            muaConfig[catConfigItem[index].name] = item;
+          }
+        });
+        return muaConfig;
+      })
+      .catch((_e) => {
+        console.info(_e);
+      });
     this.state = {
-      comeinLastMinute: 0,
+      comeInLastMinute: 0,
       count: 0,
       allDmList: {
         list: [this.initMsg],
         autoHeight: 310,
       },
       comeInList: [],
-      muaConfig: {},
+      muaConfig,
     };
+    console.info(`muacofig加载完成`);
+    console.info(this.state);
+    this.load();
   }
 
   componentDidMount() {
-    const { muaConfig } = this.state;
-    let speakStatus = false;
-    const speakDMList = [];
-    let count = 0;
-    const copyObj = (cc: any) => {
-      const copyOne = cc;
-      return copyOne;
-    };
+    const { muaConfig, allDmList, comeInList } = this.state;
     console.info('renderer dw');
-    // console.info(this.state.muaConfig);
-
-    const synthesizeToSpeaker = (text: any) => {
-      const player = new this.sdk.SpeakerAudioDestination();
-      player.onAudioEnd = function (s: any) {
-        console.info(s);
-      };
-      const synthesizer = new this.sdk.SpeechSynthesizer(
-        this.speechConfig,
-        this.sdk.AudioConfig.fromDefaultSpeakerOutput(player)
-      );
-      console.info('come in ss');
-      console.info(synthesizer);
-      try {
-        synthesizer.speakTextAsync(
-          text,
-          (result: any) => {
-            speakStatus = false;
-            synthesizer.close();
-            if (result) {
-              console.log(JSON.stringify(result));
-              speakStatus = false;
-            }
-            // synthesizer.close()
-          },
-          (error: any) => {
-            console.log(error);
-            speakStatus = false;
-            synthesizer.close();
-          }
-        );
-      } catch (e) {
-        console.info(e);
-        speakStatus = false;
-      }
-    };
-    const speakDM = (dm: any) => {
-      if (dm.type === 2 && dm.price > 0 && muaConfig.ttsGift) {
-        const speakText = `感谢${dm.nickname}赠送的${dm.count}个${dm.giftName}`;
-        synthesizeToSpeaker(speakText);
-      }
-      if (muaConfig.ttsDanmu) {
-        synthesizeToSpeaker(`${dm.content}`);
-      }
-    };
-
-    const speakDanmuReal = (dm: { [K: string]: any } | null) => {
-      if (true) {
-        // 判断是否在阅读
-        if (speakStatus) {
-          // 不阅读 把其加入阅读list
-          if (dm !== null) {
-            speakDMList.push(dm);
-          }
-        } else if (speakDMList.length !== 0) {
-          speakStatus = true;
-          if (dm !== null) {
-            speakDMList.push(dm);
-          }
-          const tempText = speakDMList.pop();
-          speakDM(tempText);
-        } else if (dm !== null) {
-          speakStatus = true;
-          const tempText = dm;
-          speakDM(tempText);
-        }
-      }
-    };
     setInterval(() => {
       console.info('try to read');
-      speakDanmuReal(null);
+      this.speakDanmuReal(null);
     }, 2000);
-  }
-
-  componentWillUnmount() {}
-
-  load = () => {
-    const { muaConfig, allDmList, comeInList } = this.state;
     const countReset = () => {
       const t = new Date();
       if (t.getSeconds() === 0) {
         console.info('try reset count');
         this.setState({
-          comeinLastMinute: 0,
+          comeInLastMinute: 0,
         });
       }
     };
     setInterval(() => {
       countReset();
     }, 1000);
+    this.connectLive();
+    if (muaConfig.alwaysOnTop) {
+      window.electron.ipcRenderer.sendMessage('setOnTop:setting', [
+        [muaConfig.alwaysOnTop],
+      ]); // .getCurrentWindow().setAlwaysOnTop(true)
+    }
+    window.danmuApi.msgTips((_event: any, data: any) => {
+      Toast({
+        title: '提示',
+        description: data,
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      });
+    });
+    window.danmuApi.onUpdateMsg(async (_event: any, data: any) => {
+      // eslint-disable-next-line no-plusplus
+      // eslint-disable-next-line eqeqeq
+      const dm = await transformMsg(data, muaConfig.proxyApi as boolean);
+      if (dm && stringify(dm.data) !== '{}') {
+        this.uploadDanmu(dm);
+        if (dm.type !== 3) {
+          dm.keyy = data.keyy;
+          allDmList.list.push(dm);
+          allDmList.autoHeight = 310 - this.listHeightRef?.clientHeight;
+          console.info(allDmList);
+          this.setState({
+            allDmList,
+          });
+          this.speakDanmuReal(dm);
+        } else {
+          comeInList.splice(0);
+          comeInList.push(dm);
+          // setComeInLisnt([...comeInLisnt,dm])githubtrans translateYtranslateY
+          this.setState({ comeInList });
+          // eslint-disable-next-line no-plusplus
+          this.count++;
+          this.setState({
+            comeInList: this.count,
+          });
+        }
+
+        // console.info(dm)
+      }
+    });
+  }
+
+  componentWillUnmount() {}
+
+  load = () => {
     if (true) {
       this.speechConfig = this.sdk.SpeechConfig.fromSubscription(
         'b431d048b5234ec187ffb676ea939ad1',
@@ -185,86 +220,28 @@ class DanmuWindow extends React.Component {
       this.speechConfig.speechSynthesisVoiceName = 'zh-CN-XiaoxiaoNeural';
     }
     console.info('init danmu data');
-    muaConfig.sessionId = getNewSessionId();
-    muaConfig.started = true;
-    console.info(muaConfig);
-    this.setState(muaConfig);
-    const arr = catConfigItem.map((item) =>
-      window.electron.store.get(item.name)
-    );
-    // eslint-disable-next-line promise/catch-or-return
-    // eslint-disable-next-line promise/always-return
-    // eslint-disable-next-line promise/catch-or-return
-    Promise.all(arr).then((e) => {
-      console.log(e);
-      // eslint-disable-next-line array-callback-return
-      e.map((item: any, index: number) => {
-        if (typeof item === catConfigItem[index].type) {
-          console.info(item);
-          muaConfig[catConfigItem[index].name] = item;
-        }
-      });
-      this.connectLive();
-      if (muaConfig.alwaysOnTop) {
-        window.electron.ipcRenderer.sendMessage('setOnTop:setting', [
-          [muaConfig.alwaysOnTop],
-        ]); // .getCurrentWindow().setAlwaysOnTop(true)
-      }
-      window.danmuApi.msgTips((_event: any, data: any) => {
-        Toast({
-          title: '提示',
-          description: data,
-          status: 'error',
-          duration: 2000,
-          isClosable: true,
-        });
-      });
-      window.danmuApi.onUpdateMsg(async (_event: any, data: any) => {
-        // eslint-disable-next-line no-plusplus
-        // eslint-disable-next-line eqeqeq
-        const dm = await transformMsg(data, muaConfig.proxyApi);
-        if (dm && stringify(dm.data) !== '{}') {
-          this.uploadDanmu(dm);
-          if (dm.type !== 3) {
-            dm.keyy = data.keyy;
-            allDmList.list.push(dm);
-            allDmList.autoHeight =
-              310 - this.listHeightRef?.current?.clientHeight;
-            console.info(this.listHeightRef);
-            this.setState({
-              allDmList
-            });
-            speakDanmuReal(dm);
-          } else {
-            comeInList.clear();
-            comeInList.push(dm);
-            // setComeInLisnt([...comeInLisnt,dm])githubtrans translateYtranslateY
-            this.setState([comeInList]);
-            // eslint-disable-next-line no-plusplus
-            this.count++;
-            comeInList = 1;
-            this.setState({
-              comeInList:
-            });
-          }
-
-          // console.info(dm)
-        }
-      });
-      return '';
-    });
   };
 
-  connectLive = () => {
+  connectLive = async () => {
     const { muaConfig } = this.state;
-    window.electron.ipcRenderer.sendMessage('onLive', [muaConfig]);
-    window.danmuApi.onUpdateOnliner((_event: any, value: any) => {
-      muaConfig.count = value;
-      this.setState(muaConfig);
-    });
+    let roomId;
+    new Promise(function (resolve, reject) {
+      resolve(window.electron.store.get('roomid'));
+    })
+      .then((res) => {
+        window.electron.ipcRenderer.sendMessage('onLive', [res]);
+        window.danmuApi.onUpdateOnliner((_event: any, value: any) => {
+          muaConfig.count = value;
+          this.setState({ muaConfig });
+        });
+        return '';
+      })
+      .catch((e) => {
+        console.info(e);
+      });
   };
 
-  uploadDanmu =(dm: { [K: string]: any }) => {
+  uploadDanmu = (dm: BiliBiliDanmu) => {
     const { muaConfig } = this.state;
     if (muaConfig.catdb) {
       if (muaConfig.clientId) {
@@ -286,8 +263,77 @@ class DanmuWindow extends React.Component {
     }
   };
 
+  synthesizeToSpeaker = (text: string) => {
+    const player = new this.sdk.SpeakerAudioDestination();
+    player.onAudioEnd = function (s: unknown) {
+      console.info(s);
+    };
+    const synthesizer = new this.sdk.SpeechSynthesizer(
+      this.speechConfig,
+      this.sdk.AudioConfig.fromDefaultSpeakerOutput(player)
+    );
+    console.info('come in ss');
+    console.info(synthesizer);
+    try {
+      synthesizer.speakTextAsync(
+        text,
+        (result: any) => {
+          this.speakStatus = false;
+          synthesizer.close();
+          if (result) {
+            console.log(JSON.stringify(result));
+            this.speakStatus = false;
+          }
+          // synthesizer.close()
+        },
+        (error: any) => {
+          console.log(error);
+          this.speakStatus = false;
+          synthesizer.close();
+        }
+      );
+    } catch (e) {
+      console.info(e);
+      this.speakStatus = false;
+    }
+  };
+
+  speakDM = (dm: BiliBiliDanmu) => {
+    const { muaConfig } = this.state;
+    if (dm.type === 2 && (dm.price as number) > 0 && muaConfig.ttsGift) {
+      const speakText = `感谢${dm.nickname}赠送的${dm.count}个${dm.giftName}`;
+      this.synthesizeToSpeaker(speakText);
+    }
+    if (muaConfig.ttsDanmu) {
+      this.synthesizeToSpeaker(`${dm.content}`);
+    }
+  };
+
+  speakDanmuReal = (dm: BiliBiliDanmu | null) => {
+    if (true) {
+      // 判断是否在阅读
+      if (this.speakStatus) {
+        // 不阅读 把其加入阅读list
+        if (dm !== null) {
+          this.speakDMList.push(dm);
+        }
+      } else if (this.speakDMList.length !== 0) {
+        this.speakStatus = true;
+        if (dm !== null) {
+          this.speakDMList.push(dm);
+        }
+        const tempText = this.speakDMList.pop();
+        this.speakDM(tempText as BiliBiliDanmu);
+      } else if (dm !== null) {
+        this.speakStatus = true;
+        const tempText = dm;
+        this.speakDM(tempText);
+      }
+    }
+  };
+
   render() {
-    const { comeinLastMinute, count, allDmList, comeInList, muaConfig } =
+    const { count, comeInLastMinute, allDmList, comeInList, muaConfig } =
       this.state;
     return (
       <>
@@ -295,11 +341,11 @@ class DanmuWindow extends React.Component {
           <div className={styles.m_bg_top} />
           <div className={styles.online}>
             {`人气: `}
-            <span style={{ color: 'orange' }}>{count}</span>
+            <span style={{ color: 'orange' }}>{count || 0}</span>
           </div>
           <div className={styles.comeinLastMinute}>
             <span>进入/分钟：</span>
-            <span style={{ color: 'orange' }}>{comeinLastMinute}</span>
+            <span style={{ color: 'orange' }}>{comeInLastMinute}</span>
           </div>
           <div className={styles.c_bg}>
             <div
@@ -315,7 +361,7 @@ class DanmuWindow extends React.Component {
                     this.listHeightRef = ref;
                   }}
                 >
-                  {allDmList.list.map((danmu: any) => (
+                  {allDmList.list.map((danmu: BiliBiliDanmu) => (
                     <CSSTransition
                       key={`danmu${danmu.keyy}`}
                       timeout={1}

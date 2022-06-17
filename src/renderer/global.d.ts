@@ -7,7 +7,7 @@ declare global {
     // IPC listener
     electron: {
       store: {
-        get: (key: string) => any;
+        get: (key: string) => Promise<any>;
         set: (key: string, val: any) => void;
         // any other methods you've defined...
       };

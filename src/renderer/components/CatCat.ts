@@ -22,6 +22,7 @@
 
 import axios from 'axios';
 import { stringify } from 'querystring';
+import { BiliBiliDanmu } from 'renderer/@types/catcat';
 
 //     ]
 // const getConfigItem = () => {
@@ -512,7 +513,12 @@ function handleSENDGIFT(data: any, danmu: { [K: string]: any }) {
 }
 
 const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
-  let danmu: { [K: string]: any } | undefined = {};
+  let danmu: BiliBiliDanmu | undefined = {
+    type: 0,
+    uid: 0,
+    nickname: '',
+    timestamp: 0,
+  };
   // console.info(data)
   // xxxxxxx
   // eslint-disable-next-line default-case
@@ -574,7 +580,6 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
       danmu.timestamp = data.data.start_time;
       danmu.uid = data.data.uid;
       setFace(danmu, proxyApi);
-      danmu.username = data.data.username;
       danmu.giftName = data.data.gift_name;
       // if (danmu.giftName === '舰长') {
       //   danmu.giftImg =
@@ -586,7 +591,7 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
       //   danmu.giftImg =
       //     'https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/icon-l-1.fde1190..png';
       // }
-      danmu.num = data.data.num;
+      danmu.giftNum = data.data.num;
       danmu.price = data.data.price * data.data.num;
       danmu.origin = data;
       danmu.content = `续费了${data.data.num}个${data.data.gift_name}`;

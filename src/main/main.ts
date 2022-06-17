@@ -36,7 +36,7 @@ let dm: BrowserWindow | null = null;
 // IPC listener
 ipcMain.on('electron-store-get', async (event, val) => {
   mainWindow?.webContents.send('main-process-message', store.path);
-  event.returnValue = store.get(val);
+  event.returnValue = await store.get(val);
 });
 ipcMain.on('electron-store-set', async (event, key, val) => {
   store.set(key, val);
@@ -253,11 +253,11 @@ ipcMain.on('onLive', (event, arg) => {
   console.info(arg);
   if (!live) {
     console.info('new liveWs instance added');
-    live = new LiveWS(Number(arg[0].roomid));
+    live = new LiveWS(Number(arg[0]));
   } else {
     live.close();
     console.info('old closed and new liveWs instance added');
-    live = new LiveWS(Number(arg[0].roomid));
+    live = new LiveWS(Number(arg[0]));
   }
   live.on('open', () => {
     dm?.webContents.send(
