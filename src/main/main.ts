@@ -34,9 +34,9 @@ let mainWindow: BrowserWindow | null = null;
 let dm: BrowserWindow | null = null;
 
 // IPC listener
-ipcMain.on('electron-store-get', async (event, val) => {
+ipcMain.on('electron-store-get', (event, val) => {
   mainWindow?.webContents.send('main-process-message', store.path);
-  event.returnValue = await store.get(val);
+  event.returnValue = store.get(val);
 });
 ipcMain.on('electron-store-set', async (event, key, val) => {
   store.set(key, val);
@@ -282,6 +282,7 @@ ipcMain.on('onLive', (event, arg) => {
 });
 
 ipcMain.on('setOnTop:setting', (event, arg) => {
+  console.info(`setOnTop:setting ${arg[0]}`);
   if (arg) {
     dm?.setAlwaysOnTop(arg[0]);
   }

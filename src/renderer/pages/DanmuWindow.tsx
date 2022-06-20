@@ -44,7 +44,7 @@ interface MuaConfig {
 type StateType = {
   comeInLastMinute: number;
   count: number;
-  allDmList: { list: BiliBiliDanmu[]; autoHeight: number };
+  allDmList: { list: Array<BiliBiliDanmu>; autoHeight: number };
   comeInList: Array<BiliBiliDanmu>;
   muaConfig: MuaConfig;
 };
@@ -59,6 +59,8 @@ interface DanmuWindow {
 const { ToastContainer, toast } = createStandaloneToast();
 class DanmuWindow extends React.Component {
   listHeightRef: any = '';
+
+  loaded: boolean = false;
 
   count: number = 0;
 
@@ -84,6 +86,7 @@ class DanmuWindow extends React.Component {
     nickname: 'catcat',
     timestamp: new Date().getTime(),
     price: 0,
+    giftNum: 0,
   };
 
   constructor(props) {
@@ -111,23 +114,30 @@ class DanmuWindow extends React.Component {
     const arr = catConfigItem.map((item) =>
       window.electron.store.get(item.name)
     );
+    arr.map((item: unknown, index: number) => {
+      console.info(item);
+      muaConfig[catConfigItem[index].name] = item;
+
+      return '';
+    });
+    console.info(muaConfig);
     // eslint-disable-next-line promise/catch-or-return
     // eslint-disable-next-line promise/always-return
-    Promise.all(arr)
-      .then((e) => {
-        console.log(e);
-        // eslint-disable-next-line array-callback-return
-        e.map((item: unknown, index: number) => {
-          if (typeof item === catConfigItem[index].type) {
-            console.info(item);
-            muaConfig[catConfigItem[index].name] = item;
-          }
-        });
-        return muaConfig;
-      })
-      .catch((_e) => {
-        console.info(_e);
-      });
+    // Promise.all(arr)
+    //   .then((e) => {
+    //     console.log(e);
+    //     // eslint-disable-next-line array-callback-return
+    //     e.map((item: unknown, index: number) => {
+    //       if (typeof item === catConfigItem[index].type) {
+    //         console.info(item);
+    //         muaConfig[catConfigItem[index].name] = item;
+    //       }
+    //     });
+    //     return muaConfig;
+    //   })
+    //   .catch((_e) => {
+    //     console.info(_e);
+    //   });
     this.state = {
       comeInLastMinute: 0,
       count: 0,
@@ -140,7 +150,7 @@ class DanmuWindow extends React.Component {
     };
     console.info(`muacofig加载完成`);
     console.info(this.state);
-    this.load();
+    this.load(muaConfig);
   }
 
   componentDidMount() {
@@ -179,11 +189,41 @@ class DanmuWindow extends React.Component {
       // eslint-disable-next-line eqeqeq
       const dm = await transformMsg(data, muaConfig.proxyApi as boolean);
       if (dm && stringify(dm.data) !== '{}') {
+        console.info('merge dm');
+        console.info(allDmList);
         this.uploadDanmu(dm);
+        let merged = false;
         if (dm.type !== 3) {
+          const listSize = allDmList.list.length;
+          const max = Math.min(listSize, 7);
+          console.info(max);
+          const lastList = allDmList.list.slice(-max);
+          for (let index = 0; index < lastList.length; index += 1) {
+            const tempDanmu = lastList[index];
+            const needmerge = this.needMergeDanmu(tempDanmu, dm);
+            console.info('check mergeble');
+            if (needmerge) {
+              merged = true;
+              if (dm.type === 1) {
+                allDmList.list[index + (listSize - max)].content += '*2';
+              } else if (dm.type === 2) {
+                allDmList.list[index + (listSize - max)].content = `赠送了${
+                  tempDanmu.giftNum + dm.giftNum
+                }个${dm.giftName}`;
+                allDmList.list[index + (listSize - max)].price =
+                  (tempDanmu.price ? tempDanmu.price : 0) +
+                  (dm.price ? dm.price : 0);
+                allDmList.list[index + (listSize - max)].giftNum =
+                  (tempDanmu.giftNum ? tempDanmu.giftNum : 0) +
+                  (dm.giftNum ? dm.giftNum : 0);
+              }
+            }
+          }
           dm.keyy = data.keyy;
-          allDmList.list.push(dm);
-          allDmList.autoHeight = 310 - this.listHeightRef?.clientHeight;
+          if (!merged) {
+            allDmList.list.push(dm);
+            allDmList.autoHeight = 310 - this.listHeightRef?.clientHeight;
+          }
           console.info(allDmList);
           this.setState({
             allDmList,
@@ -211,16 +251,27 @@ class DanmuWindow extends React.Component {
 
   componentDidUpdate(prevProps: any, prevState: any) {
     // FIXME bad usage
-    if (prevState?.muaConfig?.alwaysOnTop) {
-      window.electron.ipcRenderer.sendMessage('setOnTop:setting', [
-        [prevState?.muaConfig?.alwaysOnTop],
-      ]); // .getCurrentWindow().setAlwaysOnTop(true)
-    }
+    console.info('componentDidUpdate');
+    // if (!this.loaded) {
+    //   console.info('loading');
+    //   if (prevState?.muaConfig?.alwaysOnTop) {
+    //     window.electron.ipcRenderer.sendMessage('setOnTop:setting', [
+    //       [prevState?.muaConfig?.alwaysOnTop],
+    //     ]); // .getCurrentWindow().setAlwaysOnTop(true)
+    //   }
+    //   this.loaded = true;
+    // }
   }
 
   componentWillUnmount() {}
 
-  load = () => {
+  load = (muaConfig: MuaConfig) => {
+    console.info('load muaconfig');
+    console.info(muaConfig);
+    window.electron.ipcRenderer.sendMessage('setOnTop:setting', [
+      muaConfig.alwaysOnTop,
+    ]);
+    // fixme : is already sync
     new Promise((resolve) => {
       resolve(window.electron.store.get('ttsKey'));
     })
@@ -242,6 +293,23 @@ class DanmuWindow extends React.Component {
         console.info(e);
       });
     console.info('init danmu data');
+  };
+
+  needMergeDanmu = (tempDanmu: BiliBiliDanmu, dm: BiliBiliDanmu) => {
+    let same = false;
+    if (
+      (tempDanmu.type === dm.type &&
+        tempDanmu.type === 1 &&
+        tempDanmu.content === dm.content &&
+        tempDanmu.uid === dm.uid) ||
+      (tempDanmu.type === dm.type &&
+        tempDanmu.type === 2 &&
+        tempDanmu.price < 1000 &&
+        tempDanmu.giftName === dm.giftName)
+    ) {
+      same = true;
+    }
+    return same;
   };
 
   connectLive = async () => {

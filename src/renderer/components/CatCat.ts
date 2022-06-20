@@ -456,6 +456,7 @@ async function handleDanMuMSG(
   // eslint-disable-next-line prefer-destructuring
   danmu.content = data.info[1];
   danmu.price = 0;
+  danmu.giftNum = 0;
   if (danmu.content.indexOf('cat2') !== -1) {
     danmu.type = 2;
   }
@@ -478,7 +479,6 @@ async function handleDanMuMSG(
   danmu.noBorder = true;
   emotionData.forEach((item) => {
     if (item.name === danmu?.content) {
-      danmu.type = 2;
       danmu.content = '';
       danmu.giftImg = item.img;
     }
@@ -494,6 +494,7 @@ async function handleDanMuMSG(
 
 function handleSENDGIFT(data: any, danmu: { [K: string]: any }) {
   console.info('is gift msg');
+  console.info(data);
   danmu.type = 2;
   danmu.noBorder = false;
   danmu.origin = data;
@@ -502,6 +503,7 @@ function handleSENDGIFT(data: any, danmu: { [K: string]: any }) {
   danmu.uid = data.data.uid;
   danmu.nickname = data.data.uname;
   danmu.timestamp = data.data.timestamp;
+  danmu.giftNum = data.data.num;
   danmu.content = `赠送了${data.data.num}个${data.data.giftName}`;
   danmu.price = data.data.num * data.data.discount_price;
   danmu.avatarFace = data.data.face;
@@ -518,6 +520,8 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
     uid: 0,
     nickname: '',
     timestamp: 0,
+    price: 0,
+    giftNum: 0,
   };
   // console.info(data)
   // xxxxxxx

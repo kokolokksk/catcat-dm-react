@@ -4,10 +4,10 @@ export interface BiliBiliDanmu {
   uid: number;
   nickname: string;
   content?: string;
-  price?: number;
+  price: number | 0;
   giftName?: string;
   giftType?: number;
-  giftNum?: number;
+  giftNum: number;
   color?: string;
   borderColor?: string;
   priceColor?: string;
