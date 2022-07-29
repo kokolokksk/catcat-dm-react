@@ -174,13 +174,14 @@ const Setting = () => {
             skey="catdb"
           />
           <Divider />
-          {/* <SettingSwitchItem
+          <SettingSwitchItem
             name="波浪"
-            v={catConfigData.waveD || false}
+            v={catConfigData.wave || false}
             c={commonSwitchItemSave}
-            skey="waveD"
+            skey="wave"
           />
           <Divider />
+          {/*
           <SettingSwitchItem
             name="粉丝牌显示"
             v={catConfigData.fansDisplay || false}

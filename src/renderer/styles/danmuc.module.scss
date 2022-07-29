@@ -1,6 +1,8 @@
 .danmuContainer {
+    background-color: moccasin;
     align-items: center;
     font-family: 'Consolas','zxfyyt','YouYuan';
+    font-weight: bolder;
     width: 90vw;
     height: 50px;
     display: flex;
@@ -9,6 +11,20 @@
     margin-right: 5vw;
     margin-bottom: 5px;
  //   background-color: rgb(248, 248, 238);
+}
+.danmuContainerDark {
+  background-color: rgb(122, 107, 107);
+  align-items: center;
+  font-family: 'Consolas','zxfyyt','YouYuan';
+  font-weight: bolder;
+  width: 90vw;
+  height: 50px;
+  display: flex;
+  margin-left: 5vw;
+  margin-top: 5px;
+  margin-right: 5vw;
+  margin-bottom: 5px;
+//   background-color: rgb(248, 248, 238);
 }
 .giftContainer {
   border: solid 1px teal;
@@ -62,9 +78,31 @@
 
 }
 .avatar {
+    margin-left: 2vw;
     height: 5vh;
     border-radius: 50%;
 }
+.avatarContainer {
+  display: contents;
+  position: relative;
+
+}
+.divider {
+  margin-left: 1vw !important;
+  margin-right: 1vw !important;
+  border-color: rgb(255, 100, 38) !important;
+  border-left-width: 1px !important;
+  border-style: dashed !important;
+}
+
+.dividerDark {
+  margin-left: 1vw !important;
+  margin-right: 1vw !important;
+  border-color: rgb(150, 50, 11) !important;
+  border-left-width: 1px !important;
+  border-style: dashed !important;
+}
+
 .fansAndNickname {
     align-self: center;
     font-size:smaller;
@@ -72,7 +110,7 @@
     // background-color: lightgray;
 }
 .danmuContent {
-    margin-left: 2vw;
+    margin-left: 0vw;
     align-self: center;
     // background-color: white;
 }

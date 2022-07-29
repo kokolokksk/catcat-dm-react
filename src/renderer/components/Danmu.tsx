@@ -1,9 +1,7 @@
 /* eslint-disable no-nested-ternary */
-import { useColorMode } from '@chakra-ui/react';
-import axios from 'axios';
+import { Divider, useColorMode } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import styles from '../styles/danmuc.module.scss';
-import { giftData } from './CatCat';
 
 const Danmu = (prop: any) => {
   const data = {
@@ -20,6 +18,8 @@ const Danmu = (prop: any) => {
   const [giftImg, setGiftImg] = useState('');
   const faceImg = '';
   const [scBorder, setScBorder] = useState('');
+  const theme = useColorMode();
+  console.info(theme);
   const changeDisplay = () => {
     setIsDisplayble('none');
   };
@@ -63,16 +63,30 @@ const Danmu = (prop: any) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return data?.data.type === 1 ? (
-    <div className={styles.danmuContainer}>
-      <img
-        alt=""
-        className={styles.avatar}
-        style={{ display: isDisplayble }}
-        onError={changeDisplay}
-        src={data.data.avatarFace}
-      />
+    <div
+      className={
+        theme.colorMode === 'dark'
+          ? styles.danmuContainerDark
+          : styles.danmuContainer
+      }
+    >
+      <div className={styles.avatarContainer}>
+        <img
+          alt=""
+          className={styles.avatar}
+          style={{ display: isDisplayble }}
+          onError={changeDisplay}
+          src={data.data.avatarFace}
+        />
+        <Divider
+          orientation="vertical"
+          className={
+            theme.colorMode === 'dark' ? styles.dividerDark : styles.divider
+          }
+        />
+      </div>
       <div className={styles.fansAndNickname}>
-        <div className={styles.nickname}> {data.nickname}</div>
+        <div className={styles.nickname}> {data.nickname}:</div>
       </div>
       <div className={styles.fansAndNickname}>
         {/* <div className={styles.fans}>1</div> */}

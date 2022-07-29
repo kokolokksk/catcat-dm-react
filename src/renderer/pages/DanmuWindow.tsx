@@ -8,6 +8,7 @@ import {
   Transition,
 } from 'react-transition-group';
 import { BiliBiliDanmu } from 'renderer/@types/catcat';
+import BackgroundWave from 'renderer/components/BackgroundWave';
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
 import {
@@ -39,6 +40,7 @@ interface MuaConfig {
   sessionId?: string;
   started?: boolean;
   count: number;
+  wave?: boolean;
 }
 
 type StateType = {
@@ -83,6 +85,7 @@ class DanmuWindow extends React.Component {
     type: 1,
     uid: 123,
     content: `${new Date().toLocaleString()}`,
+    avatarFace: 'https://static.hdslb.com/images/member/noface.gif',
     nickname: 'catcat',
     timestamp: new Date().getTime(),
     price: 0,
@@ -109,6 +112,7 @@ class DanmuWindow extends React.Component {
       proxyApi: false,
       sessionId: getNewSessionId(),
       started: true,
+      wave: false,
     };
     super(props);
     const arr = catConfigItem.map((item) =>
@@ -426,6 +430,7 @@ class DanmuWindow extends React.Component {
       this.state;
     return (
       <>
+        <BackgroundWave display={muaConfig.wave} />
         <div className={styles.root}>
           <div className={styles.m_bg_top} />
           <div className={styles.online}>

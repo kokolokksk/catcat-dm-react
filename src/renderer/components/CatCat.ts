@@ -21,7 +21,6 @@
 //     { name:'fansDisplay',type:'boolean' }
 
 import axios from 'axios';
-import { stringify } from 'querystring';
 import { BiliBiliDanmu } from 'renderer/@types/catcat';
 
 //     ]
@@ -47,7 +46,7 @@ const catConfigItem = [
   { name: 'ttsDanmu', type: 'boolean' },
   { name: 'ttsGift', type: 'boolean' },
   { name: 'ttsKey', type: 'string' },
-  { name: 'waveD', type: 'boolean' },
+  { name: 'wave', type: 'boolean' },
   { name: 'alwaysOnTop', type: 'boolean' },
   { name: 'catdb', type: 'boolean' },
   { name: 'dmTs', type: 'string' },
@@ -82,6 +81,10 @@ const giftData = [
   {
     name: '这个好哎',
     img: 'https://i0.hdslb.com/bfs/live/f3057d838ff4c2f7b5d930db9c03ed6513aaf36c.webp',
+  },
+  {
+    name: '金币',
+    img: 'https://i0.hdslb.com/bfs/live/bbc1a0fa4924a644c861cc39e30e38d84fe219d0.webp',
   },
   {
     name: '白银宝盒',
