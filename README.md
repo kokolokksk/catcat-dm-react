@@ -19,7 +19,7 @@
 - ~~Ctrl+Shift+F5 重载弹幕窗口。~~
 >应用界面
  - ![./zread/setting.png](./zread/setting.png)
- - ![./zread/dm.png](./zread/dm.gif)
+ - ![./zread/dm.png](./zread/dm.png)
 
 - [下载地址](https://github.com/kokolokksk/catcat-dm-react/releases/latest)
 ## Windows
