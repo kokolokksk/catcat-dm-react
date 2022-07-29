@@ -93,7 +93,6 @@
     "@chakra-ui/theme-tools": "^2.0.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "@types/react-transition-group": "^4.4.4",
     "@uiw/react-color-colorful": "^1.0.10",
     "axios": "^0.27.2",
     "bilibili-live-danmaku-api": "^1.1.0",
