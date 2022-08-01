@@ -1,0 +1,81 @@
+.titlebarLight{
+  background-color: #ffffff;
+  height: 24px;
+  position: relative;
+  width: 100%;
+  display: inline-flex;
+  z-index: 1;
+  align-items: center;
+}
+.titlebarCloseLight {
+  position: fixed;
+  right: 0;
+  padding: 2px;
+  margin-right: 10px;
+  color: rgb(0, 0, 0) !important;
+}
+.titlebarCloseLight:hover {
+  position: fixed;
+  right: 0;
+  padding: 2px;
+  margin-right: 10px;
+  color: rgb(5, 5, 5) !important;
+  background-color: red;
+}
+
+.titlebarDark{
+  background-color: #1a202c;
+  height: 24px;
+  position: relative;
+  width: 100%;
+  display: inline-flex;
+  z-index: 1;
+  align-items: center;
+}
+.titlebarCloseDark {
+  position: fixed;
+  right: 0;
+  padding: 2px;
+  margin-right: 10px;
+  color: rgb(255, 255, 255) !important;
+}
+.titlebarCloseDark:hover {
+  position: fixed;
+  right: 0;
+  padding: 2px;
+  margin-right: 10px;
+  color: #1a202c !important;
+  background-color: rgb(255, 71, 71);
+}
+
+.titlebarWave{
+  background-image: linear-gradient(to top, #27273c 20%, #27273c 80%);
+  height: 24px;
+  position: relative;
+  width: 100%;
+  display: inline-flex;
+  z-index: 1;
+  align-items: center;
+}
+.titlebarCloseWave {
+  position: fixed;
+  right: 0;
+  padding: 2px;
+  margin-right: 10px;
+  color: rgb(255, 255, 255) !important;
+
+}
+.titlebarCloseWave:hover {
+  position: fixed;
+  right: 0;
+  padding: 2px;
+  margin-right: 10px;
+  color: rgb(5, 5, 5) !important;
+  background-color: red;
+}
+
+.dragArea {
+  -webkit-app-region: drag;
+  height: 24px;
+  width:  calc(100% - 1rem - 24px);
+}

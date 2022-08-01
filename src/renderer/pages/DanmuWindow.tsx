@@ -9,6 +9,8 @@ import {
 } from 'react-transition-group';
 import { BiliBiliDanmu, MuaConfig } from 'renderer/@types/catcat';
 import BackgroundWave from 'renderer/components/BackgroundWave';
+import Titlebar from 'renderer/components/Titlebar';
+import { ColorModeContext, ColorModeProvider } from '@chakra-ui/react';
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
 import {
@@ -37,6 +39,7 @@ interface DanmuWindow {
   props: PropType;
 }
 const { ToastContainer, toast } = createStandaloneToast();
+
 class DanmuWindow extends React.Component {
   listHeightRef: any = '';
 
@@ -407,8 +410,17 @@ class DanmuWindow extends React.Component {
   render() {
     const { count, comeInLastMinute, allDmList, comeInList, muaConfig } =
       this.state;
+    let themeMode = '';
+    if (muaConfig.wave) {
+      themeMode = 'wave';
+    } else if (muaConfig.darkMode) {
+      themeMode = 'dark';
+    } else {
+      themeMode = 'light';
+    }
     return (
       <>
+        <Titlebar theme={themeMode} />
         <BackgroundWave display={muaConfig.wave} />
         <div className={styles.root}>
           <div className={styles.m_bg_top} />

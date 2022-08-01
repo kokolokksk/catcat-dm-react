@@ -171,7 +171,7 @@ const createDMWindow = async () => {
     height: 600,
     useContentSize: false,
     width: 455,
-    frame: true,
+    frame: false,
     transparent: true,
     webPreferences: {
       webSecurity: false,
@@ -233,6 +233,17 @@ ipcMain.on('sendDanmu', (event, arg) => {
     });
   } catch (err: any) {
     console.error(err);
+  }
+});
+ipcMain.on('closeWindow', (event, arg) => {
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < arg.length; i++) {
+    if (arg[i] === 'dm-close') {
+      dm?.close();
+    }
+    if (arg[i] === 'main-close') {
+      mainWindow?.close();
+    }
   }
 });
 ipcMain.on('dark-mode:toggle', (event, arg) => {
