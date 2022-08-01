@@ -1,7 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { CloseIcon } from '@chakra-ui/icons';
-import { useColorMode } from '@chakra-ui/react';
-import { LegacyRef, useRef } from 'react';
 import style from '../styles/titlebar.module.css';
 
 const Titlebar = (prop: any | undefined) => {

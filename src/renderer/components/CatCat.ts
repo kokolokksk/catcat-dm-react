@@ -214,6 +214,82 @@ const giftData = [
     name: '鸿运小电视',
     img: 'https://i0.hdslb.com/bfs/live/5a02f041d03912d589b8abba6b8680c6b52bc09b.webp',
   },
+  {
+    name: '许愿精灵',
+    img: 'https://i0.hdslb.com/bfs/live/b850d8fc71558f5b84785cf4a48f119de8db4ada.webp',
+  },
+  {
+    name: '星河入梦',
+    img: 'https://i0.hdslb.com/bfs/live/b171ae30b6ef6b6a8d3e4fac95fa0f237409de9d.webp',
+  },
+  {
+    name: '美梦成真',
+    img: 'https://i0.hdslb.com/bfs/live/7976d5e81bbacad3275514319431845481f25f7e.webp',
+  },
+  {
+    name: '梦游仙境',
+    img: 'https://i0.hdslb.com/bfs/live/6955a8ca060099676490995de7e400c393b90ca2.webp',
+  },
+  {
+    name: '为你摘星',
+    img: 'https://i0.hdslb.com/bfs/live/753f66b921be842aa8630b5433563e5f0c89f9b2.webp',
+  },
+  {
+    name: '我星永恒',
+    img: 'https://i0.hdslb.com/bfs/live/d741353c103db947aecef2c28aa4987784a5111a.webp',
+  },
+  {
+    name: '粉丝团灯牌',
+    img: 'https://i0.hdslb.com/bfs/live/ae05135dafe1d97323bb343c7c228590d1e6f200.webp',
+  },
+  {
+    name: '告白气球',
+    img: 'https://i0.hdslb.com/bfs/live/0b5e4c99b86de5179a02001fc73d29d74afd9da9.webp',
+  },
+  {
+    name: '嗨翻全场',
+    img: 'https://i0.hdslb.com/bfs/live/7e6c6ff0dfe4463130d9923e688f3d799bcd08c4.webp',
+  },
+  {
+    name: '喵娘',
+    img: 'https://i0.hdslb.com/bfs/live/8e31ae247fd6824a904c60e98aa28176a55ae615.webp',
+  },
+  {
+    name: '变身话筒',
+    img: 'https://i0.hdslb.com/bfs/live/279df14a67fcac363ce398b436a074f4e34ec4bc.webp',
+  },
+  {
+    name: '奈斯',
+    img: 'https://i0.hdslb.com/bfs/live/42f2836bab6a2bbb73c60e10ff1448b5a21e596b.webp',
+  },
+  {
+    name: '柠檬茶',
+    img: 'https://i0.hdslb.com/bfs/live/4a1e000dd82e3dbcaecfe0e4a8429b9ca1a6ddf5.webp',
+  },
+  {
+    name: '家养萌猫',
+    img: 'https://i0.hdslb.com/bfs/live/313e818ed0fa082693d91d3fce110c6691a6c6fe.gif',
+  },
+  {
+    name: '明日之星',
+    img: 'https://i0.hdslb.com/bfs/live/9a5bc980f7a93fc4ef4a914bf76c0df2647c9159.gif',
+  },
+  {
+    name: '爱的啵啵',
+    img: 'https://i0.hdslb.com/bfs/live/9e2a092cab14682b5e54f7439d59970d7870a7cb.webp',
+  },
+  {
+    name: 'flag',
+    img: 'https://i0.hdslb.com/bfs/live/b7d428c3a5dc117412c6fa2cc389c06c51f5cd7a.webp',
+  },
+  {
+    name: '给大佬递茶',
+    img: 'https://i0.hdslb.com/bfs/live/9733aec683369e19cfd934a41b62ee20320eee74.webp',
+  },
+  {
+    name: '小海浪',
+    img: 'https://i0.hdslb.com/bfs/live/7290976f9f1e07bf4771a37e5623e4fcb381c3a9.webp',
+  },
 ];
 
 const emotionData = [

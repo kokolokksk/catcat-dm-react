@@ -168,7 +168,7 @@ const createDMWindow = async () => {
 
   dm = new BrowserWindow({
     title: 'Danmu Windwow',
-    height: 600,
+    height: 624,
     useContentSize: false,
     width: 455,
     frame: false,

@@ -1,7 +1,8 @@
 .titlebarLight{
   background-color: #ffffff;
   height: 24px;
-  position: relative;
+  overflow: hidden;
+  position: absolute;
   width: 100%;
   display: inline-flex;
   z-index: 1;
@@ -26,7 +27,8 @@
 .titlebarDark{
   background-color: #1a202c;
   height: 24px;
-  position: relative;
+  overflow: hidden;
+  position: absolute;
   width: 100%;
   display: inline-flex;
   z-index: 1;
@@ -51,7 +53,8 @@
 .titlebarWave{
   background-image: linear-gradient(to top, #27273c 20%, #27273c 80%);
   height: 24px;
-  position: relative;
+  overflow: hidden;
+  position: absolute;
   width: 100%;
   display: inline-flex;
   z-index: 1;

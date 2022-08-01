@@ -12,7 +12,9 @@
 		-moz-background-size: 50px 50px;
 		background-size: 50px 50px;
     display: flex;
-    height: 100vh;
+    position: relative;
+    top: 24px;
+    height: calc(100vh - 24px);
     width: 100vw;
     flex-flow: wrap;
 }
