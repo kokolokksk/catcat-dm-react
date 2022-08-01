@@ -7,7 +7,7 @@ import {
   CSSTransition,
   Transition,
 } from 'react-transition-group';
-import { BiliBiliDanmu } from 'renderer/@types/catcat';
+import { BiliBiliDanmu, MuaConfig } from 'renderer/@types/catcat';
 import BackgroundWave from 'renderer/components/BackgroundWave';
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
@@ -20,28 +20,6 @@ import {
 import Danmu from '../components/Danmu';
 import ComeInDisplay from '../components/ComeInDisplay';
 import ChatContainer from '../components/ChatContainer';
-
-interface MuaConfig {
-  roomid: number;
-  clientId?: string;
-  ttsDanmu?: boolean;
-  ttsGift?: boolean;
-  ttsKey?: string;
-  alwaysOnTop?: boolean;
-  catdb?: boolean;
-  dmTs?: string;
-  SESSDATA?: string;
-  csrf?: string;
-  v1?: string;
-  v2?: string;
-  fansDisplay?: string;
-  darkMode?: boolean;
-  proxyApi?: boolean;
-  sessionId?: string;
-  started?: boolean;
-  count: number;
-  wave?: boolean;
-}
 
 type StateType = {
   comeInLastMinute: number;
@@ -92,7 +70,7 @@ class DanmuWindow extends React.Component {
     giftNum: 0,
   };
 
-  constructor(props) {
+  constructor(props: PropType) {
     const muaConfig: MuaConfig = {
       count: 0,
       roomid: 0,
@@ -118,9 +96,10 @@ class DanmuWindow extends React.Component {
     const arr = catConfigItem.map((item) =>
       window.electron.store.get(item.name)
     );
-    arr.map((item: unknown, index: number) => {
+    arr.map((item: any, index: number) => {
       console.info(item);
-      muaConfig[catConfigItem[index].name] = item;
+      const k = catConfigItem[index].name as string;
+      muaConfig[k] = item;
 
       return '';
     });

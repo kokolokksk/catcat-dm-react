@@ -65,9 +65,7 @@
   background-size: 50% 100px;
 }
 .waveAnimation .waveTop {
-animation: move_wave 3s;
- -webkit-animation: move_wave 3s;
- -webkit-animation-delay: 1s;
+ animation: move_wave 3s linear infinite;
  animation-delay: 1s;
 }
 .waveMiddle {

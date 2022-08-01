@@ -110,6 +110,12 @@ const Danmu = (prop: any) => {
         onError={changeDisplay}
         src={data.data.avatarFace}
       />
+      <Divider
+        orientation="vertical"
+        className={
+          theme.colorMode === 'dark' ? styles.dividerDark : styles.divider
+        }
+      />
       <div className={styles.fansAndNickname}>
         <div className={styles.nickname}> {data.nickname}</div>
       </div>
@@ -169,6 +175,12 @@ const Danmu = (prop: any) => {
         onError={changeDisplay}
         src={data.data.avatarFace}
       />
+      <Divider
+        orientation="vertical"
+        className={
+          theme.colorMode === 'dark' ? styles.dividerDark : styles.divider
+        }
+      />
       <div className={styles.fansAndNickname}>
         <div className={styles.nickname}> {data.nickname}</div>
       </div>
@@ -227,6 +239,12 @@ const Danmu = (prop: any) => {
         style={{ display: isDisplayble }}
         onError={changeDisplay}
         src={data.data.avatarFace}
+      />
+      <Divider
+        orientation="vertical"
+        className={
+          theme.colorMode === 'dark' ? styles.dividerDark : styles.divider
+        }
       />
       <div className={styles.fansAndNickname}>
         <div className={styles.nickname}> {data.nickname}</div>
