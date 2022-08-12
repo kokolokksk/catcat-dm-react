@@ -57,8 +57,8 @@
 - npm module [bilibili-live-danmaku-api](https://github.com/simon300000/bilibili-live-danmaku-api)
 - [background image](https://codepen.io/plavookac/pen/QMwObb)
 - [tts间隔问题](https://stackoverflow.com/questions/62564402/microsoft-cognitive-tts-onaudioend-event-not-working)
-- [![MistEO](https://avatars.githubusercontent.com/u/18511905?s=70&v=4)](https://github.com/MistEO)提出的bug
-- [![hongyizs](https://avatars.githubusercontent.com/u/26345319?s=70&v=4)](https://github.com/hongyizs)
+- [MistEO](https://github.com/MistEO)提出的bug
+- [hongyizs](https://github.com/hongyizs)答疑
 - generated from electron-react-boilerplate/electron-react-boilerplate
 
 ### 交流
