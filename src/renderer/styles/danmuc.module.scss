@@ -122,3 +122,9 @@
     transition: all 1s ease-in 0;
     transform: translateY(2vh);
       }
+.noDrag {
+  -webkit-app-region: no-drag;
+}
+.drag {
+  -webkit-app-region: drag;
+}

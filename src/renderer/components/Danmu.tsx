@@ -64,11 +64,11 @@ const Danmu = (prop: any) => {
   }, []);
   return data?.data.type === 1 ? (
     <div
-      className={
+      className={`${
         theme.colorMode === 'dark'
           ? styles.danmuContainerDark
           : styles.danmuContainer
-      }
+      } ${' rounded-md shadow-lg hover:bg-red-200  cursor-pointer '} ${styles.noDrag}` }
     >
       <div className={styles.avatarContainer}>
         <img
@@ -102,7 +102,7 @@ const Danmu = (prop: any) => {
       />
     </div>
   ) : data?.data.type === 2 ? (
-    <div className={containerClass}>
+    <div className={`${containerClass} ${' rounded-md shadow-lg hover:bg-red-200  cursor-pointer '} ${styles.noDrag}`}>
       <img
         alt=""
         className={styles.avatar}
@@ -145,7 +145,7 @@ const Danmu = (prop: any) => {
     </div>
   ) : data?.data.type === 4 ? (
     <div
-      className={gbContainer}
+      className={`${gbContainer} ${' rounded-md shadow-lg hover:bg-red-200  cursor-pointer '} ${styles.noDrag}`}
       style={
         data.data.giftName === '舰长'
           ? {

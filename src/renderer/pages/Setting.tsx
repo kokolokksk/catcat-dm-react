@@ -8,6 +8,7 @@ import SettingInputItem from '../components/SettingInputItem';
 import { catConfigItem } from '../components/CatCat';
 // import '../samples/electron-store'
 import SettingSwitchItem from '../components/SettingSwitchItem';
+import SettingSelectItem from 'renderer/components/SettingSelectItem';
 // const catConfig = window.catConfig
 // catConfig.setDataPath('F://catConfig.json')
 
@@ -15,6 +16,7 @@ const Setting = () => {
   const tempRoomId = 0;
   const obj: { [K: string]: any } = {};
   const [catConfigData, setCatConfigData] = useState(obj);
+  const color = useColorMode();
   const load = (num: number) => {
     console.info('on load user img and nickname');
     axios
@@ -92,6 +94,26 @@ const Setting = () => {
       window.electron.ipcRenderer.sendMessage('setOnTop:setting', [
         value.target.checked,
       ]);
+    }
+  };
+  const commonSelectItemSave = async (skey: any, value: any) => {
+    console.info(value.target.value);
+    window.electron.store.set(skey, value.target.value);
+    if (skey === 'theme') {
+      if((color.colorMode === 'light' && value.target.value === 'dark')) {
+        toggleColorMode();
+        window.electron.ipcRenderer.sendMessage(
+            'dark-mode:toggle',
+             false as any
+          );
+      }
+      if((color.colorMode === 'dark' && value.target.value === 'light')) {
+        toggleColorMode();
+        window.electron.ipcRenderer.sendMessage(
+            'dark-mode:toggle',
+             true as any
+          );
+      }
     }
   };
   useEffect(() => {
@@ -189,11 +211,18 @@ const Setting = () => {
             skey="fansDisplay"
           />
           <Divider /> */}
-          <SettingSwitchItem
+          {/* <SettingSwitchItem
             name="深浅模式"
             v={catConfigData.darkMode || false}
             c={commonSwitchItemSave}
             skey="darkMode"
+          />
+          <Divider /> */}
+          <SettingSelectItem
+            name="主题"
+            v={catConfigData.theme || 'light'}
+            c={commonSelectItemSave}
+            skey="theme"
           />
           <Divider />
           {/* <SettingSwitchItem

@@ -254,6 +254,7 @@ ipcMain.on('dark-mode:toggle', (event, arg) => {
   } else {
     nativeTheme.themeSource = 'dark';
   }
+  // todo: 通知所有窗口更新主题
   return nativeTheme.shouldUseDarkColors;
 });
 

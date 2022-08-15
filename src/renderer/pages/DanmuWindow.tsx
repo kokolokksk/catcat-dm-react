@@ -61,8 +61,8 @@ class DanmuWindow extends React.Component {
     keyy: 0,
     type: 1,
     uid: 123,
-    content: `${new Date().toLocaleString()}`,
-    avatarFace: 'https://static.hdslb.com/images/member/noface.gif',
+    content: `${dayjs().format('YYYY-MM-DD HH:mm:ss')}`,
+    avatarFace: 'https://i0.hdslb.com/bfs/new_dyn/750c0c53bbee5e1d4f151b3ac7236bd21999280.png@180w_180h_1e_1c.webp',
     nickname: 'catcat',
     timestamp: new Date().getTime(),
     price: 0,
@@ -90,6 +90,7 @@ class DanmuWindow extends React.Component {
       sessionId: getNewSessionId(),
       started: true,
       wave: false,
+      theme: 'light',
     };
     super(props);
     const arr = catConfigItem.map((item) =>
@@ -407,18 +408,12 @@ class DanmuWindow extends React.Component {
   render() {
     const { count, comeInLastMinute, allDmList, comeInList, muaConfig } =
       this.state;
-    let themeMode = '';
-    if (muaConfig.wave) {
-      themeMode = 'wave';
-    } else if (muaConfig.darkMode) {
-      themeMode = 'dark';
-    } else {
-      themeMode = 'light';
-    }
+    let themeMode = muaConfig.theme;
     return (
       <>
         <Titlebar theme={themeMode} />
-        <BackgroundWave display={muaConfig.wave} />
+        {/* <BackgroundWave display={muaConfig.wave} /> */}
+        {muaConfig.theme=== 'wave' && <BackgroundWave display={muaConfig.wave} />}
         <div className={styles.root}>
           <div className={styles.m_bg_top} />
           <div className={styles.online}>
