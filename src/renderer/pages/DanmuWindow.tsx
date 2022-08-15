@@ -2,15 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { createStandaloneToast } from '@chakra-ui/toast';
 import { stringify } from 'querystring';
-import {
-  TransitionGroup,
-  CSSTransition,
-  Transition,
-} from 'react-transition-group';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { BiliBiliDanmu, MuaConfig } from 'renderer/@types/catcat';
 import BackgroundWave from 'renderer/components/BackgroundWave';
 import Titlebar from 'renderer/components/Titlebar';
-import { ColorModeContext, ColorModeProvider } from '@chakra-ui/react';
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
 import {
@@ -22,6 +17,7 @@ import {
 import Danmu from '../components/Danmu';
 import ComeInDisplay from '../components/ComeInDisplay';
 import ChatContainer from '../components/ChatContainer';
+import dayjs from 'dayjs';
 
 type StateType = {
   comeInLastMinute: number;
@@ -175,9 +171,8 @@ class DanmuWindow extends React.Component {
       // eslint-disable-next-line eqeqeq
       const dm = await transformMsg(data, muaConfig.proxyApi as boolean);
       if (dm && stringify(dm.data) !== '{}') {
-        console.info('merge dm');
-        console.info(allDmList);
         this.uploadDanmu(dm);
+        this.writeDanmuToFile(dm);
         let merged = false;
         if (dm.type !== 3) {
           const listSize = allDmList.list.length;
@@ -317,24 +312,26 @@ class DanmuWindow extends React.Component {
   };
 
   uploadDanmu = (dm: BiliBiliDanmu) => {
-    const { muaConfig } = this.state;
-    if (muaConfig.catdb) {
-      if (muaConfig.clientId) {
-        axios({
-          method: 'post',
-          url: `https://db.loli.monster/cat/dm/addDanMu?clientId=${muaConfig.clientId}&roomId=${muaConfig.roomid}`,
-          data: dm,
-          headers: { 'content-type': 'application/json' },
-        })
-          // eslint-disable-next-line func-names
-          // eslint-disable-next-line promise/always-return
-          .then(function (response) {
-            // console.log(response);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+    // interface: upload danmu to server
+  };
+
+  writeDanmuToFile = (dm: BiliBiliDanmu) => {
+    // interface: upload danmu to server
+    if (dm.content) {
+      if (!dm.fansName) {
+        dm.fansName = '';
       }
+      if (!dm.fansLevel) {
+        dm.fansLevel = 0;
+      }
+      const date = dayjs().format('YYYY-MM-DD HH:mm:ss');
+      window.fs.appendFile(
+        './danmu.txt',
+        `${date} ${dm.nickname}[${dm.fansName}${dm.fansLevel}](${dm.uid}) : ${dm.content}\n`,
+        (err) => {
+          if (err) throw err;
+        }
+      );
     }
   };
 

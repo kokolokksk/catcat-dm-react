@@ -491,10 +491,7 @@ const getNewSessionId = () => {
 };
 
 async function setFace(danmu: any, proxyApi: boolean) {
-  let url = `https://db.loli.monster/cat/client/getUserInfo?uid=${danmu.uid}`;
-  if (!proxyApi) {
-    url = `https://api.live.bilibili.com/live_user/v1/Master/info?uid=${danmu.uid}`;
-  }
+  const url = `https://api.live.bilibili.com/live_user/v1/Master/info?uid=${danmu.uid}`;
   await axios({
     url,
     // https://api.live.bilibili.com/live_user/v1/Master/info?uid=${danmu.uid}

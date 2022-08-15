@@ -167,13 +167,13 @@ const Setting = () => {
             skey="alwaysOnTop"
           />
           <Divider />
-          <SettingSwitchItem
+          {/* <SettingSwitchItem
             name="弹幕上传"
             v={catConfigData.catdb}
             c={commonSwitchItemSave}
             skey="catdb"
           />
-          <Divider />
+          <Divider /> */}
           <SettingSwitchItem
             name="波浪"
             v={catConfigData.wave || false}
@@ -196,12 +196,12 @@ const Setting = () => {
             skey="darkMode"
           />
           <Divider />
-          <SettingSwitchItem
+          {/* <SettingSwitchItem
             name="使用代理服务器请求弹幕用户头像"
             v={catConfigData.proxyApi || false}
             c={commonSwitchItemSave}
             skey="proxyApi"
-          />
+          /> */}
           <Divider />
           <SettingSwitchItem
             name="TTS感谢礼物"
