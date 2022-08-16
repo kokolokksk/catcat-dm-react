@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import About from '../pages/About';
 import '../styles/slider-menu.css';
+import styles from '../styles/slider_menu.module.scss';
 import CatCatSign from './CatCatSign';
 import MenuItem from './MenuItem';
 
@@ -70,11 +71,24 @@ const SliderMenu = (prop: any | undefined) => {
     console.info(window.electron.store)
     window.electron.ipcRenderer.sendMessage('createDmWindow',[])
   }
+  const { theme } = dataProp;
+  let sliderMenu = styles.slideMenuLight;
+  switch (theme) {
+    case 'light':
+      sliderMenu = styles.slideMenuLight;
+      break;
+    case 'dark':
+      sliderMenu = styles.slideMenuDark;
+      break;
+    default:
+      sliderMenu = styles.slideMenuLight;
+      break;
+  }
     return (
       // eslint-disable-next-line react/jsx-no-comment-textnodes
       <>
 
-      <div className="slider-menu">
+      <div className={sliderMenu}>
 
           <div className="menu-photo">
 
@@ -87,7 +101,7 @@ const SliderMenu = (prop: any | undefined) => {
             <MenuItem menu = {data.menu_1} click = {startDanmuWindow}/>
             <MenuItem menu = {data.menu_2} click = {onOpen}/>
           </div>
-          <CatCatSign color = {data.color} />
+          <CatCatSign color = {data.color} theme={theme} />
         </div>
         <Modal autoFocus={false} isOpen={isOpen} onClose={onClose}>
             <ModalOverlay

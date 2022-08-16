@@ -246,6 +246,21 @@ ipcMain.on('closeWindow', (event, arg) => {
     }
   }
 });
+ipcMain.on('minusWindow', (event, arg) => {
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < arg.length; i++) {
+    if (arg[i] === 'dm-minus') {
+      if (dm?.maximizable) {
+        dm?.minimize();
+      }
+    }
+    if (arg[i] === 'main-minus') {
+      if (mainWindow?.maximizable) {
+        mainWindow?.minimize();
+      }
+    }
+  }
+});
 ipcMain.on('dark-mode:toggle', (event, arg) => {
   console.info('come in dark toggle');
   console.info(nativeTheme.themeSource);
@@ -255,7 +270,22 @@ ipcMain.on('dark-mode:toggle', (event, arg) => {
     nativeTheme.themeSource = 'dark';
   }
   // todo: 通知所有窗口更新主题
+  if (dm != null) {
+    dm.webContents.send('dark-mode:toggle', arg);
+  }
   return nativeTheme.shouldUseDarkColors;
+});
+
+ipcMain.on('theme:change', (event, arg) => {
+  console.info('come in theme change');
+  console.info(nativeTheme.themeSource);
+  if (dm != null) {
+    dm.webContents.send('theme:change', arg);
+  }
+});
+
+ipcMain.handle('dark-mode:toggle', async (event) => {
+  console.info('come in dark toggle');
 });
 
 ipcMain.handle('dark-mode:system', () => {

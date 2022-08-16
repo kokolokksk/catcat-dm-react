@@ -18,6 +18,9 @@ declare global {
     darkMode: {
       toggle: (arg0: (_event: any, args: unknown[]) => void) => boolean;
     };
+    theme: {
+      change: (arg0: (_event: any, data: any) => void) => void;
+    };
     danmuApi: {
       onUpdateOnliner: (arg0: (_event: any, value: any) => void) => void;
       onUpdateMsg: (arg0: (_event: any, data: any) => void) => void;

@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { useColorMode } from '@chakra-ui/react';
 import '../styles/wave.css';
 
 const BackgroundWave = (prop: any | undefined) => {
@@ -11,13 +10,11 @@ const BackgroundWave = (prop: any | undefined) => {
     // eslint-disable-next-line react/destructuring-assignment
     color = prop.color;
   }
-  const { display } = prop;
-  const { colorMode } = useColorMode();
   return (
     <div>
       <div
         className="waveWrapper waveAnimation waveroot"
-        style={display ? { display: 'inline' } : { display: 'none' }}
+        style={{ display: 'inline' }}
       >
         <div className="waveWrapperInner bgTop">
           <div className="wave waveTop bgt" />

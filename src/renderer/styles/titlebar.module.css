@@ -82,3 +82,44 @@
   height: 24px;
   width:  calc(100% - 1rem - 24px);
 }
+
+.titlebarMinusLight {
+  position: fixed;
+  right: 35px;
+  margin-right: -5px;
+  color: rgb(0, 0, 0) !important;
+}
+.titlebarMinusLight:hover {
+  position: fixed;
+  right: 35px;
+  margin-right: 0px;
+  color: rgb(5, 5, 5) !important;
+  background-color: red;
+}
+.titlebarMinusDark {
+  position: fixed;
+  right: 35px;
+  margin-right: 0px;
+  color: rgb(255, 255, 255) !important;
+}
+.titlebarMinusDark:hover {
+  position: fixed;
+  right: 35px;
+  margin-right: 0px;
+  color: #1a202c !important;
+  background-color: rgb(255, 71, 71);
+}
+.titlebarMinusWave {
+  position: fixed;
+  right: 35px;
+  margin-right: 0px;
+  color: rgb(255, 255, 255) !important;
+
+}
+.titlebarMinusWave:hover {
+  position: fixed;
+  right: 35px;
+  margin-right: 0px;
+  color: rgb(5, 5, 5) !important;
+  background-color: red;
+}

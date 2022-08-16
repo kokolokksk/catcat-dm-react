@@ -7,7 +7,6 @@ import {
   Input,
   InputRightElement,
   Button,
-  useColorMode,
 } from '@chakra-ui/react';
 import { SetStateAction, useState } from 'react';
 
@@ -15,7 +14,6 @@ const ChatContainer = (prop: any | undefined) => {
   const [value, setValue] = useState('');
   const [edit, setEdit] = useState(false);
   const toast = useToast();
-  const theme = useColorMode();
   const handleChange = (event: { target: { value: SetStateAction<string> } }) =>
     setValue(event.target.value);
   const handleClick = () => {
@@ -63,6 +61,7 @@ const ChatContainer = (prop: any | undefined) => {
       handleClick();
     }
   };
+  const { theme } = prop.config;
   return (
     <>
       <InputGroup>
@@ -74,7 +73,7 @@ const ChatContainer = (prop: any | undefined) => {
         />
         <Input
           style={
-            theme.colorMode === 'dark'
+            theme === 'dark'
               ? { background: '#00000052' }
               : { background: '#ffffff52' }
           }

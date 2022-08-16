@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
 import { createStandaloneToast } from '@chakra-ui/toast';
 import { stringify } from 'querystring';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { BiliBiliDanmu, MuaConfig } from 'renderer/@types/catcat';
 import BackgroundWave from 'renderer/components/BackgroundWave';
 import Titlebar from 'renderer/components/Titlebar';
+import dayjs from 'dayjs';
+import React from 'react';
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
 import {
@@ -17,7 +17,6 @@ import {
 import Danmu from '../components/Danmu';
 import ComeInDisplay from '../components/ComeInDisplay';
 import ChatContainer from '../components/ChatContainer';
-import dayjs from 'dayjs';
 
 type StateType = {
   comeInLastMinute: number;
@@ -34,7 +33,7 @@ interface DanmuWindow {
   state: StateType;
   props: PropType;
 }
-const { ToastContainer, toast } = createStandaloneToast();
+const { toast } = createStandaloneToast();
 
 class DanmuWindow extends React.Component {
   listHeightRef: any = '';
@@ -62,7 +61,8 @@ class DanmuWindow extends React.Component {
     type: 1,
     uid: 123,
     content: `${dayjs().format('YYYY-MM-DD HH:mm:ss')}`,
-    avatarFace: 'https://i0.hdslb.com/bfs/new_dyn/750c0c53bbee5e1d4f151b3ac7236bd21999280.png@180w_180h_1e_1c.webp',
+    avatarFace:
+      'https://i0.hdslb.com/bfs/new_dyn/750c0c53bbee5e1d4f151b3ac7236bd21999280.png@180w_180h_1e_1c.webp',
     nickname: 'catcat',
     timestamp: new Date().getTime(),
     price: 0,
@@ -103,24 +103,6 @@ class DanmuWindow extends React.Component {
 
       return '';
     });
-    console.info(muaConfig);
-    // eslint-disable-next-line promise/catch-or-return
-    // eslint-disable-next-line promise/always-return
-    // Promise.all(arr)
-    //   .then((e) => {
-    //     console.log(e);
-    //     // eslint-disable-next-line array-callback-return
-    //     e.map((item: unknown, index: number) => {
-    //       if (typeof item === catConfigItem[index].type) {
-    //         console.info(item);
-    //         muaConfig[catConfigItem[index].name] = item;
-    //       }
-    //     });
-    //     return muaConfig;
-    //   })
-    //   .catch((_e) => {
-    //     console.info(_e);
-    //   });
     this.state = {
       comeInLastMinute: 0,
       count: 0,
@@ -165,6 +147,15 @@ class DanmuWindow extends React.Component {
         status: 'error',
         duration: 2000,
         isClosable: true,
+      });
+    });
+    window.theme.change((_event: any, data: any) => {
+      console.log(data);
+      this.setState({
+        muaConfig: {
+          ...muaConfig,
+          theme: data,
+        },
       });
     });
     window.danmuApi.onUpdateMsg(async (_event: any, data: any) => {
@@ -408,13 +399,28 @@ class DanmuWindow extends React.Component {
   render() {
     const { count, comeInLastMinute, allDmList, comeInList, muaConfig } =
       this.state;
-    let themeMode = muaConfig.theme;
+    const themeMode = muaConfig.theme;
+    let rootTheme = styles.root;
+    switch (themeMode) {
+      case 'light':
+        rootTheme = styles.rootLight;
+        break;
+      case 'dark':
+        rootTheme = styles.rootDark;
+        break;
+      case 'wave':
+        rootTheme = styles.rootWave;
+        break;
+      default:
+        rootTheme = styles.root;
+        break;
+    }
     return (
       <>
         <Titlebar theme={themeMode} />
         {/* <BackgroundWave display={muaConfig.wave} /> */}
-        {muaConfig.theme=== 'wave' && <BackgroundWave display={muaConfig.wave} />}
-        <div className={styles.root}>
+        {muaConfig.theme === 'wave' && <BackgroundWave />}
+        <div className={rootTheme}>
           <div className={styles.m_bg_top} />
           <div className={styles.online}>
             {`人气: `}
@@ -445,6 +451,7 @@ class DanmuWindow extends React.Component {
                       classNames="item"
                     >
                       <Danmu
+                        theme={themeMode}
                         nickname={danmu.nickname}
                         content={danmu.content}
                         data={danmu}

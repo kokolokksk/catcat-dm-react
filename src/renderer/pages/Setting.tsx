@@ -2,13 +2,13 @@
 import { Flex, Divider, useColorMode } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import SettingSelectItem from 'renderer/components/SettingSelectItem';
 import SliderMenu from '../components/SliderMenu';
 import styles from '../styles/setting.module.scss';
 import SettingInputItem from '../components/SettingInputItem';
 import { catConfigItem } from '../components/CatCat';
 // import '../samples/electron-store'
 import SettingSwitchItem from '../components/SettingSwitchItem';
-import SettingSelectItem from 'renderer/components/SettingSelectItem';
 // const catConfig = window.catConfig
 // catConfig.setDataPath('F://catConfig.json')
 
@@ -97,23 +97,16 @@ const Setting = () => {
     }
   };
   const commonSelectItemSave = async (skey: any, value: any) => {
-    console.info(value.target.value);
     window.electron.store.set(skey, value.target.value);
     if (skey === 'theme') {
-      if((color.colorMode === 'light' && value.target.value === 'dark')) {
-        toggleColorMode();
-        window.electron.ipcRenderer.sendMessage(
-            'dark-mode:toggle',
-             false as any
-          );
-      }
-      if((color.colorMode === 'dark' && value.target.value === 'light')) {
-        toggleColorMode();
-        window.electron.ipcRenderer.sendMessage(
-            'dark-mode:toggle',
-             true as any
-          );
-      }
+      setCatConfigData({
+        ...catConfigData,
+        theme: value.target.value,
+      });
+      window.electron.ipcRenderer.sendMessage(
+        'theme:change',
+        value.target.value
+      );
     }
   };
   useEffect(() => {
@@ -159,23 +152,39 @@ const Setting = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const { theme } = catConfigData;
+  let pageTheme;
+  switch (theme) {
+    case 'light':
+      pageTheme = styles.page;
+      break;
+    case 'dark':
+      pageTheme = styles.pageDark;
+      break;
+    default:
+      pageTheme = styles.page;
+      break;
+  }
   return (
     <Flex height="100vh">
       <SliderMenu
+        theme={catConfigData.theme}
         nickname={catConfigData.nickname}
         faceImg={catConfigData.faceImg}
       />
       <Divider orientation="vertical" />
-      <div className={styles.page}>
+      <div className={pageTheme}>
         <div className={styles.setting}>
           <SettingInputItem
             name="房间号"
+            theme={catConfigData.theme}
             v={catConfigData.roomid}
             c={commonInputItemSave}
             skey="roomid"
           />
           <Divider />
           <SettingInputItem
+            theme={catConfigData.theme}
             name="弹幕阴影"
             v={catConfigData.dmTs || '1px 1px 1px #fff'}
             c={commonInputItemSave}
@@ -184,6 +193,7 @@ const Setting = () => {
           <Divider />
           <SettingSwitchItem
             name="弹幕窗口置顶"
+            theme={catConfigData.theme}
             v={catConfigData.alwaysOnTop}
             c={commonSwitchItemSave}
             skey="alwaysOnTop"
@@ -198,6 +208,7 @@ const Setting = () => {
           <Divider /> */}
           <SettingSwitchItem
             name="波浪"
+            theme={catConfigData.theme}
             v={catConfigData.wave || false}
             c={commonSwitchItemSave}
             skey="wave"
@@ -220,6 +231,7 @@ const Setting = () => {
           <Divider /> */}
           <SettingSelectItem
             name="主题"
+            theme={catConfigData.theme}
             v={catConfigData.theme || 'light'}
             c={commonSelectItemSave}
             skey="theme"
@@ -234,6 +246,7 @@ const Setting = () => {
           <Divider />
           <SettingSwitchItem
             name="TTS感谢礼物"
+            theme={catConfigData.theme}
             v={catConfigData.ttsGift || false}
             c={commonSwitchItemSave}
             skey="ttsGift"
@@ -241,6 +254,7 @@ const Setting = () => {
           <Divider />
           <SettingSwitchItem
             name="TTS阅读弹幕"
+            theme={catConfigData.theme}
             v={catConfigData.ttsDanmu || false}
             c={commonSwitchItemSave}
             skey="ttsDanmu"
@@ -252,6 +266,7 @@ const Setting = () => {
           <Divider />
           <SettingInputItem
             name="SESSDATA"
+            theme={catConfigData.theme}
             v={catConfigData.SESSDATA || '-'}
             c={commonInputItemSave}
             skey="SESSDATA"
@@ -259,6 +274,7 @@ const Setting = () => {
           <Divider />
           <SettingInputItem
             name="csrf"
+            theme={catConfigData.theme}
             v={catConfigData.csrf || '-'}
             c={commonInputItemSave}
             skey="csrf"
@@ -266,6 +282,7 @@ const Setting = () => {
           <Divider />
           <SettingInputItem
             name="TTS KEY"
+            theme={catConfigData.theme}
             v={catConfigData.ttsKey || '-'}
             c={commonInputItemSave}
             skey="ttsKey"

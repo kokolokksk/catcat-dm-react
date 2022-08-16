@@ -1,17 +1,12 @@
-import { FormControl, FormLabel, Switch, useColorMode } from '@chakra-ui/react';
-import { useState } from 'react';
+import { FormControl, FormLabel, Switch } from '@chakra-ui/react';
 import styles from '../styles/setting.module.scss';
 
 const SettingSwitchItem = (prop: any | undefined) => {
   const data = {
     ...prop,
   };
-  const { colorMode, toggleColorMode } = useColorMode();
-  // const [switchColor, setSwitchColor] = useState('orange');
-  // if (colorMode === 'dark') {
-  //   setSwitchColor('teal');
-  // }
   console.info(data.v);
+  const { theme } = data;
   return (
     <div className={styles.setting_input_item}>
       <p className={styles.line} />
@@ -30,7 +25,7 @@ const SettingSwitchItem = (prop: any | undefined) => {
           defaultChecked={data.v}
           onChange={(text) => data.c(data.skey, text)}
           size="md"
-          colorScheme={colorMode === 'dark' ? 'orange' : 'teal'}
+          colorScheme={theme === 'dark' ? 'orange' : 'teal'}
         />
       </FormControl>
     </div>

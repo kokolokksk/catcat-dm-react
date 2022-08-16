@@ -47,6 +47,7 @@ const catConfigItem = [
   { name: 'ttsGift', type: 'boolean' },
   { name: 'ttsKey', type: 'string' },
   { name: 'wave', type: 'boolean' },
+  { name: 'theme', type: 'string' },
   { name: 'alwaysOnTop', type: 'boolean' },
   { name: 'catdb', type: 'boolean' },
   { name: 'dmTs', type: 'string' },
@@ -533,24 +534,26 @@ async function handleDanMuMSG(
   danmu.content = data.info[1];
   danmu.price = 0;
   danmu.giftNum = 0;
-  if (danmu.content.indexOf('cat2') !== -1) {
-    danmu.type = 2;
-  }
-  if (danmu.content.indexOf('cat4') !== -1) {
-    danmu.type = 4;
-    danmu.giftName = '提督';
-    danmu.price = '1998000';
-    danmu.origin = data;
-    danmu.content = '续费了1个提督';
-  }
-  if (danmu.content.indexOf('cat5') !== -1) {
-    danmu.type = 5;
-    danmu.giftName = 'sc';
-    danmu.content = 'sc测试';
-    danmu.price = 30000;
-    danmu.color = '#A3F6FF';
-    danmu.borderColor = '#DBFFFD';
-    danmu.priceColor = '#7DA4BD';
+  if(process.env.NODE_ENV === 'development'){
+    if (danmu.content.indexOf('cat2') !== -1) {
+      danmu.type = 2;
+    }
+    if (danmu.content.indexOf('cat4') !== -1) {
+      danmu.type = 4;
+      danmu.giftName = '提督';
+      danmu.price = '1998000';
+      danmu.origin = data;
+      danmu.content = '续费了1个提督';
+    }
+    if (danmu.content.indexOf('cat5') !== -1) {
+      danmu.type = 5;
+      danmu.giftName = 'sc';
+      danmu.content = 'sc测试';
+      danmu.price = 30000;
+      danmu.color = '#A3F6FF';
+      danmu.borderColor = '#DBFFFD';
+      danmu.priceColor = '#7DA4BD';
+    }
   }
   danmu.noBorder = true;
   emotionData.forEach((item) => {

@@ -1,17 +1,15 @@
-import { FormControl, FormLabel, Select, Switch, useColorMode } from '@chakra-ui/react';
-import { useState } from 'react';
+import { FormControl, FormLabel, Select, useColorMode } from '@chakra-ui/react';
 import styles from '../styles/setting.module.scss';
 
 const SettingSwitchItem = (prop: any | undefined) => {
   const data = {
     ...prop,
   };
-  const { colorMode, toggleColorMode } = useColorMode();
   // const [switchColor, setSwitchColor] = useState('orange');
   // if (colorMode === 'dark') {
   //   setSwitchColor('teal');
   // }
-  console.info(data.v);
+  const { theme, v, c, skey } = data;
   return (
     <div className={styles.setting_input_item}>
       <p className={styles.line} />
@@ -25,19 +23,28 @@ const SettingSwitchItem = (prop: any | undefined) => {
           {data.name}
         </FormLabel>
         <Select
+          color="#000"
           style={{ cursor: 'pointer' }}
           id="email-alerts"
-          key={data.v}
-          defaultValue={data.v}
-          onChange={(text) => data.c(data.skey, text)}
+          key={v}
+          defaultValue={v}
+          onChange={(text) => c(skey, text)}
           size="sm"
           width={100}
-          colorScheme={colorMode === 'dark' ? 'orange' : 'teal'}
+          colorScheme={theme === 'dark' ? 'orange' : 'teal'}
         >
-          <option style={{ cursor: 'pointer' }} value="light">白色</option>
-          <option style={{ cursor: 'pointer' }} value="dark">黑色</option>
-          <option style={{ cursor: 'pointer' }} value="wave">波浪</option>
-          <option style={{ cursor: 'pointer' }} value="longluuu">长颈鹿</option>
+          <option style={{ cursor: 'pointer' }} value="light">
+            白色
+          </option>
+          <option style={{ cursor: 'pointer' }} value="dark">
+            黑色
+          </option>
+          <option style={{ cursor: 'pointer' }} value="wave">
+            波浪
+          </option>
+          <option style={{ cursor: 'pointer' }} value="longluuu">
+            长颈鹿
+          </option>
         </Select>
       </FormControl>
     </div>
