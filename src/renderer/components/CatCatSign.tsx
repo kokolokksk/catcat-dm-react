@@ -17,32 +17,32 @@ const CatCatSign = (prop: any | undefined) => {
   return (
     <div id="of" style={color}>
       <label
-        style={theme === 'light' ? { color: '#52734D' } : { color: '#735A4D' }}
+        style={theme === 'dark' ? { color: '#735A4D' } : { color: '#52734D' }}
       >
         C
       </label>
       <label
-        style={theme === 'light' ? { color: '#91C788' } : { color: '#C7A788' }}
+        style={theme === 'dark' ? { color: '#C7A788' } : { color: '#91C788' }}
       >
         a
       </label>
       <label
-        style={theme === 'light' ? { color: '#DDFFBC' } : { color: '#FFBA71' }}
+        style={theme === 'dark' ? { color: '#FFBA71' } : { color: '#DDFFBC' }}
       >
         t
       </label>
       <label
-        style={theme === 'light' ? { color: '#DDFFBC' } : { color: '#FEC18F' }}
+        style={theme === 'dark' ? { color: '#FEC18F' } : { color: '#DDFFBC' }}
       >
         C
       </label>
       <label
-        style={theme === 'light' ? { color: '#91C788' } : { color: '#E0C397' }}
+        style={theme === 'dark' ? { color: '#E0C397' } : { color: '#91C788' }}
       >
         a
       </label>
       <label
-        style={theme === 'light' ? { color: '#52734D' } : { color: '#BD967F' }}
+        style={theme === 'dark' ? { color: '#BD967F' } : { color: '#52734D' }}
       >
         t
       </label>
