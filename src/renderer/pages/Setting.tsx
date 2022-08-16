@@ -206,14 +206,14 @@ const Setting = () => {
             skey="catdb"
           />
           <Divider /> */}
-          <SettingSwitchItem
+          {/* <SettingSwitchItem
             name="波浪"
             theme={catConfigData.theme}
             v={catConfigData.wave || false}
             c={commonSwitchItemSave}
             skey="wave"
           />
-          <Divider />
+          <Divider /> */}
           {/*
           <SettingSwitchItem
             name="粉丝牌显示"
