@@ -25,6 +25,7 @@ declare global {
       onUpdateOnliner: (arg0: (_event: any, value: any) => void) => void;
       onUpdateMsg: (arg0: (_event: any, data: any) => void) => void;
       mainProcessMessage: (arg0: (_event: any, data: any) => void) => void;
+      updateMessage: (arg0: (_event: any, data: any) => void) => void;
       msgTips: (arg0: (_event: any, data: any) => void) => void;
     };
     removeLoading: () => void;

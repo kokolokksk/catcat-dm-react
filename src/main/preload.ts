@@ -51,6 +51,9 @@ contextBridge.exposeInMainWorld('danmuApi', {
   mainProcessMessage: (
     callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
   ) => ipcRenderer.on('main-process-message', callback),
+  updateMessage: (
+    callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+  ) => ipcRenderer.on('update-message', callback),
   msgTips: (
     callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
   ) => ipcRenderer.on('msg-tips', callback),
