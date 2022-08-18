@@ -23,7 +23,7 @@ const SettingSwitchItem = (prop: any | undefined) => {
           {data.name}
         </FormLabel>
         <Select
-          color="#000"
+          color="orange"
           style={{ cursor: 'pointer' }}
           id="email-alerts"
           key={v}
