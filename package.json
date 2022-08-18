@@ -1,7 +1,7 @@
 {
   "name": "catcat-dm-react",
   "productName": "catcat-dm-react",
-  "version": "1.6.1",
+  "version": "1.6.7",
   "description": "catcat-dm-react.",
   "author": "Loveloliii <loli@loli.monster>",
   "license": "MIT",
@@ -33,7 +33,7 @@
     "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
-    "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
+    "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder -p always",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
     "start:main": "cross-env NODE_ENV=development electronmon -r ts-node/register/transpile-only .",
@@ -100,10 +100,10 @@
     "dayjs": "^1.11.5",
     "electron-debug": "^3.2.0",
     "electron-json-storage": "^4.5.0",
-    "electron-log": "^4.4.7",
+    "electron-log": "^4.4.8",
     "electron-referer": "^0.3.0",
     "electron-store": "^8.0.1",
-    "electron-updater": "^5.0.1",
+    "electron-updater": "^5.2.1",
     "framer-motion": "^6",
     "got": "^12.1.0",
     "lottie-web": "^5.9.4",
@@ -119,7 +119,7 @@
     "webpack-merge": "^5.8.0"
   },
   "devDependencies": {
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.6",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.2.0",
@@ -131,28 +131,28 @@
     "@types/react-test-renderer": "^18.0.0",
     "@types/react-transition-group": "^4.4.5",
     "@types/terser-webpack-plugin": "^5.0.4",
-    "@types/webpack-bundle-analyzer": "^4.4.1",
+    "@types/webpack-bundle-analyzer": "^4.4.2",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
     "@typescript-eslint/parser": "^5.23.0",
     "autoprefixer": "^10.4.8",
     "browserslist-config-erb": "^0.0.3",
     "chalk": "^4.1.2",
-    "concurrently": "^7.1.0",
-    "core-js": "^3.22.5",
+    "concurrently": "^7.3.0",
+    "core-js": "^3.24.1",
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.1",
-    "css-minimizer-webpack-plugin": "^3.4.1",
+    "css-minimizer-webpack-plugin": "^4.0.0",
     "detect-port": "^1.3.0",
-    "electron": "^18.2.3",
-    "electron-builder": "^23.0.3",
+    "electron": "^20.0.3",
+    "electron-builder": "^23.3.3",
     "electron-devtools-installer": "^3.2.0",
     "electron-notarize": "^1.2.1",
-    "electron-rebuild": "^3.2.7",
+    "electron-rebuild": "^3.2.9",
     "electronmon": "^2.0.2",
     "eslint": "^8.15.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-erb": "^4.0.3",
-    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-import-resolver-typescript": "^3.4.1",
     "eslint-import-resolver-webpack": "^0.13.2",
     "eslint-plugin-compat": "^4.0.2",
     "eslint-plugin-import": "^2.26.0",
@@ -177,7 +177,7 @@
     "sass-loader": "^12.6.0",
     "style-loader": "^3.3.1",
     "tailwindcss": "^3.1.8",
-    "terser-webpack-plugin": "^5.3.1",
+    "terser-webpack-plugin": "^5.3.5",
     "ts-jest": "^28.0.2",
     "ts-loader": "^9.3.0",
     "ts-node": "^10.7.0",
@@ -185,8 +185,8 @@
     "url-loader": "^4.1.1",
     "webpack": "^5.72.1",
     "webpack-bundle-analyzer": "^4.5.0",
-    "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.9.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.10.0",
     "webpack-merge": "^5.8.0"
   },
   "build": {
@@ -202,14 +202,9 @@
     "afterSign": ".erb/scripts/notarize.js",
     "win": {
       "target": [
-        "7z"
+        "7z",
+        "nsis"
       ]
-    },
-    "linux": {
-      "target": [
-        "AppImage"
-      ],
-      "category": "Development"
     },
     "directories": {
       "app": "release/app",
@@ -231,6 +226,9 @@
   "devEngines": {
     "node": ">=14.x",
     "npm": ">=7.x"
+  },
+  "electronDownload": {
+    "cache": "./.electron-cache"
   },
   "electronmon": {
     "patterns": [

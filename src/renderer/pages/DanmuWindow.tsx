@@ -220,16 +220,6 @@ class DanmuWindow extends React.Component {
         // console.info(dm)
       }
     });
-    window.danmuApi.updateMessage((_event: any, data: any) => {
-      console.info(data);
-      toast({
-        title: '提示',
-        description: data,
-        status: 'error',
-        duration: 2000,
-        isClosable: true,
-      });
-    });
   }
 
   componentDidUpdate(prevProps: any, prevState: any) {

@@ -101,6 +101,7 @@ const createWindow = async () => {
     frame: true,
     transparent: true,
     webPreferences: {
+      sandbox: false,
       nodeIntegration: true,
       contextIsolation: true,
       webSecurity: false,
@@ -123,7 +124,6 @@ const createWindow = async () => {
       mainWindow.minimize();
     } else {
       mainWindow.show();
-      autoUpdater.checkForUpdatesAndNotify();
     }
   });
 
@@ -175,6 +175,7 @@ const createDMWindow = async () => {
     frame: false,
     transparent: true,
     webPreferences: {
+      sandbox: false,
       webSecurity: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
@@ -360,14 +361,14 @@ app
   })
   .catch(console.log);
 
-app.on('ready', () => {
-  autoUpdater.checkForUpdatesAndNotify();
-});
-
 function sendStatusToWindow(text: string) {
   log.info(text);
   mainWindow?.webContents.send('update-message', text);
 }
+app.on('ready', function () {
+  // eslint-disable-next-line no-new
+  new AppUpdater();
+});
 
 autoUpdater.on('checking-for-update', () => {
   sendStatusToWindow('Checking for update...');

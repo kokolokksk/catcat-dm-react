@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import { Flex, Divider, useColorMode } from '@chakra-ui/react';
+import { Flex, Divider, useColorMode, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import SettingSelectItem from 'renderer/components/SettingSelectItem';
@@ -14,6 +14,7 @@ import SettingSwitchItem from '../components/SettingSwitchItem';
 
 const Setting = () => {
   const tempRoomId = 0;
+  const toast = useToast();
   const obj: { [K: string]: any } = {};
   const [catConfigData, setCatConfigData] = useState(obj);
   const color = useColorMode();
@@ -112,6 +113,16 @@ const Setting = () => {
   useEffect(() => {
     // init data
     console.info('init data');
+    window.danmuApi.updateMessage((_event: any, data: any) => {
+      console.info(data);
+      toast({
+        title: '提示',
+        description: data,
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      });
+    });
     const arr = catConfigItem.map((item) =>
       window.electron.store.get(item.name)
     );
