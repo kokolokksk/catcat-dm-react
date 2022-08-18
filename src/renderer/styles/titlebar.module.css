@@ -10,18 +10,20 @@
 }
 .titlebarCloseLight {
   position: fixed;
+  display: flex;
   right: 0;
   padding: 5px;
-  margin-right: 10px;
+  margin-right: 0px;
   width:24px;
   height:24px;
   color: rgb(0, 0, 0) !important;
 }
 .titlebarCloseLight:hover {
   position: fixed;
+  display: flex;
   right: 0;
   padding: 5px;
-  margin-right: 10px;
+  margin-right: 0px;
   color: rgb(5, 5, 5) !important;
   width:24px;
   height:24px;
@@ -40,18 +42,20 @@
 }
 .titlebarCloseDark {
   position: fixed;
+  display: flex;
   right: 0;
   padding: 5px;
-  margin-right: 10px;
+  margin-right: 0px;
   width:24px;
   height:24px;
   color: rgb(255, 255, 255) !important;
 }
 .titlebarCloseDark:hover {
   position: fixed;
+  display: flex;
   right: 0;
   padding: 5px;
-  margin-right: 10px;
+  margin-right: 0px;
   width:24px;
   height:24px;
   color: #1a202c !important;
@@ -70,9 +74,10 @@
 }
 .titlebarCloseWave {
   position: fixed;
+  display: flex;
   right: 0;
   padding: 5px;
-  margin-right: 10px;
+  margin-right: 0px;
   width:24px;
   height:24px;
   color: rgb(255, 255, 255) !important;
@@ -80,25 +85,26 @@
 }
 .titlebarCloseWave:hover {
   position: fixed;
+  display: flex;
   right: 0;
   padding: 5px;
   width:24px;
   height:24px;
-  margin-right: 10px;
-  color: rgb(5, 5, 5) !important;
-  background-color: red;
+  margin-right: 0px;
+  color: rgb(255, 255, 255) !important;
+  background-color:  red;
 }
 
 .dragArea {
   -webkit-app-region: drag;
   height: 24px;
-  width:  calc(100% - 1rem - 24px);
+  width:  calc(100% - 1rem - 48px);
 }
 
 .titlebarMinusLight {
   position: fixed;
   right: 35px;
-  margin-right: 0px;
+  margin-right: -10px;
   width:24px;
   height:24px;
   padding: 5px;
@@ -108,7 +114,7 @@
 .titlebarMinusLight:hover {
   position: fixed;
   right: 35px;
-  margin-right: 0px;
+  margin-right: -10px;
   width:24px;
   height:24px;
   padding: 5px;
@@ -119,7 +125,7 @@
 .titlebarMinusDark {
   position: fixed;
   right: 35px;
-  margin-right: 0px;
+  margin-right: -10px;
   width:24px;
   height:24px;
   padding: 5px;
@@ -133,7 +139,7 @@
   height:24px;
   padding: 5px;
   display:flex;
-  margin-right: 0px;
+  margin-right: -10px;
   color: #1a202c !important;
   background-color: rgb(255, 71, 71);
 }
@@ -144,7 +150,7 @@
   padding: 5px;
   height:24px;
   display:flex;
-  margin-right: 0px;
+  margin-right: -10px;
   color: rgb(255, 255, 255) !important;
 
 }
@@ -155,7 +161,7 @@
   width:24px;
   height:24px;
   display:flex;
-  margin-right: 0px;
-  color: rgb(5, 5, 5) !important;
-  background-color: rgb(240, 240, 240);
+  margin-right: -10px;
+  color: rgb(255, 255, 255) !important;
+  background-color: rgb(180, 180, 180);
 }
