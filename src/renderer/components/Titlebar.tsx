@@ -42,18 +42,20 @@ const Titlebar = (prop: any | undefined) => {
     <>
       <div className={titlebarClass}>
         <div className={style.dragArea} />
-        <MinusIcon
-          width={5}
-          height={5}
+        <div
+          aria-hidden="true"
           className={titlebarMinusClass}
           onClick={handleMinusClick}
-        />
-        <CloseIcon
-          width={4}
-          height={4}
-          className={titlebarCloseClass}
+        >
+          <MinusIcon width={3} height={3} />
+        </div>
+        <div
+          aria-hidden="true"
+          className={`${titlebarCloseClass}`}
           onClick={handleClick}
-        />
+        >
+          <CloseIcon width={3} height={3} />
+        </div>
       </div>
     </>
   );
