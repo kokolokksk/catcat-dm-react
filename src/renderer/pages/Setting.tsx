@@ -22,9 +22,10 @@ import SliderMenu from '../components/SliderMenu';
 import styles from '../styles/setting.module.scss';
 import SettingInputItem from '../components/SettingInputItem';
 import { catConfigItem } from '../components/CatCat';
-import p from '../../../package.json';
+import pack from '../../../package.json';
 // import '../samples/electron-store'
 import SettingSwitchItem from '../components/SettingSwitchItem';
+import { electron } from 'process';
 // const catConfig = window.catConfig
 // catConfig.setDataPath('F://catConfig.json')
 
@@ -102,6 +103,57 @@ const Setting = () => {
       load(catConfigData.roomid);
       commonInputItemSave('roomid', catConfigData.roomid);
     }
+    if (catConfigData.allowUpdate) {
+      axios
+        .get(
+          'https://api.github.com/repos/kokolokksk/catcat-dm-react/releases/latest'
+        )
+        .then((res) => {
+          console.info(res.data.tag_name);
+          console.info(res.data.name);
+          console.info(res.data.body);
+          console.info(res.data.html_url);
+          console.info(res.data.assets[0].browser_download_url);
+          console.info(res.data.assets[0].name);
+          console.info(res.data.assets[0].size);
+          console.info(res.data.assets[0].updated_at);
+          console.info(res.data.assets[0].created_at);
+          console.info(res.data.assets[0].content_type);
+          setState({
+            ...state,
+            downtext: '后台下载',
+            transferred: 0,
+            total: 0,
+            version: res.data.tag_name,
+            name: res.data.name,
+            body: res.data.body,
+            html_url: res.data.html_url,
+            browser_download_url: res.data.assets[0].browser_download_url,
+            file_name: res.data.assets[0].name,
+            size: res.data.assets[0].size,
+            updated_at: res.data.assets[0].updated_at,
+            created_at: res.data.assets[0].created_at,
+            content_type: res.data.assets[0].content_type,
+          });
+          console.info(pack.version, res.data.tag_name);
+          if (
+            parseInt(pack.version.replaceAll('.', ''), 10) <
+            parseInt(
+              res.data.tag_name.replaceAll('v', '').replaceAll('.', ''),
+              10
+            )
+          ) {
+            console.info('update');
+            onOpen();
+          } else {
+            console.info('no update');
+          }
+          return '';
+        })
+        .catch((e) => {
+          console.info(e.message);
+        });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [catConfigData.roomid]);
   const commonSwitchItemSave = async (skey: any, value: any) => {
@@ -138,61 +190,14 @@ const Setting = () => {
   useEffect(() => {
     // init data
     console.info('init data');
-    // check update
-    axios
-      .get(
-        'https://api.github.com/repos/kokolokksk/catcat-dm-react/releases/latest'
-      )
-      .then((res) => {
-        console.info(res.data.tag_name);
-        console.info(res.data.name);
-        console.info(res.data.body);
-        console.info(res.data.html_url);
-        console.info(res.data.assets[0].browser_download_url);
-        console.info(res.data.assets[0].name);
-        console.info(res.data.assets[0].size);
-        console.info(res.data.assets[0].updated_at);
-        console.info(res.data.assets[0].created_at);
-        console.info(res.data.assets[0].content_type);
-        setState({
-          ...state,
-          transferred: 0,
-          total: 0,
-          version: res.data.tag_name,
-          name: res.data.name,
-          body: res.data.body,
-          html_url: res.data.html_url,
-          browser_download_url: res.data.assets[0].browser_download_url,
-          file_name: res.data.assets[0].name,
-          size: res.data.assets[0].size,
-          updated_at: res.data.assets[0].updated_at,
-          created_at: res.data.assets[0].created_at,
-          content_type: res.data.assets[0].content_type,
-        });
-        console.info(p.version, state.version);
-        if (
-          parseInt(p.version.replaceAll('.', ''), 10) <
-          parseInt(state.version.replaceAll('v', '').replaceAll('.', ''), 10)
-        ) {
-          console.info('update');
-          onOpen();
-        } else {
-          console.info('no update');
-        }
-        return '';
-      })
-      .catch((e) => {
-        console.info(e.message);
-      });
     window.danmuApi.updateMessage((_event: any, data: any) => {
       console.info(data);
-      toast({
-        title: '提示',
-        description: data,
-        status: 'error',
-        duration: 2000,
-        isClosable: true,
-      });
+      if (data === 'Update downloaded') {
+        setState({
+          ...state,
+          downtext: '下载完成',
+        });
+      }
     });
     window.danmuApi.downProgress((_event: any, data: any) => {
       console.info(data);
@@ -354,6 +359,14 @@ const Setting = () => {
             c={commonSwitchItemSave}
             skey="ttsDanmu"
           />
+          <Divider />
+          <SettingSwitchItem
+            name="允许检测更新"
+            theme={catConfigData.allowUpdate}
+            v={catConfigData.allowUpdate || false}
+            c={commonSwitchItemSave}
+            skey="allowUpdate"
+          />
           {/* <Divider/>
         <SettingSwitchItem name='TTS' v={catConfigData.tts || false} c={commonSwitchItemSave} skey={'tts'}/>
         <Divider/>
@@ -419,7 +432,18 @@ const Setting = () => {
               <Button ref={cancelRef} onClick={onClose}>
                 取消
               </Button>
-              <Button colorScheme="gray" onClick={onClose} ml={3}>
+              <Button
+                colorScheme="gray"
+                onClick={() => {
+                  onClose();
+                  setCatConfigData({
+                    ...catConfigData,
+                    allowUpdate: false,
+                  });
+                  window.electron.store.set('allowUpdate', false);
+                }}
+                ml={3}
+              >
                 不再提示
               </Button>
             </AlertDialogFooter>
@@ -451,7 +475,7 @@ const Setting = () => {
                 }}
                 className=" ml-4 mr-2"
               >
-                后台下载
+                {state.downtext}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

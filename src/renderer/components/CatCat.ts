@@ -64,6 +64,7 @@ const catConfigItem = [
   { name: 'fansDisplay', type: 'boolean' },
   { name: 'darkMode', type: 'boolean' },
   { name: 'proxyApi', type: 'boolean' },
+  { name: 'allowUpdate', type: 'boolean' },
 ];
 
 const giftData = [
