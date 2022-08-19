@@ -1,7 +1,7 @@
 {
   "name": "catcat-dm-react",
   "productName": "catcat-dm-react",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "catcat-dm-react.",
   "author": "Loveloliii <loli@loli.monster>",
   "license": "MIT",
@@ -113,6 +113,7 @@
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-icons": "^4.3.1",
+    "react-markdown": "^8.0.3",
     "react-router-dom": "^6.3.0",
     "react-transition-group": "^4.4.2",
     "url": "^0.11.0",

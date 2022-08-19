@@ -54,6 +54,9 @@ contextBridge.exposeInMainWorld('danmuApi', {
   updateMessage: (
     callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
   ) => ipcRenderer.on('update-message', callback),
+  downProgress: (
+    callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+  ) => ipcRenderer.on('down-progress', callback),
   msgTips: (
     callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
   ) => ipcRenderer.on('msg-tips', callback),

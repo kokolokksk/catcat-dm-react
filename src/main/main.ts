@@ -16,6 +16,7 @@ import {
   ipcMain,
   globalShortcut,
   nativeTheme,
+  ipcRenderer,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -365,7 +366,9 @@ function sendStatusToWindow(text: string) {
   log.info(text);
   mainWindow?.webContents.send('update-message', text);
 }
-app.on('ready', function () {
+
+ipcMain.on('update:app', (event, arg) => {
+  console.info(arg);
   // eslint-disable-next-line no-new
   new AppUpdater();
 });
@@ -387,6 +390,11 @@ autoUpdater.on('download-progress', (progressObj) => {
   logMessage = `${logMessage} - Downloaded ${progressObj.percent}%`;
   logMessage = `${logMessage} (${progressObj.transferred}/${progressObj.total})`;
   sendStatusToWindow(logMessage);
+  mainWindow?.webContents.send('down-progress', [
+    progressObj.percent,
+    progressObj.transferred,
+    progressObj.total,
+  ]);
 });
 autoUpdater.on('update-downloaded', (info) => {
   sendStatusToWindow('Update downloaded');

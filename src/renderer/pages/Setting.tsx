@@ -1,22 +1,47 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import { Flex, Divider, useColorMode, useToast } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import {
+  Flex,
+  Divider,
+  useColorMode,
+  useToast,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+  Button,
+  Progress,
+} from '@chakra-ui/react';
 import axios from 'axios';
 import SettingSelectItem from 'renderer/components/SettingSelectItem';
+import React, { Children, useEffect, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import SliderMenu from '../components/SliderMenu';
 import styles from '../styles/setting.module.scss';
 import SettingInputItem from '../components/SettingInputItem';
 import { catConfigItem } from '../components/CatCat';
+import p from '../../../package.json';
 // import '../samples/electron-store'
 import SettingSwitchItem from '../components/SettingSwitchItem';
 // const catConfig = window.catConfig
 // catConfig.setDataPath('F://catConfig.json')
 
 const Setting = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isUpdateOpen,
+    onOpen: onUpdateOpen,
+    onClose: onUpdateClose,
+  } = useDisclosure();
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  const cancelUpdateRef = useRef<HTMLButtonElement>(null);
   const tempRoomId = 0;
   const toast = useToast();
   const obj: { [K: string]: any } = {};
   const [catConfigData, setCatConfigData] = useState(obj);
+  const [state, setState] = useState(obj);
   const color = useColorMode();
   const load = (num: number) => {
     console.info('on load user img and nickname');
@@ -113,6 +138,52 @@ const Setting = () => {
   useEffect(() => {
     // init data
     console.info('init data');
+    // check update
+    axios
+      .get(
+        'https://api.github.com/repos/kokolokksk/catcat-dm-react/releases/latest'
+      )
+      .then((res) => {
+        console.info(res.data.tag_name);
+        console.info(res.data.name);
+        console.info(res.data.body);
+        console.info(res.data.html_url);
+        console.info(res.data.assets[0].browser_download_url);
+        console.info(res.data.assets[0].name);
+        console.info(res.data.assets[0].size);
+        console.info(res.data.assets[0].updated_at);
+        console.info(res.data.assets[0].created_at);
+        console.info(res.data.assets[0].content_type);
+        setState({
+          ...state,
+          transferred: 0,
+          total: 0,
+          version: res.data.tag_name,
+          name: res.data.name,
+          body: res.data.body,
+          html_url: res.data.html_url,
+          browser_download_url: res.data.assets[0].browser_download_url,
+          file_name: res.data.assets[0].name,
+          size: res.data.assets[0].size,
+          updated_at: res.data.assets[0].updated_at,
+          created_at: res.data.assets[0].created_at,
+          content_type: res.data.assets[0].content_type,
+        });
+        console.info(p.version, state.version);
+        if (
+          parseInt(p.version.replaceAll('.', ''), 10) <
+          parseInt(state.version.replaceAll('v', '').replaceAll('.', ''), 10)
+        ) {
+          console.info('update');
+          onOpen();
+        } else {
+          console.info('no update');
+        }
+        return '';
+      })
+      .catch((e) => {
+        console.info(e.message);
+      });
     window.danmuApi.updateMessage((_event: any, data: any) => {
       console.info(data);
       toast({
@@ -121,6 +192,15 @@ const Setting = () => {
         status: 'error',
         duration: 2000,
         isClosable: true,
+      });
+    });
+    window.danmuApi.downProgress((_event: any, data: any) => {
+      console.info(data);
+      setState({
+        ...state,
+        progress: data[0],
+        transferred: data[1],
+        total: data[2],
       });
     });
     const arr = catConfigItem.map((item) =>
@@ -176,6 +256,10 @@ const Setting = () => {
       pageTheme = styles.page;
       break;
   }
+  const updateApp = () => {
+    console.info('update app');
+    window.electron.ipcRenderer.sendMessage('update:app', []);
+  };
   return (
     <Flex height="100vh">
       <SliderMenu
@@ -302,7 +386,79 @@ const Setting = () => {
           {/* <ColorSelectContainer c={commonInputItemSave}/> */}
         </div>
       </div>
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              更新提示
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <b>{state.version}</b>版本已经发布，是否更新?
+              <p />
+              <ReactMarkdown>{state.body}</ReactMarkdown>
+              {state.updated_at}
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button
+                colorScheme="green"
+                onClick={() => {
+                  updateApp();
+                  onClose();
+                  onUpdateOpen();
+                }}
+                className=" ml-4 mr-2"
+              >
+                确定
+              </Button>
+              <Button ref={cancelRef} onClick={onClose}>
+                取消
+              </Button>
+              <Button colorScheme="gray" onClick={onClose} ml={3}>
+                不再提示
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+      <AlertDialog
+        isOpen={isUpdateOpen}
+        leastDestructiveRef={cancelUpdateRef}
+        onClose={onUpdateClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              更新中
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Progress colorScheme="green" size="sm" value={state.progress} />
+              <p />
+              {state.transferred}/{state.total}
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button
+                colorScheme="green"
+                onClick={() => {
+                  onUpdateClose();
+                }}
+                className=" ml-4 mr-2"
+              >
+                后台下载
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Flex>
   );
 };
+
 export default Setting;

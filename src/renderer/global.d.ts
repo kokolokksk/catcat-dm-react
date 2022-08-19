@@ -27,6 +27,7 @@ declare global {
       mainProcessMessage: (arg0: (_event: any, data: any) => void) => void;
       updateMessage: (arg0: (_event: any, data: any) => void) => void;
       msgTips: (arg0: (_event: any, data: any) => void) => void;
+      downProgress: (arg0: (_event: any, data: any) => void) => void;
     };
     removeLoading: () => void;
   }
