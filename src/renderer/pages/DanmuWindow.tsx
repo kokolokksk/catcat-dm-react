@@ -6,6 +6,7 @@ import BackgroundWave from 'renderer/components/BackgroundWave';
 import Titlebar from 'renderer/components/Titlebar';
 import dayjs from 'dayjs';
 import React from 'react';
+import CatLog from 'renderer/utils/CatLog';
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
 import {
@@ -97,7 +98,7 @@ class DanmuWindow extends React.Component {
       window.electron.store.get(item.name)
     );
     arr.map((item: any, index: number) => {
-      console.info(item);
+      CatLog.console(item);
       const k = catConfigItem[index].name as string;
       muaConfig[k] = item;
 
@@ -113,16 +114,16 @@ class DanmuWindow extends React.Component {
       comeInList: [],
       muaConfig,
     };
-    console.info(`muacofig加载完成`);
-    console.info(this.state);
+    CatLog.console(`muacofig加载完成`);
+    CatLog.console(this.state);
     this.load(muaConfig);
   }
 
   componentDidMount() {
     const { muaConfig, allDmList, comeInList } = this.state;
-    console.info('renderer dw');
+    CatLog.console('renderer dw');
     setInterval(() => {
-      console.info('try to read');
+      CatLog.console('try to read');
       if (this.ttsOk) {
         this.speakDanmuReal(null);
       }
@@ -130,7 +131,7 @@ class DanmuWindow extends React.Component {
     const countReset = () => {
       const t = new Date();
       if (t.getSeconds() === 0) {
-        console.info('try reset count');
+        CatLog.console('try reset count');
         this.setState({
           comeInLastMinute: 0,
         });
@@ -169,12 +170,12 @@ class DanmuWindow extends React.Component {
         if (dm.type !== 3) {
           const listSize = allDmList.list.length;
           const max = Math.min(listSize, 7);
-          console.info(max);
+          CatLog.console(max);
           const lastList = allDmList.list.slice(-max);
           for (let index = 0; index < lastList.length; index += 1) {
             const tempDanmu = lastList[index];
             const needmerge = this.needMergeDanmu(tempDanmu, dm);
-            console.info('check mergeble');
+            CatLog.console('check mergeble');
             if (needmerge) {
               merged = true;
               if (dm.type === 1) {
@@ -194,10 +195,14 @@ class DanmuWindow extends React.Component {
           }
           dm.keyy = data.keyy;
           if (!merged) {
+            if (allDmList.list.length > 7) {
+              allDmList.list.shift();
+              CatLog.info('clear some damuka');
+            }
             allDmList.list.push(dm);
             allDmList.autoHeight = 310 - this.listHeightRef?.clientHeight;
           }
-          console.info(allDmList);
+          CatLog.console(allDmList);
           this.setState({
             allDmList,
           });
@@ -211,22 +216,22 @@ class DanmuWindow extends React.Component {
           this.setState({ comeInList });
           // eslint-disable-next-line no-plusplus
           const { comeInLastMinute } = this.state;
-          console.info(comeInLastMinute);
+          CatLog.console(comeInLastMinute);
           this.setState({
             comeInLastMinute: comeInLastMinute + 1,
           });
         }
 
-        // console.info(dm)
+        // CatLog.console(dm)
       }
     });
   }
 
   componentDidUpdate(prevProps: any, prevState: any) {
     // FIXME bad usage
-    console.info('componentDidUpdate');
+    CatLog.console('componentDidUpdate');
     // if (!this.loaded) {
-    //   console.info('loading');
+    //   CatLog.console('loading');
     //   if (prevState?.muaConfig?.alwaysOnTop) {
     //     window.electron.ipcRenderer.sendMessage('setOnTop:setting', [
     //       [prevState?.muaConfig?.alwaysOnTop],
@@ -239,8 +244,8 @@ class DanmuWindow extends React.Component {
   componentWillUnmount() {}
 
   load = (muaConfig: MuaConfig) => {
-    console.info('load muaconfig');
-    console.info(muaConfig);
+    CatLog.console('load muaconfig');
+    CatLog.console(muaConfig);
     window.electron.ipcRenderer.sendMessage('setOnTop:setting', [
       muaConfig.alwaysOnTop,
     ]);
@@ -263,9 +268,9 @@ class DanmuWindow extends React.Component {
         return '';
       })
       .catch((e) => {
-        console.info(e);
+        CatLog.console(e);
       });
-    console.info('init danmu data');
+    CatLog.console('init danmu data');
   };
 
   needMergeDanmu = (tempDanmu: BiliBiliDanmu, dm: BiliBiliDanmu) => {
@@ -299,7 +304,7 @@ class DanmuWindow extends React.Component {
         return '';
       })
       .catch((e) => {
-        console.info(e);
+        CatLog.console(e);
       });
   };
 
@@ -316,10 +321,11 @@ class DanmuWindow extends React.Component {
       if (!dm.fansLevel) {
         dm.fansLevel = 0;
       }
-      const date = dayjs().format('YYYY-MM-DD HH:mm:ss');
+      const datetime = dayjs().format('YYYY-MM-DD HH:mm:ss');
+      const date = dayjs().format('YYYY-MM-DD');
       window.fs.appendFile(
-        './danmu.txt',
-        `${date} ${dm.nickname}[${dm.fansName}${dm.fansLevel}](${dm.uid}) : ${dm.content}\n`,
+        `./danmu-${date}.txt`,
+        `${datetime} ${dm.nickname}[${dm.fansName}${dm.fansLevel}](${dm.uid}) : ${dm.content}\n`,
         (err) => {
           if (err) throw err;
         }
@@ -330,14 +336,14 @@ class DanmuWindow extends React.Component {
   synthesizeToSpeaker = (text: string) => {
     const player = new this.sdk.SpeakerAudioDestination();
     player.onAudioEnd = function (s: unknown) {
-      console.info(s);
+      CatLog.console(s);
     };
     const synthesizer = new this.sdk.SpeechSynthesizer(
       this.speechConfig,
       this.sdk.AudioConfig.fromDefaultSpeakerOutput(player)
     );
-    console.info('come in ss');
-    console.info(synthesizer);
+    CatLog.console('come in ss');
+    CatLog.console(synthesizer);
     try {
       synthesizer.speakTextAsync(
         text,
@@ -357,7 +363,7 @@ class DanmuWindow extends React.Component {
         }
       );
     } catch (e) {
-      console.info(e);
+      CatLog.console(e);
       this.speakStatus = false;
     }
   };
@@ -433,9 +439,9 @@ class DanmuWindow extends React.Component {
           <div className={styles.c_bg}>
             <div
               style={{
-                transform: `translateY(${allDmList.autoHeight}px)`,
+                // transform: `translateY(${allDmList.autoHeight}px)`,
                 transition: 'transform 1s ease-in-out',
-                transformOrigin: '0px',
+                transformOrigin: '-24px',
               }}
             >
               <TransitionGroup>

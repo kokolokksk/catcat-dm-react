@@ -373,6 +373,22 @@ ipcMain.on('update:app', (event, arg) => {
   new AppUpdater();
 });
 
+ipcMain.on('log', (event, arg) => {
+  if (arg[0] === 'info') {
+    log.info(arg[1]);
+  } else if (arg[0] === 'error') {
+    log.error(arg[1]);
+  } else if (arg[0] === 'warn') {
+    log.warn(arg[1]);
+  } else if (arg[0] === 'debug') {
+    log.debug(arg[1]);
+  } else if (arg[0] === 'silly') {
+    log.silly(arg[1]);
+  } else {
+    log.info(arg[1]);
+  }
+});
+
 autoUpdater.on('checking-for-update', () => {
   sendStatusToWindow('Checking for update...');
 });

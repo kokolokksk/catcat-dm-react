@@ -16,8 +16,9 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import SettingSelectItem from 'renderer/components/SettingSelectItem';
-import React, { Children, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import CatLog from 'renderer/utils/CatLog';
 import SliderMenu from '../components/SliderMenu';
 import styles from '../styles/setting.module.scss';
 import SettingInputItem from '../components/SettingInputItem';
@@ -25,7 +26,6 @@ import { catConfigItem } from '../components/CatCat';
 import pack from '../../../package.json';
 // import '../samples/electron-store'
 import SettingSwitchItem from '../components/SettingSwitchItem';
-import { electron } from 'process';
 // const catConfig = window.catConfig
 // catConfig.setDataPath('F://catConfig.json')
 
@@ -45,7 +45,7 @@ const Setting = () => {
   const [state, setState] = useState(obj);
   const color = useColorMode();
   const load = (num: number) => {
-    console.info('on load user img and nickname');
+    CatLog.console('on load user img and nickname');
     axios
       .get(`https://api.live.bilibili.com/room/v1/Room/room_init?id=${num}`)
       // eslint-disable-next-line func-names
@@ -97,7 +97,7 @@ const Setting = () => {
     window.electron.store.set(skey, t);
   };
   const { colorMode, toggleColorMode } = useColorMode();
-  console.info(colorMode);
+  CatLog.console(colorMode);
   useEffect(() => {
     if (catConfigData.roomid) {
       load(catConfigData.roomid);
@@ -109,16 +109,16 @@ const Setting = () => {
           'https://api.github.com/repos/kokolokksk/catcat-dm-react/releases/latest'
         )
         .then((res) => {
-          console.info(res.data.tag_name);
-          console.info(res.data.name);
-          console.info(res.data.body);
-          console.info(res.data.html_url);
-          console.info(res.data.assets[0].browser_download_url);
-          console.info(res.data.assets[0].name);
-          console.info(res.data.assets[0].size);
-          console.info(res.data.assets[0].updated_at);
-          console.info(res.data.assets[0].created_at);
-          console.info(res.data.assets[0].content_type);
+          CatLog.console(res.data.tag_name);
+          CatLog.console(res.data.name);
+          CatLog.console(res.data.body);
+          CatLog.console(res.data.html_url);
+          CatLog.console(res.data.assets[0].browser_download_url);
+          CatLog.console(res.data.assets[0].name);
+          CatLog.console(res.data.assets[0].size);
+          CatLog.console(res.data.assets[0].updated_at);
+          CatLog.console(res.data.assets[0].created_at);
+          CatLog.console(res.data.assets[0].content_type);
           setState({
             ...state,
             downtext: '后台下载',
@@ -135,7 +135,7 @@ const Setting = () => {
             created_at: res.data.assets[0].created_at,
             content_type: res.data.assets[0].content_type,
           });
-          console.info(pack.version, res.data.tag_name);
+          CatLog.console(pack.version, res.data.tag_name);
           if (
             parseInt(pack.version.replaceAll('.', ''), 10) <
             parseInt(
@@ -143,21 +143,21 @@ const Setting = () => {
               10
             )
           ) {
-            console.info('update');
+            CatLog.console('update');
             onOpen();
           } else {
-            console.info('no update');
+            CatLog.console('no update');
           }
           return '';
         })
         .catch((e) => {
-          console.info(e.message);
+          CatLog.console(e.message);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [catConfigData.roomid]);
   const commonSwitchItemSave = async (skey: any, value: any) => {
-    console.info(value.target.checked);
+    CatLog.console(value.target.checked);
     window.electron.store.set(skey, value.target.checked);
     if (skey === 'darkMode') {
       toggleColorMode();
@@ -189,9 +189,9 @@ const Setting = () => {
   };
   useEffect(() => {
     // init data
-    console.info('init data');
+    CatLog.console('init data');
     window.danmuApi.updateMessage((_event: any, data: any) => {
-      console.info(data);
+      CatLog.console(data);
       if (data === 'Update downloaded') {
         setState({
           ...state,
@@ -200,7 +200,7 @@ const Setting = () => {
       }
     });
     window.danmuApi.downProgress((_event: any, data: any) => {
-      console.info(data);
+      CatLog.console(data);
       setState({
         ...state,
         progress: data[0],
@@ -217,7 +217,7 @@ const Setting = () => {
       // eslint-disable-next-line array-callback-return
       e.map((item: any, index: number) => {
         if (typeof item === catConfigItem[index].type) {
-          console.info(item);
+          CatLog.console(item);
           catConfigData[catConfigItem[index].name] = item;
         }
       });
@@ -262,7 +262,7 @@ const Setting = () => {
       break;
   }
   const updateApp = () => {
-    console.info('update app');
+    CatLog.console('update app');
     window.electron.ipcRenderer.sendMessage('update:app', []);
   };
   return (

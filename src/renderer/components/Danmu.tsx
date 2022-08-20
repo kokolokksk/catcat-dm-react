@@ -68,7 +68,9 @@ const Danmu = (prop: any) => {
         theme.colorMode === 'dark'
           ? styles.danmuContainerDark
           : styles.danmuContainer
-      } ${' rounded-md shadow-lg hover:bg-red-200  cursor-pointer '} ${styles.noDrag}` }
+      } ${' rounded-2xl shadow-lg hover:bg-red-200  cursor-pointer '} ${
+        styles.noDrag
+      }`}
     >
       <div className={styles.avatarContainer}>
         <img
@@ -94,7 +96,7 @@ const Danmu = (prop: any) => {
       <div className={styles.danmuContent}>{data.content}</div>
       <img
         alt=""
-        className={styles.avatar}
+        className={styles.chatImage}
         style={{ display: isChatImgDisplayble }}
         key={data.data.giftImg}
         onError={changeChatDisplay}
@@ -102,7 +104,11 @@ const Danmu = (prop: any) => {
       />
     </div>
   ) : data?.data.type === 2 ? (
-    <div className={`${containerClass} ${' rounded-md shadow-lg hover:bg-red-200  cursor-pointer '} ${styles.noDrag}`}>
+    <div
+      className={`${containerClass} ${' rounded-2xl shadow-lg hover:bg-red-200  cursor-pointer '} ${
+        styles.noDrag
+      }`}
+    >
       <img
         alt=""
         className={styles.avatar}
@@ -125,7 +131,7 @@ const Danmu = (prop: any) => {
       <div className={styles.danmuContent}>{data.content}</div>
       <img
         alt=""
-        className={styles.avatar}
+        className={styles.chatImage}
         style={{ display: isGiftImgDisplayble }}
         key={data.data.giftImg}
         onError={changeGiftDisplay}
@@ -145,7 +151,7 @@ const Danmu = (prop: any) => {
     </div>
   ) : data?.data.type === 4 ? (
     <div
-      className={`${gbContainer} ${' rounded-md shadow-lg hover:bg-red-200  cursor-pointer '} ${styles.noDrag}`}
+      className={`${gbContainer} ${' rounded-2xl shadow-lg hover:bg-red-200  cursor-pointer '} ${styles.noDrag}`}
       style={
         data.data.giftName === '舰长'
           ? {
@@ -189,7 +195,7 @@ const Danmu = (prop: any) => {
       </div>
       <div className={styles.danmuContent}>{data.content}</div>
       <span
-        className={styles.avatar}
+        className={styles.chatImage}
         style={
           data.data.giftName === '舰长'
             ? {
