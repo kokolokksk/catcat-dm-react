@@ -62,6 +62,24 @@ const ChatContainer = (prop: any | undefined) => {
     }
   };
   const { theme } = prop.config;
+  let leftIcon;
+  switch (theme) {
+    case 'light':
+      leftIcon = '❤';
+      break;
+    case 'dark':
+      leftIcon = '❤';
+      break;
+    case 'wave':
+      leftIcon = '❤';
+      break;
+    case 'miku':
+      leftIcon = '❄';
+      break;
+    default:
+      leftIcon = '❤';
+      break;
+  }
   return (
     <>
       <InputGroup>
@@ -69,7 +87,7 @@ const ChatContainer = (prop: any | undefined) => {
           pointerEvents="none"
           color="gray.300"
           fontSize="1.2em"
-          children="❤"
+          children={leftIcon}
         />
         <Input
           style={

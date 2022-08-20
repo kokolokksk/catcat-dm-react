@@ -37,6 +37,37 @@
   margin-right: 5vw;
   margin-bottom: 5px;
 }
+.danmuContainerMiku {
+  border: solid 1px teal;
+  text-shadow: 0 0 #489b6d;
+  align-items: center;
+  font-family: 'Consolas','zxfyyt','YouYuan';
+  width: 90vw;
+  height: 50px;
+  display: flex;
+  background-color: white;
+  margin-left: 5vw;
+  margin-top: 5px;
+  margin-right: 5vw;
+  margin-bottom: 5px;
+}
+.hoverClassMiku:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(57 197 187 / var(--tw-bg-opacity));
+}
+.gbContainerMiku {
+  border: solid 1px teal;
+  text-shadow: 0 0 #489b6d;
+  align-items: center;
+  font-family: 'Consolas','zxfyyt','YouYuan';
+  width: 90vw;
+  height: 50px;
+  display: flex;
+  margin-left: 5vw;
+  margin-top: 5px;
+  margin-right: 5vw;
+  margin-bottom: 5px;
+}
 .gbContainer {
   border: solid 1px teal;
   text-shadow: 0 0 #489b6d;

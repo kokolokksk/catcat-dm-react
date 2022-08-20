@@ -42,8 +42,8 @@ const SettingSwitchItem = (prop: any | undefined) => {
           <option style={{ cursor: 'pointer' }} value="wave">
             波浪
           </option>
-          <option style={{ cursor: 'pointer' }} value="longluuu">
-            长颈鹿
+          <option style={{ cursor: 'pointer' }} value="miku">
+            miku
           </option>
         </Select>
       </FormControl>

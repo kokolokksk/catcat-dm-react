@@ -24,6 +24,11 @@ const Titlebar = (prop: any | undefined) => {
       titlebarCloseClass = style.titlebarCloseWave;
       titlebarMinusClass = style.titlebarMinusWave;
       break;
+    case 'miku':
+      titlebarClass = style.titlebarMiku;
+      titlebarCloseClass = style.titlebarCloseMiku;
+      titlebarMinusClass = style.titlebarMinusMiku;
+      break;
     default:
       titlebarClass = style.titlebar;
       titlebarCloseClass = style.titlebarClose;

@@ -13,7 +13,7 @@ const Danmu = (prop: any) => {
   const [isChatImgDisplayble, setIsChatImgDisplayble] = useState('none');
   const [isGiftPriceDisplayble, setIsGiftPriceDisplayble] = useState('none');
   const [containerClass, setContainerClass] = useState(styles.danmuContainer);
-  const { superChatContainer, gbContainer } = styles;
+  const { superChatContainer } = styles;
   const [avatarFace, setAvatarFace] = useState('');
   const [giftImg, setGiftImg] = useState('');
   const faceImg = '';
@@ -62,13 +62,35 @@ const Danmu = (prop: any) => {
     // eslint-disable-next-line prettier/prettier
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  let danmuContainer;
+  let gbContainer;
+  let hoverClass = 'hover:bg-red-200';
+  switch (data.theme) {
+    case 'dark':
+      danmuContainer = styles.danmuContainerDark;
+      gbContainer = styles.gbContainer;
+      break;
+    case 'light':
+      danmuContainer = styles.danmuContainer;
+      gbContainer = styles.gbContainer;
+      break;
+    case 'wave':
+      danmuContainer = styles.danmuContainer;
+      gbContainer = styles.gbContainer;
+      break;
+    case 'miku':
+      danmuContainer = styles.danmuContainerMiku;
+      gbContainer = styles.gbContainerMiku;
+      hoverClass = styles.hoverClassMiku;
+      break;
+    default:
+      danmuContainer = styles.danmuContainer;
+      gbContainer = styles.gbContainer;
+      break;
+  }
   return data?.data.type === 1 ? (
     <div
-      className={`${
-        theme.colorMode === 'dark'
-          ? styles.danmuContainerDark
-          : styles.danmuContainer
-      } ${' rounded-2xl shadow-lg hover:bg-red-200  cursor-pointer '} ${
+      className={`${danmuContainer} ${hoverClass} ${'rounded-2xl shadow-lg cursor-pointer '} ${
         styles.noDrag
       }`}
     >
@@ -105,7 +127,7 @@ const Danmu = (prop: any) => {
     </div>
   ) : data?.data.type === 2 ? (
     <div
-      className={`${containerClass} ${' rounded-2xl shadow-lg hover:bg-red-200  cursor-pointer '} ${
+      className={`${danmuContainer} ${hoverClass} ${' rounded-2xl shadow-lg cursor-pointer '} ${
         styles.noDrag
       }`}
     >
@@ -151,7 +173,9 @@ const Danmu = (prop: any) => {
     </div>
   ) : data?.data.type === 4 ? (
     <div
-      className={`${gbContainer} ${' rounded-2xl shadow-lg hover:bg-red-200  cursor-pointer '} ${styles.noDrag}`}
+      className={`${gbContainer} ${hoverClass} ${' rounded-2xl shadow-lg cursor-pointer '} ${
+        styles.noDrag
+      }`}
       style={
         data.data.giftName === '舰长'
           ? {

@@ -165,3 +165,61 @@
   color: rgb(255, 255, 255) !important;
   background-color: rgb(180, 180, 180);
 }
+
+// miku theme
+.titlebarMiku {
+  background-color: #39C5BB;
+  height: 24px;
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+  display: inline-flex;
+  z-index: 1;
+  align-items: center;
+}
+
+.titlebarMinusMiku {
+  position: fixed;
+  right: 35px;
+  width:24px;
+  padding: 5px;
+  height:24px;
+  display:flex;
+  margin-right: -10px;
+  color: rgb(255, 255, 255) !important;
+
+}
+.titlebarMinusMiku:hover {
+  position: fixed;
+  right: 35px;
+  padding: 5px;
+  width:24px;
+  height:24px;
+  display:flex;
+  margin-right: -10px;
+  color: rgb(255, 255, 255) !important;
+  background-color: rgb(180, 200, 150);
+}
+
+.titlebarCloseMiku {
+  position: fixed;
+  display: flex;
+  right: 0;
+  padding: 5px;
+  margin-right: 0px;
+  width:24px;
+  height:24px;
+  color: rgb(255, 255, 255) !important;
+
+}
+.titlebarCloseMiku:hover {
+  position: fixed;
+  display: flex;
+  right: 0;
+  padding: 5px;
+  width:24px;
+  height:24px;
+  margin-right: 0px;
+  color: rgb(255, 255, 255) !important;
+  background-color:  red;
+}

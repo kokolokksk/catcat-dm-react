@@ -535,7 +535,7 @@ async function handleDanMuMSG(
   danmu.content = data.info[1];
   danmu.price = 0;
   danmu.giftNum = 0;
-  if(process.env.NODE_ENV === 'development'){
+  if (process.env.NODE_ENV === 'development') {
     if (danmu.content.indexOf('cat2') !== -1) {
       danmu.type = 2;
     }

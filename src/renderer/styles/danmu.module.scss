@@ -69,6 +69,22 @@
     width: 100vw;
     flex-flow: wrap;
 }
+.rootMiku {
+  background-color: #39C5BB;
+  -moz-box-shadow: 8px 8px 8px gray;
+		-webkit-box-shadow: 8px 8px 8px gray;
+		box-shadow: 1px 1px 0px gray;
+    border-radius:1%;
+    -webkit-background-size: 50px 50px;
+		-moz-background-size: 50px 50px;
+		background-size: 50px 50px;
+    display: flex;
+    position: relative;
+    top: 24px;
+    height: calc(100vh - 24px);
+    width: 100vw;
+    flex-flow: wrap;
+}
 .online {
   height: 5vh;
     background-color: transparent;

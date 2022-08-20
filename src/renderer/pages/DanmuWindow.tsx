@@ -18,6 +18,7 @@ import {
 import Danmu from '../components/Danmu';
 import ComeInDisplay from '../components/ComeInDisplay';
 import ChatContainer from '../components/ChatContainer';
+import BackgroundMiku from 'renderer/components/BackgroundMiku';
 
 type StateType = {
   comeInLastMinute: number;
@@ -417,6 +418,9 @@ class DanmuWindow extends React.Component {
       case 'wave':
         rootTheme = styles.rootWave;
         break;
+      case 'miku':
+        rootTheme = styles.rootMiku;
+        break;
       default:
         rootTheme = styles.root;
         break;
@@ -426,6 +430,7 @@ class DanmuWindow extends React.Component {
         <Titlebar theme={themeMode} />
         {/* <BackgroundWave display={muaConfig.wave} /> */}
         {muaConfig.theme === 'wave' && <BackgroundWave />}
+        {muaConfig.theme === 'miku' && <BackgroundMiku />}
         <div className={rootTheme}>
           <div className={styles.m_bg_top} />
           <div className={styles.online}>
@@ -472,7 +477,7 @@ class DanmuWindow extends React.Component {
             <ComeInDisplay data={comeInList} />
           </>
           <div className={styles.chatContainer}>
-            <ChatContainer config={muaConfig} />
+            <ChatContainer config={muaConfig} theme={themeMode} />
           </div>
         </div>
       </>
