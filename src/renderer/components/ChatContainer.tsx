@@ -9,6 +9,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { SetStateAction, useState } from 'react';
+import miku from '../assets/miku.gif';
 
 const ChatContainer = (prop: any | undefined) => {
   const [value, setValue] = useState('');
@@ -63,21 +64,27 @@ const ChatContainer = (prop: any | undefined) => {
   };
   const { theme } = prop.config;
   let leftIcon;
+  let leftIconBg;
   switch (theme) {
     case 'light':
       leftIcon = '❤';
+      leftIconBg = '';
       break;
     case 'dark':
       leftIcon = '❤';
+      leftIconBg = '';
       break;
     case 'wave':
       leftIcon = '❤';
+      leftIconBg = '';
       break;
     case 'miku':
-      leftIcon = '❄';
+      leftIcon = '';
+      leftIconBg = miku;
       break;
     default:
       leftIcon = '❤';
+      leftIconBg = '';
       break;
   }
   return (
@@ -88,6 +95,8 @@ const ChatContainer = (prop: any | undefined) => {
           color="gray.300"
           fontSize="1.2em"
           children={leftIcon}
+          background={`url(${leftIconBg}) no-repeat`}
+          style={{ backgroundSize: '90% 90%' }}
         />
         <Input
           style={
@@ -101,7 +110,11 @@ const ChatContainer = (prop: any | undefined) => {
           onKeyDown={handleKeyDown}
         />
         <InputRightElement>
-          <Button color="green.500" onClick={handleClick}>
+          <Button
+            color="green.500"
+            onClick={handleClick}
+            style={{ height: '94%' }}
+          >
             {' '}
             发送
           </Button>

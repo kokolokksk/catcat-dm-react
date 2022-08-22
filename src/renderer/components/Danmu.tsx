@@ -2,6 +2,7 @@
 import { Divider, useColorMode } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import styles from '../styles/danmuc.module.scss';
+import themes from '../styles/themes.module.scss';
 
 const Danmu = (prop: any) => {
   const data = {
@@ -64,28 +65,37 @@ const Danmu = (prop: any) => {
   }, []);
   let danmuContainer;
   let gbContainer;
+  let themeBackColor;
+  let themeColor;
+  let scContainer;
   let hoverClass = 'hover:bg-red-200';
   switch (data.theme) {
     case 'dark':
       danmuContainer = styles.danmuContainerDark;
       gbContainer = styles.gbContainer;
+      scContainer = styles.superChatContainerDark;
       break;
     case 'light':
       danmuContainer = styles.danmuContainer;
       gbContainer = styles.gbContainer;
+      scContainer = styles.superChatContainerLight;
       break;
     case 'wave':
       danmuContainer = styles.danmuContainer;
       gbContainer = styles.gbContainer;
+      scContainer = styles.superChatContainerWave;
       break;
     case 'miku':
       danmuContainer = styles.danmuContainerMiku;
       gbContainer = styles.gbContainerMiku;
       hoverClass = styles.hoverClassMiku;
+      scContainer = styles.superChatContainerMiku;
+      themeBackColor = themes.mikuBaseBackground;
       break;
     default:
       danmuContainer = styles.danmuContainer;
       gbContainer = styles.gbContainer;
+      scContainer = styles.scContainer;
       break;
   }
   return data?.data.type === 1 ? (
@@ -262,7 +272,12 @@ const Danmu = (prop: any) => {
       </div>
     </div>
   ) : (
-    <div className={superChatContainer} style={{ border: scBorder }}>
+    <div
+      className={`${scContainer} ${hoverClass} ${'rounded-2xl shadow-lg cursor-pointer '} ${
+        styles.noDrag
+      }`}
+      style={{ border: scBorder }}
+    >
       <img
         alt=""
         className={styles.avatar}
@@ -282,7 +297,12 @@ const Danmu = (prop: any) => {
       <div className={styles.fansAndNickname}>
         {/* <div className={styles.fans}>1</div> */}
       </div>
-      <div className={styles.superChatContent}>{data.content}</div>
+      <div
+        className={styles.superChatContent}
+        style={{ color: 'red', fontSize: '1.2rem', fontWeight: 'bold' }}
+      >
+        {data.content}
+      </div>
       <div
         style={{
           color: 'orange',

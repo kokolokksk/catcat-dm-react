@@ -13,6 +13,7 @@ import {
   AlertDialogFooter,
   Button,
   Progress,
+  background,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import SettingSelectItem from 'renderer/components/SettingSelectItem';
