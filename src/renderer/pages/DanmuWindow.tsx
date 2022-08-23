@@ -7,6 +7,8 @@ import Titlebar from 'renderer/components/Titlebar';
 import dayjs from 'dayjs';
 import React from 'react';
 import CatLog from 'renderer/utils/CatLog';
+import SuperChatBar from 'renderer/components/SuperChatBar';
+import BackgroundMiku from 'renderer/components/BackgroundMiku';
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
 import {
@@ -18,12 +20,12 @@ import {
 import Danmu from '../components/Danmu';
 import ComeInDisplay from '../components/ComeInDisplay';
 import ChatContainer from '../components/ChatContainer';
-import BackgroundMiku from 'renderer/components/BackgroundMiku';
 
 type StateType = {
   comeInLastMinute: number;
   count: number;
   allDmList: { list: Array<BiliBiliDanmu>; autoHeight: number };
+  scList: { list: Array<BiliBiliDanmu>; autoHeight: number };
   comeInList: Array<BiliBiliDanmu>;
   muaConfig: MuaConfig;
 };
@@ -112,6 +114,10 @@ class DanmuWindow extends React.Component {
         list: [this.initMsg],
         autoHeight: 310,
       },
+      scList: {
+        list: [],
+        autoHeight: 310,
+      },
       comeInList: [],
       muaConfig,
     };
@@ -121,7 +127,7 @@ class DanmuWindow extends React.Component {
   }
 
   componentDidMount() {
-    const { muaConfig, allDmList, comeInList } = this.state;
+    const { muaConfig, allDmList, scList, comeInList } = this.state;
     CatLog.console('renderer dw');
     setInterval(() => {
       CatLog.console('try to read');
@@ -166,7 +172,7 @@ class DanmuWindow extends React.Component {
       const dm = await transformMsg(data, muaConfig.proxyApi as boolean);
       if (dm && stringify(dm.data) !== '{}') {
         this.uploadDanmu(dm);
-        this.writeDanmuToFile(dm);
+        this.writeDanmuToFile(dm, muaConfig.roomid);
         let merged = false;
         if (dm.type !== 3) {
           const listSize = allDmList.list.length;
@@ -199,6 +205,9 @@ class DanmuWindow extends React.Component {
             if (allDmList.list.length > 7) {
               allDmList.list.shift();
               CatLog.info('clear some damuka');
+            }
+            if (dm.type === 5) {
+              scList.list.push(dm);
             }
             allDmList.list.push(dm);
             allDmList.autoHeight = 310 - this.listHeightRef?.clientHeight;
@@ -313,7 +322,7 @@ class DanmuWindow extends React.Component {
     // interface: upload danmu to server
   };
 
-  writeDanmuToFile = (dm: BiliBiliDanmu) => {
+  writeDanmuToFile = (dm: BiliBiliDanmu, roomId: number) => {
     // interface: upload danmu to server
     if (dm.content) {
       if (!dm.fansName) {
@@ -325,7 +334,7 @@ class DanmuWindow extends React.Component {
       const datetime = dayjs().format('YYYY-MM-DD HH:mm:ss');
       const date = dayjs().format('YYYY-MM-DD');
       window.fs.appendFile(
-        `./danmu-${date}.txt`,
+        `./${roomId}-danmu-${date}.txt`,
         `${datetime} ${dm.nickname}[${dm.fansName}${dm.fansLevel}](${dm.uid}) : ${dm.content}\n`,
         (err) => {
           if (err) throw err;
@@ -404,8 +413,14 @@ class DanmuWindow extends React.Component {
   };
 
   render() {
-    const { count, comeInLastMinute, allDmList, comeInList, muaConfig } =
-      this.state;
+    const {
+      count,
+      comeInLastMinute,
+      allDmList,
+      scList,
+      comeInList,
+      muaConfig,
+    } = this.state;
     const themeMode = muaConfig.theme;
     let rootTheme = styles.root;
     switch (themeMode) {
@@ -441,6 +456,7 @@ class DanmuWindow extends React.Component {
             <span>进入/分钟：</span>
             <span style={{ color: 'orange' }}>{comeInLastMinute || 0}</span>
           </div>
+          <SuperChatBar scList={scList} />
           <div className={styles.c_bg}>
             <div
               style={{
