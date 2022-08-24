@@ -16,7 +16,7 @@
     height: calc(100vh - 24px);
     width: 100vw;
     flex-flow: wrap;
-
+    justify-content: center;
 }
 .rootWave {
 
@@ -32,6 +32,7 @@
     height: calc(100vh - 24px);
     width: 100vw;
     flex-flow: wrap;
+    justify-content: center;
 
 }
 .rootLight {
@@ -49,6 +50,7 @@
     width: 100vw;
     flex-flow: wrap;
     background-color: #ffffff;
+    justify-content: center;
 }
 .rootDark {
   background-color: #1a202c;
@@ -64,6 +66,7 @@
     height: calc(100vh - 24px);
     width: 100vw;
     flex-flow: wrap;
+    justify-content: center;
 }
 .rootMiku {
   background-color: #39C5BB;
@@ -79,6 +82,7 @@
     height: calc(100vh - 24px);
     width: 100vw;
     flex-flow: wrap;
+    justify-content: center;
 }
 .online {
   height: 5vh;
@@ -100,6 +104,7 @@
   }
 
   .c_bg{
+    position: relative;
     overflow: overlay;
     /* padding-top: 20vh; */
     overflow: hidden;
@@ -142,6 +147,9 @@
       }
 
       .chatContainer {
+        position: relative;
+       display: flex;
+       flex-direction: column-reverse;
         -webkit-app-region: no-drag;
         background-color: transparent;
         align-content: center;

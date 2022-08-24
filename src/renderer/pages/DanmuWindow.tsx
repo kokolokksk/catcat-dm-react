@@ -448,13 +448,15 @@ class DanmuWindow extends React.Component {
         {muaConfig.theme === 'miku' && <BackgroundMiku />}
         <div className={rootTheme}>
           <div className={styles.m_bg_top} />
-          <div className={styles.online}>
-            {`人气: `}
-            <span style={{ color: 'orange' }}>{count || 0}</span>
-          </div>
-          <div className={styles.comeinLastMinute}>
-            <span>进入/分钟：</span>
-            <span style={{ color: 'orange' }}>{comeInLastMinute || 0}</span>
+          <div style={{ width: '100%', height: '5vh', display: 'flex' }}>
+            <div className={styles.online}>
+              {`人气: `}
+              <span style={{ color: 'orange' }}>{count || 0}</span>
+            </div>
+            <div className={styles.comeinLastMinute}>
+              <span>进入/分钟：</span>
+              <span style={{ color: 'orange' }}>{comeInLastMinute || 0}</span>
+            </div>
           </div>
           <SuperChatBar scList={scList} />
           <div className={styles.c_bg}>

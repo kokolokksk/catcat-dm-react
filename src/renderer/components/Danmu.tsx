@@ -276,7 +276,7 @@ const Danmu = (prop: any) => {
       className={`${scContainer} ${hoverClass} ${'rounded-2xl shadow-lg cursor-pointer '} ${
         styles.noDrag
       }`}
-      style={{ border: scBorder }}
+      style={{ border: scBorder, backgroundColor: data.data.background_color }}
     >
       <img
         alt=""
@@ -299,7 +299,7 @@ const Danmu = (prop: any) => {
       </div>
       <div
         className={styles.superChatContent}
-        style={{ color: 'red', fontSize: '1.2rem', fontWeight: 'bold' }}
+        style={{ color: data.color, fontSize: '1.2rem', fontWeight: 'bold' }}
       >
         {data.content}
       </div>
