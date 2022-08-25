@@ -1,8 +1,38 @@
-diff --git a/node_modules/bilibili-live-danmaku-api/index.d.ts b/node_modules/bilibili-live-danmaku-api/index.d.ts
-new file mode 100644
-index 0000000..7840713
---- /dev/null
-+++ b/node_modules/bilibili-live-danmaku-api/index.d.ts
-@@ -0,0 +1 @@
-+declare module 'bilibili-live-danmaku-api';
-\ No newline at end of file
+diff --git a/node_modules/bilibili-live-danmaku-api/index.js b/node_modules/bilibili-live-danmaku-api/index.js
+index 971660f..d949eb0 100644
+--- a/node_modules/bilibili-live-danmaku-api/index.js
++++ b/node_modules/bilibili-live-danmaku-api/index.js
+@@ -1,6 +1,6 @@
+ const got = require('got')
+ 
+-module.exports = async ({ msg, SESSDATA, csrf, roomid, extra = {} }) => {
++exports.send = async ({ msg, SESSDATA, csrf, roomid, extra = {} }) => {
+   const { body } = await got('https://api.live.bilibili.com/msg/send', {
+     headers: { Cookie: `SESSDATA=${SESSDATA}` },
+     form: true,
+@@ -21,3 +21,25 @@ module.exports = async ({ msg, SESSDATA, csrf, roomid, extra = {} }) => {
+     throw body.message
+   }
+ }
++
++exports.updateRoomTitle = async ({ title, SESSDATA, csrf, room_id, extra = {} }) => {
++  const { body } = await got(
++    'https://api.live.bilibili.com/room/v1/Room/update',
++    {
++      headers: { Cookie: `SESSDATA=${SESSDATA};bili_jct=${csrf}` },
++      form: true,
++      json: true,
++      body: {
++        title,
++        room_id,
++        csrf_token: csrf,
++        csrf,
++        ...extra,
++      },
++    }
++  );
++  if (body.code) {
++    return body;
++  }
++  return body;
++};

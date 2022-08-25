@@ -25,6 +25,9 @@ contextBridge.exposeInMainWorld('electron', {
     sendMessage(channel: string, args: unknown[]) {
       ipcRenderer.send(channel, args);
     },
+    updateRoomTitle(channel: string, args: unknown[]) {
+      ipcRenderer.send(channel, args);
+    },
     on(channel: string, func: (...args: unknown[]) => void) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
         func(...args);

@@ -88,11 +88,16 @@ const MiniSuperChat = (prop: any | undefined) => {
         <PopoverContent>
           <PopoverArrow />
           <PopoverCloseButton />
-          <PopoverHeader>
+          <PopoverHeader
+            flexWrap="wrap"
+            display="flex"
+            width="100%"
+            alignItems="center"
+          >
             <img
               alt=""
               className={danmucStyle.avatar}
-              src={data.data.user_info.face}
+              src={data.origin.data.user_info.face}
             />
             {data.nickname}
           </PopoverHeader>

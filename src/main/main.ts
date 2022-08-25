@@ -26,7 +26,7 @@ import { randomUUID } from 'crypto';
 import { getHTMLPathBySearchKey, resolveHtmlPath } from './util';
 
 require('electron-referer')('https://www.bilibili.com/');
-const send = require('bilibili-live-danmaku-api');
+const { send, updateRoomTitle } = require('bilibili-live-danmaku-api');
 
 let live: LiveWS;
 const store = new Store();
@@ -234,6 +234,35 @@ ipcMain.on('sendDanmu', (event, arg) => {
       dm?.webContents.send('main-process-message', e);
       dm?.webContents.send('msg-tips', e);
     });
+  } catch (err: any) {
+    console.error(err);
+  }
+});
+ipcMain.on('updateRoomTitle', (event, arg) => {
+  try {
+    updateRoomTitle({
+      title: arg[0].title,
+      room_id: arg[0].roomid,
+      SESSDATA: arg[0].SESSDATA,
+      csrf: arg[0].csrf,
+    })
+      .then((res: any) => {
+        let { msg } = res;
+        console.error('in then');
+        console.log(res);
+        console.log(res.msg);
+        console.log(res.code);
+        if (res.code === 0) {
+          msg = '修改成功';
+        }
+        mainWindow?.webContents.send('msg-tips', msg);
+      })
+      .catch((err: any) => {
+        console.error('in error');
+        console.log(err.msg);
+        console.log(err.code);
+        mainWindow?.webContents.send('msg-tips', err.msg);
+      });
   } catch (err: any) {
     console.error(err);
   }

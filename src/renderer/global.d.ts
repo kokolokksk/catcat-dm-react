@@ -13,6 +13,7 @@ declare global {
       };
       ipcRenderer: {
         sendMessage: (channel: string, args: unknown[]) => void;
+        updateRoomTitle: (channel: string, args: unknown[]) => void;
       };
     };
     darkMode: {

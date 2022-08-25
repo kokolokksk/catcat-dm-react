@@ -95,6 +95,15 @@ const Setting = () => {
         roomid: Number(t),
       });
     }
+    if (skey === 'roomtitle') {
+      const arg = {
+        title: value,
+        roomid: catConfigData.roomid,
+        SESSDATA: catConfigData.SESSDATA,
+        csrf: catConfigData.csrf,
+      };
+      window.electron.ipcRenderer.updateRoomTitle('updateRoomTitle', [arg]);
+    }
     window.electron.store.set(skey, t);
   };
   const { colorMode, toggleColorMode } = useColorMode();
@@ -191,6 +200,16 @@ const Setting = () => {
   useEffect(() => {
     // init data
     CatLog.console('init data');
+    window.danmuApi.msgTips((_event: any, data: any) => {
+      CatLog.console(data);
+      toast({
+        title: '提示',
+        description: data,
+        status: data === '修改成功' ? 'success' : 'error',
+        duration: 2000,
+        isClosable: true,
+      });
+    });
     window.danmuApi.updateMessage((_event: any, data: any) => {
       CatLog.console(data);
       if (data === 'Update downloaded') {
@@ -282,6 +301,13 @@ const Setting = () => {
             v={catConfigData.roomid}
             c={commonInputItemSave}
             skey="roomid"
+          />
+          <SettingInputItem
+            name="更新直播间标题"
+            theme={catConfigData.theme}
+            v={catConfigData.roomtitle}
+            c={commonInputItemSave}
+            skey="roomtitle"
           />
           <Divider />
           <SettingInputItem
