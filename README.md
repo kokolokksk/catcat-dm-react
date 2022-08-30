@@ -1,30 +1,29 @@
-![](./assets/icon.png)
-
 [![Build/release](https://github.com/kokolokksk/catcat-dm-react/actions/workflows/publish.yml/badge.svg?branch=main)](https://github.com/kokolokksk/catcat-dm-react/actions/workflows/publish.yml)
 [![HitCount](http://hits.dwyl.com/kokolokksk/catcat-dm-react.svg)](http://hits.dwyl.com/kokolokksk/catcat-dm-react)
 ![](https://img.shields.io/github/stars/kokolokksk/catcat-dm-react?color=green&style=flat-square)
 # CatCatDM React
 
+![](./assets/icon.png)
 > CatCatDM! React!
-> >The meta-electron-catcat-bilibili-danmu application!
+> > 喵喵
 
 ### 说明
  哔哩哔哩直播 弹幕姬：
-  查看直播间弹幕，发送弹幕。
+  查看直播间弹幕。
 
-- 发送弹幕需要设置 ```SESSDATA```(```SESSDATA```) 与 ```csrf```(```bili_jct```)，登陆哔哩哔哩后 F12 复制cookies中的 ```SESSDATA``` 与 ```bili_jct``` 对应键值
+- 发送弹幕 与 修改 直播间标题 需要设置 ```SESSDATA```(```SESSDATA```) 与 ```csrf```(```bili_jct```)，登陆哔哩哔哩后 F12 复制cookies中的 ```SESSDATA``` 与 ```bili_jct``` 对应键值
 - tts 需要Azure平台相应key
 - 弹幕阴影建议设置值```1px 1px 1px  #fff``` 或者 ```1px 1px 1px  #000```
-- ~~现已可以通过[catcat-data-web](https://db.loli.monster)查看历史弹幕！(需要开启弹幕上传。)
-- ~~Ctrl+Shift+F5 重载弹幕窗口。~~
 >应用界面
  - ![./zread/setting.png](./zread/setting.png)
  - ![./zread/dm.png](./zread/dm.gif)
 
 - [下载地址](https://github.com/kokolokksk/catcat-dm-react/releases/latest)
+
 ## Windows
 - 在Windows 10 上测试
 - 直接运行CatCatDM.exe
+
 ## Linux
 ~- 在Ubuntu 20.04 版本上测试。~ (尚未测试)
 - 进入目录 ```chmod +x CatCatDM```
@@ -34,22 +33,22 @@
 - [x] 对接直播间
 - [x] 自定义房间号
 - [x] 显示弹幕
-- [ ] 粉丝牌（包含颜色）
-- [ ] 背景颜色自定义
-- [ ] 弹幕颜色
 - [x] 人气
-- [ ] TTS欢迎礼物
+- [x] 弹幕本地保存
+- [x] 修改直播间标题
+- [x] sc显示
+- [x] 主题切换
+- [x] TTS欢迎礼物
+- [x] TTS读弹幕
 - [x] 进入直播间提示 
-- [x] 礼物(基本显示)
+- [x] 礼物显示
 - [x] 发送弹幕
-- [ ] 发送弹幕更多选项
-- [ ] [弹幕统计](https://github.com/kokolokksk/catcat-dm-data)
-- ~[增量更新](https://github.com/kokolokksk/lolidate)~
+- [x] 内置应用更新【仅exe版本】 
 - [x] 使用更加好听的TTS
 
 
 #### 下一步
-- 显示优化。
+- 直播间管理相关。
 
 ### 感谢（Thanks）
 - npm module [electron-referer](https://github.com/akameco/electron-referer)
