@@ -17,6 +17,8 @@ import '../styles/slider-menu.css';
 import styles from '../styles/slider_menu.module.scss';
 import CatCatSign from './CatCatSign';
 import MenuItem from './MenuItem';
+import axios from 'axios';
+import CatLog from 'renderer/utils/CatLog';
 
 // eslint-disable-next-line import/order
 
@@ -52,9 +54,19 @@ const SliderMenu = (prop: any | undefined) => {
   const initialRef = React.useRef()
   let love =0 ;
   const toast = useToast();
-  const openLove = () => {
+  const openLove = async () => {
     // eslint-disable-next-line no-plusplus
     love++;
+    // 更新用户信息 fixme
+    axios.defaults.withCredentials = true;
+    const user = await axios('https://api.bilibili.com/x/space/acc/info', {
+      headers: {
+        Cookie: `SESSDATA=9c3dd1cd%2C1677403768%2C97e8b%2A81`,
+      },
+      withCredentials: true,
+    });
+    CatLog.log(user.data);
+
     if(love >4){
       toast({
         title: '',

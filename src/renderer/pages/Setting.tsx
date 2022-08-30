@@ -308,7 +308,7 @@ const Setting = () => {
           },
         }
       )
-      .then((res) => {
+      .then(async (res) => {
         CatLog.console(res.data);
         let a;
         let b;
@@ -320,6 +320,11 @@ const Setting = () => {
           if (SESSDATA && BILI_JCT) {
             window.electron.store.set('SESSDATA', SESSDATA);
             window.electron.store.set('csrf', BILI_JCT);
+            setCatConfigData({
+              ...catConfigData,
+              SESSDATA,
+              csrf: BILI_JCT,
+            });
             onLoginClose();
             toast({
               title: '提示',
