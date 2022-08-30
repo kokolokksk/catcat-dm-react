@@ -16,7 +16,7 @@
 - 弹幕阴影建议设置值```1px 1px 1px  #fff``` 或者 ```1px 1px 1px  #000```
 >应用界面
  - ![./zread/setting.png](./zread/setting.png)
- - ![./zread/dm.png](./zread/dm.gif)
+ - ![./zread/dm.png](./zread/dm.png)
 
 - [下载地址](https://github.com/kokolokksk/catcat-dm-react/releases/latest)
 
