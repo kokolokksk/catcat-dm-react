@@ -458,7 +458,7 @@ class DanmuWindow extends React.Component {
               <span style={{ color: 'orange' }}>{comeInLastMinute || 0}</span>
             </div>
           </div>
-          <SuperChatBar scList={scList} />
+          <SuperChatBar scList={scList} theme={muaConfig.theme} />
           <div className={styles.c_bg}>
             <div
               style={{

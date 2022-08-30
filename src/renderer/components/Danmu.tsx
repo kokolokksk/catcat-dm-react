@@ -267,7 +267,7 @@ const Danmu = (prop: any) => {
           border: 'solid 1px teal',
         }}
       >
-        <small>￥</small>
+        <small>¥</small>
         <b>{data.data.price / 1000}</b>
       </div>
     </div>

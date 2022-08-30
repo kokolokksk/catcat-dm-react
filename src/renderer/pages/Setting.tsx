@@ -16,6 +16,7 @@ import {
   background,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import { QRCodeSVG } from 'qrcode.react';
 import SettingSelectItem from 'renderer/components/SettingSelectItem';
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -37,8 +38,14 @@ const Setting = () => {
     onOpen: onUpdateOpen,
     onClose: onUpdateClose,
   } = useDisclosure();
+  const {
+    isOpen: isLoginOpen,
+    onOpen: onLoginOpen,
+    onClose: onLoginClose,
+  } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null);
   const cancelUpdateRef = useRef<HTMLButtonElement>(null);
+  const cancelLoginRef = useRef<HTMLButtonElement>(null);
   const tempRoomId = 0;
   const toast = useToast();
   const obj: { [K: string]: any } = {};
@@ -285,6 +292,108 @@ const Setting = () => {
     CatLog.console('update app');
     window.electron.ipcRenderer.sendMessage('update:app', []);
   };
+
+  const checkQrLogin = async (oauthKey: string, url: string) => {
+    console.log('checkQrLogin');
+    const data = await axios
+      .post(
+        `https://passport.bilibili.com/qrcode/getLoginInfo?oauthKey=${oauthKey}`,
+        {
+          oauthKey,
+          gourl: 'https://live.bilibili.com/',
+        },
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      )
+      .then((res) => {
+        CatLog.console(res.data);
+        let a;
+        let b;
+        if (res.data.code === 0 && res.data.status === true) {
+          console.log(res.data);
+          const { url } = res.data.data;
+          const SESSDATA = url.split('&')[3].split('=')[1];
+          const BILI_JCT = url.split('&')[4].split('=')[1];
+          if (SESSDATA && BILI_JCT) {
+            window.electron.store.set('SESSDATA', SESSDATA);
+            window.electron.store.set('csrf', BILI_JCT);
+            onLoginClose();
+            toast({
+              title: '提示',
+              description: '登录成功,凭证已更新。',
+              status: 'success',
+              duration: 5000,
+              isClosable: true,
+            });
+          } else {
+            toast({
+              title: '提示',
+              description: '登录失败',
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+            });
+          }
+        }
+        if (res.data.data === -4 && res.data.status === false) {
+          console.log(res.data.message);
+          setState({
+            ...state,
+            qrUrl: url,
+            loginStatus: '请使用哔哩哔哩App扫码',
+          });
+          a = setTimeout(() => {
+            checkQrLogin(oauthKey, url);
+          }, 10000);
+        }
+        if (res.data.data === -5 && res.data.status === false) {
+          console.log(res.data.message);
+          setState({
+            ...state,
+            qrUrl: url,
+            loginStatus: '已扫描，请确认登录',
+          });
+          b = setTimeout(() => {
+            checkQrLogin(oauthKey, url);
+          }, 10000);
+        }
+        return res.data;
+      });
+  };
+
+  const freshQrLogin = async () => {
+    const data = await axios
+      .get('https://passport.bilibili.com/qrcode/getLoginUrl')
+      .then((res) => {
+        // CatLog.console(res.data.data.url);
+        setState({
+          ...state,
+          qrUrl: res.data.data.url,
+          loginStatus: '请使用哔哩哔哩App扫码',
+        });
+        setTimeout(() => {
+          checkQrLogin(res.data.data.oauthKey, res.data.data.url);
+        }, 5000);
+        return res.data.data;
+      });
+    CatLog.console(data);
+  };
+
+  const openQrLogin = () => {
+    CatLog.console('open qr login');
+    setState({
+      ...state,
+      loginStatus: '请使用哔哩哔哩App扫码',
+    });
+    onLoginOpen();
+    setTimeout(() => {
+      freshQrLogin();
+    }, 1000);
+  };
+
   return (
     <Flex height="100vh">
       <SliderMenu
@@ -423,6 +532,7 @@ const Setting = () => {
             skey="ttsKey"
           />
           <Divider />
+          <Button onClick={openQrLogin}>扫码登陆</Button>
           {/* <ColorSelectContainer c={commonInputItemSave}/> */}
         </div>
       </div>
@@ -503,6 +613,45 @@ const Setting = () => {
                 className=" ml-4 mr-2"
               >
                 {state.downtext}
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
+      <AlertDialog
+        isOpen={isLoginOpen}
+        leastDestructiveRef={cancelLoginRef}
+        onClose={onLoginClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              {state.loginStatus}
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <QRCodeSVG value={state.qrUrl} />
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button
+                colorScheme="green"
+                onClick={() => {
+                  freshQrLogin();
+                }}
+                className=" ml-4 mr-2"
+              >
+                刷新
+              </Button>
+              <Button
+                colorScheme="green"
+                onClick={() => {
+                  onLoginClose();
+                }}
+                className=" ml-4 mr-2"
+              >
+                关闭
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
