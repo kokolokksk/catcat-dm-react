@@ -58,15 +58,22 @@ const SliderMenu = (prop: any | undefined) => {
     // eslint-disable-next-line no-plusplus
     love++;
     // 更新用户信息 fixme
-    axios.defaults.withCredentials = true;
-    const user = await axios('https://api.bilibili.com/x/space/acc/info', {
-      headers: {
-        Cookie: `SESSDATA=9c3dd1cd%2C1677403768%2C97e8b%2A81`,
-      },
-      withCredentials: true,
+    // axios.defaults.withCredentials = true;
+    // const user = await axios('https://api.bilibili.com/x/space/acc/info', {
+    //   headers: {
+    //     Cookie: `SESSDATA=9c3dd1cd%2C1677403768%2C97e8b%2A81`,
+    //   },
+    //   withCredentials: true,
+    // });
+    // CatLog.log(user.data);
+    const cookie = {
+        url: 'https://api.bilibili.com/x/space/acc/info',
+        SESSDATA: '05bf2296%2C1677428439%2Cf0207%2A81',
+    };
+    window.electron.ipcRenderer.spaceInfo('space_info', [cookie]);
+    window.danmuApi.msgTips((_event: any, data1: any) => {
+      CatLog.console(data1);
     });
-    CatLog.log(user.data);
-
     if(love >4){
       toast({
         title: '',

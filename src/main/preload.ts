@@ -1,5 +1,10 @@
 import fs from 'fs';
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import {
+  contextBridge,
+  ipcRenderer,
+  IpcRendererEvent,
+  session,
+} from 'electron';
 import { useLoading } from '../preload/loading';
 
 // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -28,6 +33,9 @@ contextBridge.exposeInMainWorld('electron', {
     updateRoomTitle(channel: string, args: unknown[]) {
       ipcRenderer.send(channel, args);
     },
+    spaceInfo(channel: string, args: unknown[]) {
+      ipcRenderer.send(channel, args);
+    },
     on(channel: string, func: (...args: unknown[]) => void) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
         func(...args);
@@ -43,6 +51,7 @@ contextBridge.exposeInMainWorld('electron', {
 
 // --------- Expose some API to the Renderer process. ---------
 contextBridge.exposeInMainWorld('fs', fs);
+contextBridge.exposeInMainWorld('session', session);
 contextBridge.exposeInMainWorld('removeLoading', removeLoading);
 contextBridge.exposeInMainWorld('danmuApi', {
   onUpdateOnliner: (
@@ -63,6 +72,9 @@ contextBridge.exposeInMainWorld('danmuApi', {
   msgTips: (
     callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
   ) => ipcRenderer.on('msg-tips', callback),
+  spaceInfo: (
+    callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+  ) => ipcRenderer.on('space_info', callback),
 });
 contextBridge.exposeInMainWorld('theme', {
   change: (

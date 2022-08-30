@@ -1,5 +1,5 @@
 diff --git a/node_modules/bilibili-live-danmaku-api/index.js b/node_modules/bilibili-live-danmaku-api/index.js
-index 971660f..d949eb0 100644
+index 971660f..0bcfb9a 100644
 --- a/node_modules/bilibili-live-danmaku-api/index.js
 +++ b/node_modules/bilibili-live-danmaku-api/index.js
 @@ -1,6 +1,6 @@
@@ -10,7 +10,7 @@ index 971660f..d949eb0 100644
    const { body } = await got('https://api.live.bilibili.com/msg/send', {
      headers: { Cookie: `SESSDATA=${SESSDATA}` },
      form: true,
-@@ -21,3 +21,25 @@ module.exports = async ({ msg, SESSDATA, csrf, roomid, extra = {} }) => {
+@@ -21,3 +21,46 @@ module.exports = async ({ msg, SESSDATA, csrf, roomid, extra = {} }) => {
      throw body.message
    }
  }
@@ -27,6 +27,27 @@ index 971660f..d949eb0 100644
 +        room_id,
 +        csrf_token: csrf,
 +        csrf,
++        ...extra,
++      },
++    }
++  );
++  if (body.code) {
++    return body;
++  }
++  return body;
++};
++
++exports.spaceInfo = async ({ url, SESSDATA, extra = {} }) => {
++  console.log(url);
++  console.log(SESSDATA);
++  const { body } = await got(
++    url,
++    {
++      headers: { Cookie: `SESSDATA=${SESSDATA}` },
++      form: true,
++      json: true,
++      method: 'get',
++      body: {
 +        ...extra,
 +      },
 +    }

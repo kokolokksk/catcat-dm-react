@@ -4,6 +4,7 @@ declare global {
   interface Window {
     // Expose some Api through preload script
     fs: typeof import('fs');
+    session: typeof import('electron').session;
     // IPC listener
     electron: {
       store: {
@@ -14,6 +15,7 @@ declare global {
       ipcRenderer: {
         sendMessage: (channel: string, args: unknown[]) => void;
         updateRoomTitle: (channel: string, args: unknown[]) => void;
+        spaceInfo: (channel: string, args: unknown[]) => void;
       };
     };
     darkMode: {
@@ -29,6 +31,7 @@ declare global {
       updateMessage: (arg0: (_event: any, data: any) => void) => void;
       msgTips: (arg0: (_event: any, data: any) => void) => void;
       downProgress: (arg0: (_event: any, data: any) => void) => void;
+      spaceInfo: (arg0: (_event: any, data: any) => void) => void;
     };
     removeLoading: () => void;
   }
