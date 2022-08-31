@@ -23,7 +23,7 @@ const SettingInputItem = (prop: any | undefined) => {
       getEditButtonProps,
     } = useEditableControls();
     return isEditing ? (
-      <ButtonGroup justifyContent="center" size="sm">
+      <ButtonGroup justifyContent="center" size="sm" alignItems="top">
         <Button color="green.500" {...getSubmitButtonProps()}>
           {' '}
           √{' '}
@@ -34,9 +34,15 @@ const SettingInputItem = (prop: any | undefined) => {
         </Button>
       </ButtonGroup>
     ) : (
-      <Flex justifyContent="center">
-        <Button size="sm" color="green.500" {...getEditButtonProps()}>
-          🐱
+      <Flex justifyContent="center" alignItems="center">
+        <Button
+          className=" rounded-full "
+          style={{ borderRadius: '9999px', width: '25px' }}
+          size="sm"
+          color="green.500"
+          {...getEditButtonProps()}
+        >
+          ⚙
         </Button>
       </Flex>
     );

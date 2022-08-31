@@ -17,8 +17,6 @@ import '../styles/slider-menu.css';
 import styles from '../styles/slider_menu.module.scss';
 import CatCatSign from './CatCatSign';
 import MenuItem from './MenuItem';
-import axios from 'axios';
-import CatLog from 'renderer/utils/CatLog';
 
 // eslint-disable-next-line import/order
 
@@ -27,7 +25,7 @@ const SliderMenu = (prop: any | undefined) => {
   const dataProp = {
    ...prop
   }
-  const menuList = ['🐱', '启动', '关于'];
+  const menuList = ['o(=•ェ•=)m', '启动', '关于'];
   const data = {
     color: {
       color: '#efefef',
@@ -57,23 +55,6 @@ const SliderMenu = (prop: any | undefined) => {
   const openLove = async () => {
     // eslint-disable-next-line no-plusplus
     love++;
-    // 更新用户信息 fixme
-    // axios.defaults.withCredentials = true;
-    // const user = await axios('https://api.bilibili.com/x/space/acc/info', {
-    //   headers: {
-    //     Cookie: `SESSDATA=9c3dd1cd%2C1677403768%2C97e8b%2A81`,
-    //   },
-    //   withCredentials: true,
-    // });
-    // CatLog.log(user.data);
-    const cookie = {
-        url: 'https://api.bilibili.com/x/space/acc/info',
-        SESSDATA: '05bf2296%2C1677428439%2Cf0207%2A81',
-    };
-    window.electron.ipcRenderer.spaceInfo('space_info', [cookie]);
-    window.danmuApi.msgTips((_event: any, data1: any) => {
-      CatLog.console(data1);
-    });
     if(love >4){
       toast({
         title: '',

@@ -292,9 +292,24 @@ const Setting = () => {
     CatLog.console('update app');
     window.electron.ipcRenderer.sendMessage('update:app', []);
   };
-
+  let a: NodeJS.Timeout | undefined;
+  let b: NodeJS.Timeout | undefined;
+  let loginWindowClose = true;
+  let globalCount = 0;
   const checkQrLogin = async (oauthKey: string, url: string) => {
     console.log('checkQrLogin');
+    globalCount += 1;
+    console.log(globalCount);
+    console.info('state:', loginWindowClose);
+    if (globalCount > 10) {
+      console.log('loginWindowClose');
+      globalCount = 0;
+      setState({
+        ...state,
+        loginStatus: '已过期，请刷新',
+      });
+      return;
+    }
     const data = await axios
       .post(
         `https://passport.bilibili.com/qrcode/getLoginInfo?oauthKey=${oauthKey}`,
@@ -310,8 +325,6 @@ const Setting = () => {
       )
       .then(async (res) => {
         CatLog.console(res.data);
-        let a;
-        let b;
         if (res.data.code === 0 && res.data.status === true) {
           console.log(res.data);
           const { url } = res.data.data;
@@ -350,6 +363,7 @@ const Setting = () => {
             qrUrl: url,
             loginStatus: '请使用哔哩哔哩App扫码',
           });
+          console.info('state:', isLoginOpen);
           a = setTimeout(() => {
             checkQrLogin(oauthKey, url);
           }, 10000);
@@ -361,6 +375,7 @@ const Setting = () => {
             qrUrl: url,
             loginStatus: '已扫描，请确认登录',
           });
+          console.info('state:', isLoginOpen);
           b = setTimeout(() => {
             checkQrLogin(oauthKey, url);
           }, 10000);
@@ -381,7 +396,7 @@ const Setting = () => {
         });
         setTimeout(() => {
           checkQrLogin(res.data.data.oauthKey, res.data.data.url);
-        }, 5000);
+        }, 1000);
         return res.data.data;
       });
     CatLog.console(data);
@@ -397,6 +412,66 @@ const Setting = () => {
     setTimeout(() => {
       freshQrLogin();
     }, 1000);
+  };
+
+  const tryCloseQrLogin = () => {
+    clearTimeout(a);
+    clearTimeout(b);
+    CatLog.console('tryCloseQrLogin');
+    loginWindowClose = true;
+    onLoginClose();
+  };
+  const syncUserInfo = async () => {
+    toast({
+      title: '提示',
+      description: '正在同步用户信息',
+      status: 'info',
+      duration: 2000,
+      isClosable: true,
+    });
+    axios.defaults.withCredentials = true;
+    const user = await axios.get('https://api.bilibili.com/x/space/myinfo?', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'same-site': 'none',
+        'cross-site': 'none',
+        'Access-Control-Allow-Credentials': 'true',
+      },
+    });
+    CatLog.console(user.data);
+    if (user.data.code === 0) {
+      const { data } = user.data;
+      const { uname, face, mid } = data;
+      const liveInfo = await axios.get(
+        `http://api.bilibili.com/x/space/acc/info?mid=${mid}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'same-site': 'none',
+            'cross-site': 'none',
+            'Access-Control-Allow-Credentials': 'true',
+          },
+        }
+      );
+      const { data: liveData } = liveInfo.data;
+      const { roomid, title: roomtitle } = liveData.live_room;
+      setCatConfigData({
+        ...catConfigData,
+        roomtitle,
+        roomid,
+      });
+      window.electron.store.set('roomid', roomid);
+      window.electron.store.set('roomtitle', roomtitle);
+      toast({
+        title: '提示',
+        description: '同步用户信息成功',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -538,6 +613,7 @@ const Setting = () => {
           />
           <Divider />
           <Button onClick={openQrLogin}>扫码登陆</Button>
+          <Button onClick={syncUserInfo}>通过登陆信息更新弹幕姬</Button>
           {/* <ColorSelectContainer c={commonInputItemSave}/> */}
         </div>
       </div>
@@ -628,6 +704,7 @@ const Setting = () => {
         isOpen={isLoginOpen}
         leastDestructiveRef={cancelLoginRef}
         onClose={onLoginClose}
+        motionPreset="none"
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
@@ -652,7 +729,7 @@ const Setting = () => {
               <Button
                 colorScheme="green"
                 onClick={() => {
-                  onLoginClose();
+                  tryCloseQrLogin();
                 }}
                 className=" ml-4 mr-2"
               >

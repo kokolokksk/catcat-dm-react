@@ -16,7 +16,7 @@ import {
   ipcMain,
   globalShortcut,
   nativeTheme,
-  ipcRenderer,
+  session,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -26,11 +26,7 @@ import { randomUUID } from 'crypto';
 import { getHTMLPathBySearchKey, resolveHtmlPath } from './util';
 
 require('electron-referer')('https://www.bilibili.com/');
-const {
-  send,
-  updateRoomTitle,
-  spaceInfo,
-} = require('bilibili-live-danmaku-api');
+const { send, updateRoomTitle } = require('bilibili-live-danmaku-api');
 
 let live: LiveWS;
 const store = new Store();
@@ -44,6 +40,7 @@ ipcMain.on('electron-store-get', (event, val) => {
   event.returnValue = store.get(val);
 });
 ipcMain.on('electron-store-set', async (event, key, val) => {
+  console.log(key, val);
   store.set(key, val);
 });
 export default class AppUpdater {
@@ -117,6 +114,13 @@ const createWindow = async () => {
   });
   mainWindow.setMenuBarVisibility(false);
   mainWindow.loadURL(getHTMLPathBySearchKey('main'));
+  session.defaultSession.cookies.set({
+    url: 'https://api.bilibili.com/',
+    name: 'SESSDATA',
+    value: store.get('SESSDATA') as string,
+    sameSite: 'no_restriction',
+    domain: 'api.bilibili.com',
+  });
   mainWindow.webContents.send(
     'main-process-message',
     resolveHtmlPath('index.html')
@@ -266,28 +270,6 @@ ipcMain.on('updateRoomTitle', (event, arg) => {
         console.log(err.msg);
         console.log(err.code);
         mainWindow?.webContents.send('msg-tips', err.msg);
-      });
-  } catch (err: any) {
-    console.error(err);
-  }
-});
-ipcMain.on('space_info', (event, arg) => {
-  console.debug('space_info');
-  console.debug(arg);
-  try {
-    spaceInfo({
-      url: arg[0].url,
-      SESSDATA: arg[0].SESSDATA,
-    })
-      .then((res: any) => {
-        const { msg } = res;
-        console.error('in then');
-        console.log(res);
-        mainWindow?.webContents.send('space_info', msg);
-      })
-      .catch((err: any) => {
-        console.error('in error');
-        console.log(err);
       });
   } catch (err: any) {
     console.error(err);
