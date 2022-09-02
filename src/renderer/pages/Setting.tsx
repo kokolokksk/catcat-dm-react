@@ -253,7 +253,11 @@ const Setting = () => {
         if (!catConfigData.clientId) {
           // eslint-disable-next-line promise/no-nesting
           axios
-            .get('https://db.loli.monster/cat/client/generateClientId')
+            .get(`https://db.loli.monster/cat/client/generateClientId`, {
+              headers: {
+                version: pack.version,
+              },
+            })
             // eslint-disable-next-line promise/always-return
             .then(function (response) {
               // handle success

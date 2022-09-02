@@ -2,6 +2,7 @@
 import { CloseIcon, MinusIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Divider,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -93,15 +94,33 @@ const MiniSuperChat = (prop: any | undefined) => {
             display="flex"
             width="100%"
             alignItems="center"
+            style={{
+              backgroundColor: data.origin.data.background_color,
+              justifyContent: 'center',
+            }}
           >
             <img
               alt=""
               className={danmucStyle.avatar}
               src={data.origin.data.user_info.face}
             />
-            {data.nickname}
+            <Divider
+              orientation="horizontal"
+              color="transparent"
+              margin={0}
+              padding={0}
+              borderBottomColor="transparent"
+            />
+            <span style={{ fontSize: '1rem' }}>{data.nickname}</span>
           </PopoverHeader>
-          <PopoverBody>{data.content}</PopoverBody>
+          <PopoverBody
+            style={{
+              fontSize: '1.2rem',
+              backgroundColor: data.origin.data.message_font_color as string,
+            }}
+          >
+            {data.content}
+          </PopoverBody>
         </PopoverContent>
       </Popover>
     </>

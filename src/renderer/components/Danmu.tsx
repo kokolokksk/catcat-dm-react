@@ -276,7 +276,11 @@ const Danmu = (prop: any) => {
       className={`${scContainer} ${hoverClass} ${'rounded-2xl shadow-lg cursor-pointer '} ${
         styles.noDrag
       }`}
-      style={{ border: scBorder, backgroundColor: data.data.background_color }}
+      style={{
+        border: scBorder,
+        backgroundColor: data.data.background_color,
+        height: 'auto',
+      }}
     >
       <img
         alt=""

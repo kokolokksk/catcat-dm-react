@@ -519,7 +519,72 @@ async function setFace(danmu: any, proxyApi: boolean) {
       console.log(error);
     });
 }
-
+const superchat = {
+  cmd: 'SUPER_CHAT_MESSAGE',
+  data: {
+    background_bottom_color: '#427D9E',
+    background_color: '#DBFFFD',
+    background_color_end: '#29718B',
+    background_color_start: '#4EA4C5',
+    background_icon: '',
+    background_image:
+      'https://i0.hdslb.com/bfs/live/a712efa5c6ebc67bafbe8352d3e74b820a00c13e.png',
+    background_price_color: '#7DA4BD',
+    color_point: 0.7,
+    dmscore: 72,
+    end_time: 1654847874,
+    gift: {
+      gift_id: 12000,
+      gift_name: '醒目留言',
+      num: 1,
+    },
+    id: 4242153,
+    is_ranked: 1,
+    is_send_audit: 1,
+    medal_info: {
+      anchor_roomid: 19864,
+      anchor_uname: '菈米米',
+      guard_level: 0,
+      icon_id: 0,
+      is_lighted: 1,
+      medal_color: '#6154c',
+      medal_color_border: 398668,
+      medal_color_end: 6850801,
+      medal_color_start: 398668,
+      medal_level: 27,
+      medal_name: '喵喵沙',
+      special: '',
+      target_id: 8739477,
+    },
+    message:
+      '惆怅梦余山月斜，孤灯照壁背窗纱，小楼高阁谢娘家。暗想玉容何所似，一枝春雪冻梅花，满身香雾簇朝霞。',
+    message_font_color: '#A3F6FF',
+    message_trans: '',
+    price: 50,
+    rate: 1000,
+    start_time: 1654847754,
+    time: 6000,
+    token: '3A11DB43',
+    trans_mark: 0,
+    ts: 1654847754,
+    uid: 1999280,
+    user_info: {
+      face: 'https://i2.hdslb.com/bfs/face/2dacd5b4e08d872098a79c14be6caff6df829162.jpg',
+      face_frame: '',
+      guard_level: 0,
+      is_main_vip: 0,
+      is_svip: 0,
+      is_vip: 0,
+      level_color: '#61c05a',
+      manager: 0,
+      name_color: '#666666',
+      title: '0',
+      uname: '菈米米',
+      user_level: 19,
+    },
+  },
+  roomid: 19864,
+};
 async function handleDanMuMSG(
   data: any,
   danmu: { [K: string]: any },
@@ -549,11 +614,19 @@ async function handleDanMuMSG(
     if (danmu.content.indexOf('cat5') !== -1) {
       danmu.type = 5;
       danmu.giftName = 'sc';
-      danmu.content = 'sc测试';
-      danmu.price = 30000;
+      danmu.content = superchat.data.message;
+      danmu.price = 1000000;
       danmu.color = '#A3F6FF';
       danmu.borderColor = '#DBFFFD';
       danmu.priceColor = '#7DA4BD';
+      danmu.background_bottom_color = '#427D9E';
+      danmu.background_color = '#DBFFFD';
+      danmu.background_color_end = '#29718B';
+      danmu.background_color_start = '#4EA4C5';
+      danmu.background_image =
+        'https://i0.hdslb.com/bfs/live/a712efa5c6ebc67bafbe8352d3e74b820a00c13e.png';
+      danmu.background_price_color = '#7DA4BD';
+      danmu.origin = superchat;
     }
   }
   danmu.noBorder = true;
