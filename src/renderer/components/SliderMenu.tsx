@@ -2,6 +2,7 @@
 import React from 'react';
 import {
   Button,
+  ButtonGroup,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -9,9 +10,19 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
+import axios from 'axios';
+import ReactHlsPlayer from 'react-hls-player';
 import About from '../pages/About';
 import '../styles/slider-menu.css';
 import styles from '../styles/slider_menu.module.scss';
@@ -25,6 +36,7 @@ const SliderMenu = (prop: any | undefined) => {
   const dataProp = {
    ...prop
   }
+  const { roomid } = dataProp;
   const menuList = ['o(=•ェ•=)m', '启动', '关于'];
   const data = {
     color: {
@@ -49,7 +61,12 @@ const SliderMenu = (prop: any | undefined) => {
     },
   };
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen: isPlayOpen, onOpen: onPlayOpen, onClose: onPlayClose } = useDisclosure()
   const initialRef = React.useRef()
+  const pRef = React.useRef<HTMLVideoElement|null>(null);
+  const [state , setState] = React.useState({
+    playUrl: '',
+  })
   let love =0 ;
   const toast = useToast();
   const openLove = async () => {
@@ -65,11 +82,38 @@ const SliderMenu = (prop: any | undefined) => {
       });
       love =0;
     }
-
   }
   const startDanmuWindow = ()=> {
     console.info(window.electron.store)
     window.electron.ipcRenderer.sendMessage('createDmWindow',[])
+  }
+  const startPlay = () => {
+    toast({
+      title: '',
+      description: '正在获取直播流',
+      status: 'info',
+      duration: 2000,
+      isClosable: false,
+    });
+    axios.get(`http://api.live.bilibili.com/room/v1/Room/playUrl?cid=${roomid}&qn=10000&platform=h5`).then((res) => {
+      console.info(res);
+      setState({
+        ...state,
+        playUrl: res.data.data.durl[0].url,
+      })
+      onPlayOpen();
+      return res;
+    }).catch((err) => {
+      console.error(err);
+    });
+  }
+  const PlayOpen = () => {
+    startPlay();
+    onPlayOpen();
+  }
+  const closePlayer = () => {
+    onPlayClose();
+    pRef?.current?.pause();
   }
   const { theme } = dataProp;
   let sliderMenu = styles.slideMenuLight;
@@ -122,6 +166,41 @@ const SliderMenu = (prop: any | undefined) => {
               </ModalFooter>
             </ModalContent>
         </Modal>
+        <Popover
+        returnFocusOnClose={false}
+        isOpen={isPlayOpen}
+        onClose={onPlayClose}
+        placement='right'
+        closeOnBlur={false}
+      >
+        <PopoverTrigger>
+          <Button colorScheme='pink' onClick={PlayOpen} >
+            预览
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <PopoverHeader fontWeight='semibold'>预览</PopoverHeader>
+          <PopoverArrow />
+          <PopoverCloseButton />
+          <PopoverBody>
+          <ReactHlsPlayer
+                src={state.playUrl}
+                autoPlay={false}
+                hlsConfig={{
+                  enableWorker: true,
+                  enableSoftwareAES: true,
+                }}
+                controls
+                width="100%"
+                height="auto" playerRef={pRef}          />
+          </PopoverBody>
+          <PopoverFooter display='flex' justifyContent='flex-end'>
+            <ButtonGroup size='sm'>
+              <Button colorScheme='red' onClick={closePlayer}>关闭</Button>
+            </ButtonGroup>
+          </PopoverFooter>
+        </PopoverContent>
+      </Popover>
       </>
     )
 

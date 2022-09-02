@@ -481,6 +481,7 @@ const Setting = () => {
   return (
     <Flex height="100vh">
       <SliderMenu
+        roomid={catConfigData.roomid}
         theme={catConfigData.theme}
         nickname={catConfigData.nickname}
         faceImg={catConfigData.faceImg}
