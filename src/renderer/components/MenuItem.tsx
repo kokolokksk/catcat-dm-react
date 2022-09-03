@@ -5,7 +5,7 @@
 const MenuItem = (prop: any | undefined) => {
   return (
     <>
-      <div className="menu-item-container" onClick={prop.click}>
+      <div className="menu-item-container cursor-pointer" onClick={prop.click}>
         <div className="menu-item-icon">{prop.menu.svg}</div>
         <span>{prop.menu.name}</span>
       </div>

@@ -33,10 +33,11 @@ const store = new Store();
 
 let mainWindow: BrowserWindow | null = null;
 let dm: BrowserWindow | null = null;
+let livePreviewWindow: BrowserWindow | null = null;
 
 // IPC listener
 ipcMain.on('electron-store-get', (event, val) => {
-  mainWindow?.webContents.send('main-process-message', store.path);
+  //  mainWindow?.webContents.send('main-process-message', store.path);
   event.returnValue = store.get(val);
 });
 ipcMain.on('electron-store-set', async (event, key, val) => {
@@ -223,12 +224,77 @@ const createDMWindow = async () => {
   // eslint-disable-next-line
  // new AppUpdater();
 };
+const createLivePreviewWindow = async () => {
+  if (isDebug) {
+    await installExtensions();
+  }
+
+  const RESOURCES_PATH = app.isPackaged
+    ? path.join(process.resourcesPath, 'assets')
+    : path.join(__dirname, '../../assets');
+
+  const getAssetPath = (...paths: string[]): string => {
+    return path.join(RESOURCES_PATH, ...paths);
+  };
+
+  livePreviewWindow = new BrowserWindow({
+    title: 'Live Preview',
+    width: 800,
+    height: 600,
+    webPreferences: {
+      sandbox: false,
+      nodeIntegration: true,
+      contextIsolation: true,
+      webSecurity: false,
+      preload: app.isPackaged
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, '../../.erb/dll/preload.js'),
+    },
+  });
+  livePreviewWindow.setMenuBarVisibility(false);
+  livePreviewWindow.loadURL(getHTMLPathBySearchKey('livePreview'));
+  livePreviewWindow
+    .on('closed', () => {
+      livePreviewWindow = null;
+    })
+    .on('ready-to-show', () => {
+      if (!livePreviewWindow) {
+        throw new Error('"livePreviewWindow" is not defined');
+      }
+      if (process.env.START_MINIMIZED) {
+        livePreviewWindow.minimize();
+      } else {
+        livePreviewWindow.show();
+      }
+    });
+  livePreviewWindow.loadURL(getHTMLPathBySearchKey('livePreview'));
+
+  // const menuBuilder = new MenuBuilder(mainWindow);
+  // menuBuilder.buildMenu();
+
+  // Open urls in the user's browser
+  livePreviewWindow.webContents.setWindowOpenHandler((edata) => {
+    shell.openExternal(edata.url);
+    return { action: 'deny' };
+  });
+
+  // Remove this if your app does not use auto updates
+  // eslint-disable-next-line
+ // new AppUpdater();
+};
 
 ipcMain.on('createDmWindow', function (arg) {
   if (dm == null) {
     createDMWindow();
   }
 });
+
+ipcMain.on('createLivePreview', function (arg) {
+  if (livePreviewWindow == null) {
+    createLivePreviewWindow();
+  }
+});
+
 ipcMain.on('sendDanmu', (event, arg) => {
   try {
     send({
