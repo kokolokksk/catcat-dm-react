@@ -9,7 +9,30 @@ const SettingSwitchItem = (prop: any | undefined) => {
   // if (colorMode === 'dark') {
   //   setSwitchColor('teal');
   // }
-  const { theme, v, c, skey } = data;
+  const { theme, v, c, skey, options } = data;
+  let dynamicOptions = options;
+  if (skey === 'recentroomid') {
+    console.info('recentroomid');
+    console.info(options);
+    if (!dynamicOptions) {
+      dynamicOptions = [];
+    } else {
+      dynamicOptions = options.split(',').map((item: { roomid: number }) => {
+        return {
+          value: item,
+          label: item,
+        };
+      });
+    }
+  }
+  dynamicOptions = dynamicOptions.reduce((nVal: any[], item: any): any[] => {
+    if (nVal.findIndex((nItem: any) => nItem.value === item.value) === -1) {
+      nVal.push(item);
+    }
+    return nVal;
+  }, []);
+  console.info(111, dynamicOptions);
+  console.info(v);
   return (
     <div className={styles.setting_input_item}>
       <p className={styles.line} />
@@ -26,25 +49,17 @@ const SettingSwitchItem = (prop: any | undefined) => {
           color="orange"
           style={{ cursor: 'pointer' }}
           id="email-alerts"
-          key={v}
           defaultValue={v}
           onChange={(text) => c(skey, text)}
           size="sm"
           width={100}
           colorScheme={theme === 'dark' ? 'orange' : 'teal'}
         >
-          <option style={{ cursor: 'pointer' }} value="light">
-            白色
-          </option>
-          <option style={{ cursor: 'pointer' }} value="dark">
-            黑色
-          </option>
-          <option style={{ cursor: 'pointer' }} value="wave">
-            波浪
-          </option>
-          <option style={{ cursor: 'pointer' }} value="miku">
-            miku
-          </option>
+          {dynamicOptions.map((option: { value: string; label: string }) => (
+            <option style={{ cursor: 'pointer' }} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </Select>
       </FormControl>
     </div>

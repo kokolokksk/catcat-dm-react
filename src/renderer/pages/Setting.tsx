@@ -54,6 +54,9 @@ const Setting = () => {
   const color = useColorMode();
   const load = (num: number) => {
     CatLog.console('on load user img and nickname');
+    if (!num) {
+      return;
+    }
     axios
       .get(`https://api.live.bilibili.com/room/v1/Room/room_init?id=${num}`)
       // eslint-disable-next-line func-names
@@ -62,29 +65,31 @@ const Setting = () => {
         // handle success
         console.log(response);
         const { uid } = response.data.data;
-        axios.defaults.withCredentials = true;
-        document.cookie = 'SESSDATA=xxxx';
-        // eslint-disable-next-line promise/no-nesting
-        axios({
-          url: `https://api.live.bilibili.com/live_user/v1/Master/info?uid=${uid}`,
-        })
-          // eslint-disable-next-line func-names
-          // eslint-disable-next-line promise/always-return
-          // eslint-disable-next-line @typescript-eslint/no-shadow
-          // eslint-disable-next-line func-names
-          // eslint-disable-next-line promise/always-return
-          .then(function (response1) {
-            console.log(response1);
-            setCatConfigData({
-              ...catConfigData,
-              faceImg: response1.data.data.info.face,
-              nickname: response1.data.data.info.uname,
-            });
+        // eslint-disable-next-line promise/always-return
+        if (uid) {
+          axios.defaults.withCredentials = true;
+          // eslint-disable-next-line promise/no-nesting
+          axios({
+            url: `https://api.live.bilibili.com/live_user/v1/Master/info?uid=${uid}`,
           })
-          // eslint-disable-next-line func-names
-          .catch(function (error) {
-            console.log(error);
-          });
+            // eslint-disable-next-line func-names
+            // eslint-disable-next-line promise/always-return
+            // eslint-disable-next-line @typescript-eslint/no-shadow
+            // eslint-disable-next-line func-names
+            // eslint-disable-next-line promise/always-return
+            .then(function (response1) {
+              console.log(response1);
+              setCatConfigData({
+                ...catConfigData,
+                faceImg: response1.data.data.info.face,
+                nickname: response1.data.data.info.uname,
+              });
+            })
+            // eslint-disable-next-line func-names
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
       })
       .catch(function (error) {
         // handle error
@@ -92,7 +97,6 @@ const Setting = () => {
       });
   };
 
-  const setRoomId = (room: any) => {};
   const commonInputItemSave = (skey: any, value: string) => {
     let t: unknown = value;
     if (skey === 'roomid') {
@@ -100,7 +104,16 @@ const Setting = () => {
       setCatConfigData({
         ...catConfigData,
         roomid: Number(t),
+        recentroomid: catConfigData.recentroomid
+          ? `${catConfigData.recentroomid},${t}`
+          : `${t}`,
       });
+      window.electron.store.set(
+        'recentroomid',
+        catConfigData.recentroomid
+          ? `${catConfigData.recentroomid},${t}`
+          : `${t}`
+      );
     }
     if (skey === 'roomtitle') {
       const arg = {
@@ -116,9 +129,10 @@ const Setting = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   CatLog.console(colorMode);
   useEffect(() => {
+    console.log(22222, catConfigData.roomid);
     if (catConfigData.roomid) {
       load(catConfigData.roomid);
-      commonInputItemSave('roomid', catConfigData.roomid);
+      // commonInputItemSave('roomid', catConfigData.roomid);
     }
     if (catConfigData.allowUpdate) {
       axios
@@ -173,6 +187,16 @@ const Setting = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [catConfigData.roomid]);
+  useEffect(() => {
+    console.log(3333, catConfigData.recentroomid);
+    if (catConfigData.recentroomid) {
+      setState({
+        ...state,
+        recentroomid: catConfigData.recentroomid,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catConfigData.recentroomid]);
   const commonSwitchItemSave = async (skey: any, value: any) => {
     CatLog.console(value.target.checked);
     window.electron.store.set(skey, value.target.checked);
@@ -202,6 +226,19 @@ const Setting = () => {
         'theme:change',
         value.target.value
       );
+    }
+  };
+  const selectRoom = async (skey: any, value: any) => {
+    if (!value.target.value) {
+      CatLog.error('roomid is empty');
+      return;
+    }
+    window.electron.store.set('roomid', value.target.value);
+    if (skey === 'recentroomid') {
+      setCatConfigData({
+        ...catConfigData,
+        roomid: value.target.value,
+      });
     }
   };
   useEffect(() => {
@@ -248,6 +285,9 @@ const Setting = () => {
           catConfigData[catConfigItem[index].name] = item;
         }
       });
+      setCatConfigData({
+        ...catConfigData,
+      });
       // eslint-disable-next-line promise/always-return
       try {
         if (!catConfigData.clientId) {
@@ -270,9 +310,9 @@ const Setting = () => {
               console.log(error);
             });
         }
-        if (catConfigData.roomid) {
-          load(catConfigData.roomid);
-        }
+        // if (catConfigData.roomid) {
+        //   load(catConfigData.roomid);
+        // }
       } catch (e) {
         catConfigData.clientId = 'NetworkError';
       }
@@ -496,6 +536,15 @@ const Setting = () => {
             c={commonInputItemSave}
             skey="roomid"
           />
+          {/* <SettingSelectItem
+            name="最近使用房间号"
+            theme={catConfigData.theme}
+            v={catConfigData.roomid || '-'}
+            c={selectRoom}
+            skey="recentroomid"
+            key={catConfigData.recentroomid}
+            options={catConfigData.recentroomid}
+          /> */}
           <SettingInputItem
             name="更新直播间标题"
             theme={catConfigData.theme}
@@ -556,6 +605,24 @@ const Setting = () => {
             v={catConfigData.theme || 'light'}
             c={commonSelectItemSave}
             skey="theme"
+            options={[
+              {
+                value: 'light',
+                label: '浅色',
+              },
+              {
+                value: 'dark',
+                label: '深色',
+              },
+              {
+                value: 'wave',
+                label: '波浪',
+              },
+              {
+                value: 'miku',
+                label: '初音',
+              },
+            ]}
           />
           <Divider />
           {/* <SettingSwitchItem
