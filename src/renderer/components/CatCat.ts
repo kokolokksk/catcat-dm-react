@@ -65,7 +65,7 @@ const catConfigItem = [
   { name: 'darkMode', type: 'boolean' },
   { name: 'proxyApi', type: 'boolean' },
   { name: 'allowUpdate', type: 'boolean' },
-  { name: 'recentroomid', type: 'boolean' },
+  { name: 'recentroomid', type: 'string' },
 ];
 
 const giftData = [

@@ -105,15 +105,20 @@ const Setting = () => {
         ...catConfigData,
         roomid: Number(t),
         recentroomid: catConfigData.recentroomid
-          ? `${catConfigData.recentroomid},${t}`
-          : `${t}`,
+          ? `${catConfigData.recentroomid},${Number(t)}`
+          : `${Number(t)}`,
       });
       window.electron.store.set(
         'recentroomid',
         catConfigData.recentroomid
-          ? `${catConfigData.recentroomid},${t}`
-          : `${t}`
+          ? `${catConfigData.recentroomid},${Number(t)}`
+          : `${Number(t)}`
       );
+      load(Number(t));
+      catConfigData.roomid = Number(t);
+      catConfigData.recentroomid = catConfigData.recentroomid
+        ? `${catConfigData.recentroomid},${Number(t)}`
+        : `${Number(t)}`;
     }
     if (skey === 'roomtitle') {
       const arg = {
@@ -128,75 +133,65 @@ const Setting = () => {
   };
   const { colorMode, toggleColorMode } = useColorMode();
   CatLog.console(colorMode);
-  useEffect(() => {
-    console.log(22222, catConfigData.roomid);
-    if (catConfigData.roomid) {
-      load(catConfigData.roomid);
-      // commonInputItemSave('roomid', catConfigData.roomid);
-    }
-    if (catConfigData.allowUpdate) {
-      axios
-        .get(
-          'https://api.github.com/repos/kokolokksk/catcat-dm-react/releases/latest'
-        )
-        .then((res) => {
-          CatLog.console(res.data.tag_name);
-          CatLog.console(res.data.name);
-          CatLog.console(res.data.body);
-          CatLog.console(res.data.html_url);
-          CatLog.console(res.data.assets[0].browser_download_url);
-          CatLog.console(res.data.assets[0].name);
-          CatLog.console(res.data.assets[0].size);
-          CatLog.console(res.data.assets[0].updated_at);
-          CatLog.console(res.data.assets[0].created_at);
-          CatLog.console(res.data.assets[0].content_type);
-          setState({
-            ...state,
-            downtext: '后台下载',
-            transferred: 0,
-            total: 0,
-            version: res.data.tag_name,
-            name: res.data.name,
-            body: res.data.body,
-            html_url: res.data.html_url,
-            browser_download_url: res.data.assets[0].browser_download_url,
-            file_name: res.data.assets[0].name,
-            size: res.data.assets[0].size,
-            updated_at: res.data.assets[0].updated_at,
-            created_at: res.data.assets[0].created_at,
-            content_type: res.data.assets[0].content_type,
-          });
-          CatLog.console(pack.version, res.data.tag_name);
-          if (
-            parseInt(pack.version.replaceAll('.', ''), 10) <
-            parseInt(
-              res.data.tag_name.replaceAll('v', '').replaceAll('.', ''),
-              10
-            )
-          ) {
-            CatLog.console('update');
-            onOpen();
-          } else {
-            CatLog.console('no update');
-          }
-          return '';
-        })
-        .catch((e) => {
-          CatLog.console(e.message);
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [catConfigData.roomid]);
-  useEffect(() => {
-    console.log(3333, catConfigData.recentroomid);
-    if (catConfigData.recentroomid) {
-      setState({
-        ...state,
-        recentroomid: catConfigData.recentroomid,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [catConfigData.recentroomid]);
+  // useEffect(() => {
+  //   console.log(22222, catConfigData.roomid);
+  //   if (catConfigData.roomid) {
+  //     load(catConfigData.roomid);
+  //     // commonInputItemSave('roomid', catConfigData.roomid);
+  //   }
+  //   if (catConfigData.allowUpdate) {
+  //     axios
+  //       .get(
+  //         'https://api.github.com/repos/kokolokksk/catcat-dm-react/releases/latest'
+  //       )
+  //       .then((res) => {
+  //         CatLog.console(res.data.tag_name);
+  //         CatLog.console(res.data.name);
+  //         CatLog.console(res.data.body);
+  //         CatLog.console(res.data.html_url);
+  //         CatLog.console(res.data.assets[0].browser_download_url);
+  //         CatLog.console(res.data.assets[0].name);
+  //         CatLog.console(res.data.assets[0].size);
+  //         CatLog.console(res.data.assets[0].updated_at);
+  //         CatLog.console(res.data.assets[0].created_at);
+  //         CatLog.console(res.data.assets[0].content_type);
+  //         setState({
+  //           ...state,
+  //           downtext: '后台下载',
+  //           transferred: 0,
+  //           total: 0,
+  //           version: res.data.tag_name,
+  //           name: res.data.name,
+  //           body: res.data.body,
+  //           html_url: res.data.html_url,
+  //           browser_download_url: res.data.assets[0].browser_download_url,
+  //           file_name: res.data.assets[0].name,
+  //           size: res.data.assets[0].size,
+  //           updated_at: res.data.assets[0].updated_at,
+  //           created_at: res.data.assets[0].created_at,
+  //           content_type: res.data.assets[0].content_type,
+  //         });
+  //         CatLog.console(pack.version, res.data.tag_name);
+  //         if (
+  //           parseInt(pack.version.replaceAll('.', ''), 10) <
+  //           parseInt(
+  //             res.data.tag_name.replaceAll('v', '').replaceAll('.', ''),
+  //             10
+  //           )
+  //         ) {
+  //           CatLog.console('update');
+  //           onOpen();
+  //         } else {
+  //           CatLog.console('no update');
+  //         }
+  //         return '';
+  //       })
+  //       .catch((e) => {
+  //         CatLog.console(e.message);
+  //       });
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [catConfigData.roomid]);
   const commonSwitchItemSave = async (skey: any, value: any) => {
     CatLog.console(value.target.checked);
     window.electron.store.set(skey, value.target.checked);
@@ -233,12 +228,14 @@ const Setting = () => {
       CatLog.error('roomid is empty');
       return;
     }
-    window.electron.store.set('roomid', value.target.value);
     if (skey === 'recentroomid') {
-      setCatConfigData({
-        ...catConfigData,
-        roomid: value.target.value,
-      });
+      // setCatConfigData({
+      //   ...catConfigData,
+      //   roomid: Number(value.target.value),
+      // });
+      catConfigData.roomid = Number(value.target.value);
+      window.electron.store.set('roomid', Number(value.target.value));
+      load(value.target.value);
     }
   };
   useEffect(() => {
@@ -285,9 +282,9 @@ const Setting = () => {
           catConfigData[catConfigItem[index].name] = item;
         }
       });
-      setCatConfigData({
-        ...catConfigData,
-      });
+      // setCatConfigData({
+      //   ...catConfigData,
+      // });
       // eslint-disable-next-line promise/always-return
       try {
         if (!catConfigData.clientId) {
@@ -310,9 +307,61 @@ const Setting = () => {
               console.log(error);
             });
         }
-        // if (catConfigData.roomid) {
-        //   load(catConfigData.roomid);
-        // }
+        if (catConfigData.roomid) {
+          load(catConfigData.roomid);
+        }
+        if (catConfigData.allowUpdate) {
+          // eslint-disable-next-line promise/no-nesting
+          axios
+            .get(
+              'https://api.github.com/repos/kokolokksk/catcat-dm-react/releases/latest'
+            )
+            .then((res) => {
+              CatLog.console(res.data.tag_name);
+              CatLog.console(res.data.name);
+              CatLog.console(res.data.body);
+              CatLog.console(res.data.html_url);
+              CatLog.console(res.data.assets[0].browser_download_url);
+              CatLog.console(res.data.assets[0].name);
+              CatLog.console(res.data.assets[0].size);
+              CatLog.console(res.data.assets[0].updated_at);
+              CatLog.console(res.data.assets[0].created_at);
+              CatLog.console(res.data.assets[0].content_type);
+              setState({
+                ...state,
+                downtext: '后台下载',
+                transferred: 0,
+                total: 0,
+                version: res.data.tag_name,
+                name: res.data.name,
+                body: res.data.body,
+                html_url: res.data.html_url,
+                browser_download_url: res.data.assets[0].browser_download_url,
+                file_name: res.data.assets[0].name,
+                size: res.data.assets[0].size,
+                updated_at: res.data.assets[0].updated_at,
+                created_at: res.data.assets[0].created_at,
+                content_type: res.data.assets[0].content_type,
+              });
+              CatLog.console(pack.version, res.data.tag_name);
+              if (
+                parseInt(pack.version.replaceAll('.', ''), 10) <
+                parseInt(
+                  res.data.tag_name.replaceAll('v', '').replaceAll('.', ''),
+                  10
+                )
+              ) {
+                CatLog.console('update');
+                onOpen();
+              } else {
+                CatLog.console('no update');
+              }
+              return '';
+            })
+            .catch((e) => {
+              CatLog.console(e.message);
+            });
+        }
       } catch (e) {
         catConfigData.clientId = 'NetworkError';
       }
@@ -536,7 +585,7 @@ const Setting = () => {
             c={commonInputItemSave}
             skey="roomid"
           />
-          {/* <SettingSelectItem
+          <SettingSelectItem
             name="最近使用房间号"
             theme={catConfigData.theme}
             v={catConfigData.roomid || '-'}
@@ -544,7 +593,7 @@ const Setting = () => {
             skey="recentroomid"
             key={catConfigData.recentroomid}
             options={catConfigData.recentroomid}
-          /> */}
+          />
           <SettingInputItem
             name="更新直播间标题"
             theme={catConfigData.theme}

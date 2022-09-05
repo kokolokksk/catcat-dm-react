@@ -1,4 +1,5 @@
 import { FormControl, FormLabel, Select, useColorMode } from '@chakra-ui/react';
+import { electron } from 'process';
 import styles from '../styles/setting.module.scss';
 
 const SettingSwitchItem = (prop: any | undefined) => {
@@ -31,6 +32,15 @@ const SettingSwitchItem = (prop: any | undefined) => {
     }
     return nVal;
   }, []);
+  if (skey === 'recentroomid') {
+    const saveValue = dynamicOptions.map((item: any) => item.value).join(',');
+    if (saveValue) {
+      window.electron.store.set(
+        'recentroomid',
+        dynamicOptions.map((item: any) => item.value).join(',')
+      );
+    }
+  }
   console.info(111, dynamicOptions);
   console.info(v);
   return (
