@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
+  Badge,
   Button,
   Modal,
   ModalBody,
@@ -17,6 +18,7 @@ import '../styles/slider-menu.css';
 import styles from '../styles/slider_menu.module.scss';
 import CatCatSign from './CatCatSign';
 import MenuItem from './MenuItem';
+import axios from 'axios';
 
 // eslint-disable-next-line import/order
 
@@ -83,6 +85,9 @@ const SliderMenu = (prop: any | undefined) => {
     window.electron.ipcRenderer.sendMessage('createLivePreview',[])
   }
   const { theme } = dataProp;
+  // eslint-disable-next-line no-nested-ternary
+  console.log(dataProp.live_status);
+  const liveColor = dataProp.live_status===0?'bg-gray-500' : dataProp.live_status===1?'bg-green-600':'bg-orange-300' ;
   let sliderMenu = styles.slideMenuLight;
   switch (theme) {
     case 'light':
@@ -105,7 +110,7 @@ const SliderMenu = (prop: any | undefined) => {
 
             <img className="photo" src={dataProp.faceImg} alt='' />
             <p />
-            {dataProp.nickname}
+            {dataProp.nickname}  <div className={`${' w-2 h-2 bg-green-300 rounded-full self-center' } ${liveColor}`}/>
           </div>
           <div className="menu-list">
             <MenuItem menu = {data.menu_0} click = {openLove}/>

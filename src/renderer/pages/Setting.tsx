@@ -83,6 +83,7 @@ const Setting = () => {
                 ...catConfigData,
                 faceImg: response1.data.data.info.face,
                 nickname: response1.data.data.info.uname,
+                live_status: response.data.data.live_status,
               });
             })
             // eslint-disable-next-line func-names
@@ -574,6 +575,7 @@ const Setting = () => {
         theme={catConfigData.theme}
         nickname={catConfigData.nickname}
         faceImg={catConfigData.faceImg}
+        live_status={catConfigData.live_status}
       />
       <Divider orientation="vertical" />
       <div className={pageTheme}>
