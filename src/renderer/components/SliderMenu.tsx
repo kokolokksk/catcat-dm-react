@@ -18,7 +18,6 @@ import '../styles/slider-menu.css';
 import styles from '../styles/slider_menu.module.scss';
 import CatCatSign from './CatCatSign';
 import MenuItem from './MenuItem';
-import axios from 'axios';
 
 // eslint-disable-next-line import/order
 
@@ -86,7 +85,6 @@ const SliderMenu = (prop: any | undefined) => {
   }
   const { theme } = dataProp;
   // eslint-disable-next-line no-nested-ternary
-  console.log(dataProp.live_status);
   const liveColor = dataProp.live_status===0?'bg-gray-500' : dataProp.live_status===1?'bg-green-600':'bg-orange-300' ;
   let sliderMenu = styles.slideMenuLight;
   switch (theme) {

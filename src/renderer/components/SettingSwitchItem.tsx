@@ -5,7 +5,6 @@ const SettingSwitchItem = (prop: any | undefined) => {
   const data = {
     ...prop,
   };
-  console.info(data.v);
   const { theme } = data;
   return (
     <div className={styles.setting_input_item}>

@@ -1,6 +1,7 @@
 import { Link } from '@chakra-ui/react';
 import styles from '../styles/about.module.scss';
 import pack from '../../../package.json';
+import * as CONSTANT from '../@types/catcat/constan';
 
 const About = () => {
   return (
@@ -23,11 +24,7 @@ const About = () => {
           <div className={styles.item}>
             <div className={styles.name}>GitHub地址:</div>
             <div className={styles.value && styles.title}>
-              <Link
-                target="_blank"
-                href="https://github.com/kokolokksk/catcat-dm-react"
-                rel="noreferrer"
-              >
+              <Link target="_blank" href={CONSTANT.REPO_URL} rel="noreferrer">
                 -{'>'}CatCatDm{'<'}-
               </Link>
             </div>

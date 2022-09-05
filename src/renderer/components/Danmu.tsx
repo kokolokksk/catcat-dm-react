@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { Divider, useColorMode } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import * as CONSTANT from '../@types/catcat/constan';
 import styles from '../styles/danmuc.module.scss';
 import themes from '../styles/themes.module.scss';
 
@@ -189,20 +190,17 @@ const Danmu = (prop: any) => {
       style={
         data.data.giftName === '舰长'
           ? {
-              backgroundImage:
-                'linear-gradient(90deg,rgba(255,255,255,0) 0,#fff 100%),url(https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/bg-3.5bf39ce..png)',
+              backgroundImage: `linear-gradient(90deg,rgba(255,255,255,0) 0,#fff 100%),url(${CONSTANT.BGI_JIANZHANG})`,
               filter: 'drop-shadow(-9px 4px 10px rgba(131,184,255,.51))',
             }
           : data.data.giftName === '提督'
           ? {
-              backgroundImage:
-                'linear-gradient(90deg,rgba(255,255,255,0) 0,#fff 100%),url(https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/bg-2.013eeff..png)',
+              backgroundImage: `linear-gradient(90deg,rgba(255,255,255,0) 0,#fff 100%),url(${CONSTANT.BGI_TIDU})`,
               filter: 'drop-shadow(-9px 4px 10px rgba(215,134,255,.37))',
             }
           : data.data.giftName === '总督'
           ? {
-              backgroundImage:
-                'linear-gradient(90deg,rgba(255,255,255,0) 0,#fff 100%),url(https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/bg-1.61830d7..png)',
+              backgroundImage: `linear-gradient(90deg,rgba(255,255,255,0) 0,#fff 100%),url(${CONSTANT.BGI_ZONGDU})`,
               filter: 'drop-shadow(-9px 4px 10px rgba(215,134,255,.37))',
             }
           : {}

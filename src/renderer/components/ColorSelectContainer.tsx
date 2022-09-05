@@ -1,5 +1,4 @@
 /* eslint-disable react/destructuring-assignment */
-import { Button, ButtonGroup } from '@chakra-ui/react';
 import ColorSelectItem from './ColorSelectItem';
 
 const ColorSelectContainer = (prop: any | undefined) => {

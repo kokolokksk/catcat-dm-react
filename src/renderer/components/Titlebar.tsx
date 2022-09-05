@@ -4,7 +4,6 @@ import style from '../styles/titlebar.module.css';
 
 const Titlebar = (prop: any | undefined) => {
   const { theme } = prop;
-  console.info(theme);
   let titlebarClass = style.titlebar;
   let titlebarCloseClass = style.titlebarClose;
   let titlebarMinusClass = style.titlebarMinus;

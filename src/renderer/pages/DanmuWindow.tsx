@@ -9,6 +9,7 @@ import React from 'react';
 import CatLog from 'renderer/utils/CatLog';
 import SuperChatBar from 'renderer/components/SuperChatBar';
 import BackgroundMiku from 'renderer/components/BackgroundMiku';
+import * as CONSTANT from 'renderer/@types/catcat/constan';
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
 import {
@@ -65,8 +66,7 @@ class DanmuWindow extends React.Component {
     type: 1,
     uid: 123,
     content: `${dayjs().format('YYYY-MM-DD HH:mm:ss')}`,
-    avatarFace:
-      'https://i0.hdslb.com/bfs/new_dyn/750c0c53bbee5e1d4f151b3ac7236bd21999280.png@180w_180h_1e_1c.webp',
+    avatarFace: CONSTANT.APP_ICON,
     nickname: 'catcat',
     timestamp: new Date().getTime(),
     price: 0,

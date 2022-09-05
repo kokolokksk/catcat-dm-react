@@ -1,5 +1,4 @@
 import { FormControl, FormLabel, Select, useColorMode } from '@chakra-ui/react';
-import { electron } from 'process';
 import styles from '../styles/setting.module.scss';
 
 const SettingSwitchItem = (prop: any | undefined) => {
@@ -13,8 +12,6 @@ const SettingSwitchItem = (prop: any | undefined) => {
   const { theme, v, c, skey, options } = data;
   let dynamicOptions = options;
   if (skey === 'recentroomid') {
-    console.info('recentroomid');
-    console.info(options);
     if (!dynamicOptions) {
       dynamicOptions = [];
     } else {
@@ -41,8 +38,6 @@ const SettingSwitchItem = (prop: any | undefined) => {
       );
     }
   }
-  console.info(111, dynamicOptions);
-  console.info(v);
   return (
     <div className={styles.setting_input_item}>
       <p className={styles.line} />

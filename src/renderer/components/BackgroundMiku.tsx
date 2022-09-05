@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import '../styles/wave.css';
-import styles from '../styles/snow.module.scss';
 
 const BackgroundWave = (prop: any | undefined) => {
   let color = {

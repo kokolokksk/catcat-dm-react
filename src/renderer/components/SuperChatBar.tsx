@@ -1,7 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { CloseIcon, MinusIcon } from '@chakra-ui/icons';
 import {
-  Button,
   Divider,
   Popover,
   PopoverArrow,
@@ -10,7 +8,6 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
-  Progress,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { TransitionGroup } from 'react-transition-group';
@@ -160,10 +157,6 @@ const SuperChatBar = (prop: any | undefined) => {
       titlebarMinusClass = style.titlebarMinus;
       break;
   }
-  const handleClick = () => {
-    console.info('close');
-    window.electron.ipcRenderer.sendMessage('closeWindow', ['dm-close']);
-  };
   return (
     <>
       <div className={superChatBarClass}>

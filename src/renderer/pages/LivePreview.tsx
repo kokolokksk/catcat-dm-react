@@ -40,7 +40,6 @@ const LivePreview = () => {
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-
   }, []);
   useEffect(() => {
     toast({
@@ -60,9 +59,9 @@ const LivePreview = () => {
       )
       .then((res) => {
         console.info(res);
-        if(Hls.isSupported()){
+        if (Hls.isSupported()) {
           console.info('hls is supported');
-          var hls = new Hls();
+          const hls = new Hls();
           hls.loadSource(res.data.data.durl[0].url);
           hls.attachMedia(pRef.current as HTMLVideoElement);
         } else if (pRef.current) {
@@ -74,6 +73,7 @@ const LivePreview = () => {
       .catch((err) => {
         console.error(err);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [catConfigData.roomid]);
   const { theme } = catConfigData;
   let pageTheme;

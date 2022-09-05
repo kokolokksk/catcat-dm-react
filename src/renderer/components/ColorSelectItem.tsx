@@ -1,11 +1,10 @@
 /* eslint-disable react/destructuring-assignment */
-import { Button, ButtonGroup } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import Colorful from '@uiw/react-color-colorful';
 import { useState } from 'react';
 import styles from '../styles/color.module.scss';
 
 const ColorSelectItem = (prop: any | undefined) => {
-  const { colorItemContainerId } = prop;
   const [hex, setHex] = useState('#fff');
   return (
     <>
