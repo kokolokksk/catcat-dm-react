@@ -555,9 +555,22 @@ const Setting = () => {
         ...catConfigData,
         roomtitle,
         roomid,
+        recentroomid: String(roomid),
       });
+      catConfigData.roomtitle = roomtitle;
+      catConfigData.roomid = roomid;
+      catConfigData.recentroomid = catConfigData.recentroomid
+        ? `${catConfigData.recentroomid},${Number(roomid)}`
+        : `${Number(roomid)}`;
       window.electron.store.set('roomid', roomid);
       window.electron.store.set('roomtitle', roomtitle);
+      window.electron.store.set(
+        'recentroomid',
+        catConfigData.recentroomid
+          ? `${catConfigData.recentroomid},${Number(roomid)}`
+          : `${Number(roomid)}`
+      );
+      load(roomid);
       toast({
         title: '提示',
         description: '同步用户信息成功',
