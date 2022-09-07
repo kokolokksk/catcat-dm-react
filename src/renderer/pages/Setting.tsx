@@ -85,6 +85,7 @@ const Setting = () => {
                 nickname: response1.data.data.info.uname,
                 live_status: response.data.data.live_status,
               });
+              catConfigData.live_status = response.data.data.live_status;
             })
             // eslint-disable-next-line func-names
             .catch(function (error) {
