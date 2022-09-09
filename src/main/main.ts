@@ -25,7 +25,7 @@ import Store from 'electron-store';
 import { randomUUID } from 'crypto';
 import { getHTMLPathBySearchKey, resolveHtmlPath } from './util';
 
-require('electron-referer')('https://www.bilibili.com/');
+require('electron-referer')('https://live.bilibili.com');
 const { send, updateRoomTitle } = require('bilibili-live-danmaku-api');
 
 let live: LiveWS;

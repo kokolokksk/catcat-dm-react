@@ -1,4 +1,18 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { createStandaloneToast } from '@chakra-ui/toast';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
+  List,
+  ListItem,
+  ListIcon,
+  Divider,
+} from '@chakra-ui/react';
 import { stringify } from 'querystring';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { BiliBiliDanmu, MuaConfig } from 'renderer/@types/catcat';
@@ -10,8 +24,7 @@ import CatLog from 'renderer/utils/CatLog';
 import SuperChatBar from 'renderer/components/SuperChatBar';
 import BackgroundMiku from 'renderer/components/BackgroundMiku';
 import * as CONSTANT from 'renderer/@types/catcat/constan';
-import styles from '../styles/danmu.module.scss';
-import '../styles/dm_a.css';
+import { MdCheckCircle, MdBlock } from 'react-icons/md';
 import {
   catConfigItem,
   getNewSessionId,
@@ -22,7 +35,12 @@ import Danmu from '../components/Danmu';
 import ComeInDisplay from '../components/ComeInDisplay';
 import ChatContainer from '../components/ChatContainer';
 
+import styles from '../styles/danmu.module.scss';
+import '../styles/dm_a.css';
+import axios from 'axios';
+
 type StateType = {
+  pause: boolean;
   comeInLastMinute: number;
   count: number;
   allDmList: { list: Array<BiliBiliDanmu>; autoHeight: number };
@@ -42,6 +60,8 @@ const { toast } = createStandaloneToast();
 
 class DanmuWindow extends React.Component {
   listHeightRef: any = '';
+
+  popoverRef: any = '';
 
   loaded: boolean = false;
 
@@ -120,6 +140,7 @@ class DanmuWindow extends React.Component {
       },
       comeInList: [],
       muaConfig,
+      pause: false,
     };
     CatLog.console(`muacofig加载完成`);
     CatLog.console(this.state);
@@ -127,7 +148,7 @@ class DanmuWindow extends React.Component {
   }
 
   componentDidMount() {
-    const { muaConfig, allDmList, scList, comeInList } = this.state;
+    const { muaConfig, allDmList, scList, comeInList, pause } = this.state;
     CatLog.console('renderer dw');
     setInterval(() => {
       CatLog.console('try to read');
@@ -210,7 +231,9 @@ class DanmuWindow extends React.Component {
               scList.list.push(dm);
             }
             allDmList.list.push(dm);
-            allDmList.autoHeight = 310 - this.listHeightRef?.clientHeight;
+            if (!pause) {
+              allDmList.autoHeight = 310 - this.listHeightRef?.clientHeight;
+            }
           }
           CatLog.console(allDmList);
           this.setState({
@@ -412,6 +435,81 @@ class DanmuWindow extends React.Component {
     }
   };
 
+  onDanmuPopOpen = (dm: BiliBiliDanmu) => {
+    this.setState({ pause: true });
+  };
+
+  onDanmuPopClose = (dm: BiliBiliDanmu) => {
+    this.setState({ pause: false });
+  };
+
+  onDanmuPopClick = (dm: BiliBiliDanmu, type: string) => {
+    console.info(type);
+    const { muaConfig } = this.state;
+    switch (type) {
+      case '1':
+        axios
+          .post(
+            `https://api.live.bilibili.com/xlive/app-ucenter/v2/xbanned/banned/AddBlack?tuid=${dm.uid}&anchor_id=${muaConfig.roomid}&csrf_token=${muaConfig.csrf}&csrf=${muaConfig.csrf}&visit_id=`
+          )
+          .then((res) => {
+            if (res.data.code === 0) {
+              // console.error('拉黑成功');
+              toast({
+                title: '拉黑成功',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+              });
+            } else {
+              // console.error('拉黑失败');
+              toast({
+                title: res.data.message,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+              });
+            }
+            return '';
+          })
+          .catch((e) => {
+            console.error('拉黑失败');
+          });
+        break;
+      case '2':
+        axios
+          .post(
+            `https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/AddSilentUser?tuid=${dm.uid}&room_id=${muaConfig.roomid}&msg=${dm.content}&mobile_app=web&csrf_token=${muaConfig.csrf}&csrf=${muaConfig.csrf}&visit_id=`
+          )
+          .then((res) => {
+            if (res.data.code === 0) {
+              // console.error('拉黑成功');
+              toast({
+                title: '禁言成功',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+              });
+            } else {
+              // console.error('拉黑失败');
+              toast({
+                title: res.data.message,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+              });
+            }
+            return '';
+          })
+          .catch((e) => {
+            console.error('禁言失败');
+          });
+        break;
+      default:
+        break;
+    }
+  };
+
   render() {
     const {
       count,
@@ -479,12 +577,60 @@ class DanmuWindow extends React.Component {
                       timeout={1}
                       classNames="item"
                     >
-                      <Danmu
-                        theme={themeMode}
-                        nickname={danmu.nickname}
-                        content={danmu.content}
-                        data={danmu}
-                      />
+                      <Popover
+                        onOpen={() => {
+                          this.onDanmuPopOpen(danmu);
+                        }}
+                        onClose={() => {
+                          this.onDanmuPopClose(danmu);
+                        }}
+                      >
+                        <PopoverTrigger>
+                          <a href="#">
+                            <Danmu
+                              theme={themeMode}
+                              nickname={danmu.nickname}
+                              content={danmu.content}
+                              data={danmu}
+                            />
+                          </a>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <PopoverArrow />
+                          <PopoverCloseButton />
+                          <PopoverHeader>{danmu.nickname}</PopoverHeader>
+                          <PopoverBody>
+                            <List spacing={3}>
+                              <ListItem
+                                className=" cursor-pointer hover:bg-orange-300"
+                                onClick={() => {
+                                  this.onDanmuPopClick(danmu, '1');
+                                }}
+                              >
+                                <ListIcon as={MdBlock} color="red.500" />
+                                <a>拉黑</a>
+                              </ListItem>
+                              <Divider />
+                              <ListItem
+                                display="flex"
+                                className=" cursor-pointer hover:bg-orange-300 "
+                                onClick={() => {
+                                  this.onDanmuPopClick(danmu, '2');
+                                }}
+                              >
+                                <ListIcon as={MdBlock} color="red.500" />
+                                {/* <img
+                                  alt="block"
+                                  height={24}
+                                  width={36}
+                                  src="https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/room-block.41c35f5..png"
+                                /> */}
+                                封禁
+                              </ListItem>
+                            </List>
+                          </PopoverBody>
+                        </PopoverContent>
+                      </Popover>
                     </CSSTransition>
                   ))}
                 </div>
