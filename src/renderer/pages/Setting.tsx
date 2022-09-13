@@ -97,6 +97,27 @@ const Setting = () => {
         // handle error
         console.log(error);
       });
+    axios
+      .get(`http://api.live.bilibili.com/room/v1/Room/get_info?room_id=${num}`)
+      .then((response2) => {
+        console.log(response2);
+        setCatConfigData({
+          ...catConfigData,
+          real_roomid: response2.data.data.room_id,
+          area_id: response2.data.data.area_id,
+          parent_area_id: response2.data.data.parent_area_id,
+        });
+        window.electron.store.set('real_roomid', response2.data.data.room_id);
+        window.electron.store.set('area_id', response2.data.data.area_id);
+        window.electron.store.set(
+          'parent_area_id',
+          response2.data.data.parent_area_id
+        );
+        return response2;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const commonInputItemSave = (skey: any, value: string) => {

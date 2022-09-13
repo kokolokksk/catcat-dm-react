@@ -66,6 +66,9 @@ const catConfigItem = [
   { name: 'proxyApi', type: 'boolean' },
   { name: 'allowUpdate', type: 'boolean' },
   { name: 'recentroomid', type: 'string' },
+  { name: 'real_roomid', type: 'number' },
+  { name: 'area_id', type: 'string' },
+  { name: 'parent_area_id', type: 'string' },
 ];
 
 const giftData = [
@@ -646,29 +649,16 @@ async function handleDanMuMSG(
   await setFace(danmu, proxyApi);
 }
 
-function handleSENDGIFT(data: any, danmu: { [K: string]: any }) {
-  console.info('is gift msg');
-  console.info(data);
-  danmu.type = 2;
-  danmu.noBorder = false;
-  danmu.origin = data;
-  danmu.giftName = data.data.giftName;
-  danmu.giftType = data.data.giftType;
-  danmu.uid = data.data.uid;
-  danmu.nickname = data.data.uname;
-  danmu.timestamp = data.data.timestamp;
-  danmu.giftNum = data.data.num;
-  danmu.content = `赠送了${data.data.num}个${data.data.giftName}`;
-  danmu.price = data.data.num * data.data.discount_price;
-  danmu.avatarFace = data.data.face;
-  giftData.forEach((item) => {
-    if (item.name === danmu?.giftName) {
-      danmu.giftImg = item.img;
-    }
-  });
-}
-
-const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
+const transformMsg = async (
+  data: any | undefined,
+  proxyApi: boolean,
+  params: {
+    platform: string;
+    room_id: string;
+    area_parent_id: string;
+    area_id: string;
+  }
+) => {
   let danmu: BiliBiliDanmu | undefined = {
     type: 0,
     uid: 0,
@@ -685,7 +675,7 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
       await handleDanMuMSG(data, danmu, proxyApi);
       break;
     case 'SEND_GIFT':
-      handleSENDGIFT(data, danmu);
+      handleSENDGIFT(data, danmu, params);
       break;
     case 'INTERACT_WORD':
       danmu.type = 3;
@@ -849,4 +839,67 @@ const transformMsg = async (data: any | undefined, proxyApi: boolean) => {
   }
   return danmu;
 };
-export { catConfigItem, giftData, getNewSessionId, transformMsg };
+
+async function getGiftList(params: {
+  platform: string;
+  room_id: string;
+  area_parent_id: string;
+  area_id: string;
+}) {
+  const data = await axios
+    .get(
+      `https://api.live.bilibili.com/xlive/web-room/v1/giftPanel/giftConfig?platform=${params.platform}&room_id=${params.room_id}&area_parent_id=${params.area_parent_id}&area_id=${params.area_id}`
+    )
+    .then((res) => {
+      console.log(res.data);
+      return res.data;
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  const giftList: { name: string; img: string }[] = [];
+  data.data.list.forEach((item: any) => {
+    giftList.push({
+      name: item.name,
+      img: item.webp,
+    });
+  });
+  return giftList;
+}
+
+async function handleSENDGIFT(
+  data: any,
+  danmu: { [K: string]: any },
+  params: {
+    platform: string;
+    room_id: string;
+    area_parent_id: string;
+    area_id: string;
+  }
+) {
+  console.info('is gift msg');
+  console.info(data);
+  danmu.type = 2;
+  danmu.noBorder = false;
+  danmu.origin = data;
+  danmu.giftName = data.data.giftName;
+  danmu.giftType = data.data.giftType;
+  danmu.uid = data.data.uid;
+  danmu.nickname = data.data.uname;
+  danmu.timestamp = data.data.timestamp;
+  danmu.giftNum = data.data.num;
+  danmu.content = `赠送了${data.data.num}个${data.data.giftName}`;
+  danmu.price = data.data.num * data.data.discount_price;
+  danmu.avatarFace = data.data.face;
+  let gifts = await getGiftList(params);
+  if (gifts.length > 0) {
+    gifts = giftData;
+  }
+  gifts.forEach((item) => {
+    if (item.name === danmu?.giftName) {
+      danmu.giftImg = item.img;
+    }
+  });
+}
+
+export { catConfigItem, giftData, getNewSessionId, transformMsg, getGiftList };

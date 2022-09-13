@@ -115,6 +115,9 @@ class DanmuWindow extends React.Component {
       started: true,
       wave: false,
       theme: 'light',
+      real_roomid: 0,
+      area_id: 102,
+      parent_area_id: 2,
     };
     super(props);
     const arr = catConfigItem.map((item) =>
@@ -190,7 +193,12 @@ class DanmuWindow extends React.Component {
     window.danmuApi.onUpdateMsg(async (_event: any, data: any) => {
       // eslint-disable-next-line no-plusplus
       // eslint-disable-next-line eqeqeq
-      const dm = await transformMsg(data, muaConfig.proxyApi as boolean);
+      const dm = await transformMsg(data, muaConfig.proxyApi as boolean, {
+        platform: 'pc',
+        room_id: muaConfig.real_roomid as string,
+        area_parent_id: muaConfig.parent_area_id as string,
+        area_id: muaConfig.area_id as string,
+      });
       if (dm && stringify(dm.data) !== '{}') {
         this.uploadDanmu(dm);
         this.writeDanmuToFile(dm, muaConfig.roomid);
@@ -327,7 +335,7 @@ class DanmuWindow extends React.Component {
     const { muaConfig } = this.state;
     let roomId;
     new Promise(function (resolve, reject) {
-      resolve(window.electron.store.get('roomid'));
+      resolve(window.electron.store.get('real_roomid'));
     })
       .then((res) => {
         window.electron.ipcRenderer.sendMessage('onLive', [res]);
@@ -451,7 +459,10 @@ class DanmuWindow extends React.Component {
       case '1':
         formData = new FormData();
         formData.append('tuid', dm.uid as unknown as string);
-        formData.append('anchor_id', muaConfig.roomid as unknown as string);
+        formData.append(
+          'anchor_id',
+          muaConfig.real_roomid as unknown as string
+        );
         formData.append('csrf_token', muaConfig.csrf as unknown as string);
         formData.append('csrf', muaConfig.csrf as unknown as string);
         formData.append('visit_id', '');
@@ -487,7 +498,7 @@ class DanmuWindow extends React.Component {
       case '2':
         formData = new FormData();
         formData.append('tuid', dm.uid as unknown as string);
-        formData.append('room_id', muaConfig.roomid as unknown as string);
+        formData.append('room_id', muaConfig.real_roomid as unknown as string);
         formData.append('msg', dm.content as unknown as string);
         formData.append('mobile_app', 'web');
         formData.append('csrf_token', muaConfig.csrf as unknown as string);
@@ -524,7 +535,7 @@ class DanmuWindow extends React.Component {
         break;
       case '3':
         formData = new FormData();
-        formData.append('roomid', muaConfig.roomid as unknown as string);
+        formData.append('roomid', muaConfig.real_roomid as unknown as string);
         formData.append('uid', dm.uid as unknown as string);
         formData.append('csrf_token', muaConfig.csrf as unknown as string);
         formData.append('csrf', muaConfig.csrf as unknown as string);
