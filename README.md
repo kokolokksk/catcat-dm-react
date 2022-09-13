@@ -3,7 +3,7 @@
 ![](https://img.shields.io/github/stars/kokolokksk/catcat-dm-react?color=green&style=flat-square)
 # CatCatDM React
 
-![](./assets/icon.png)
+![](https://i0.hdslb.com/bfs/new_dyn/750c0c53bbee5e1d4f151b3ac7236bd21999280.png@120w_120h_1e_1c.webp)
 > CatCatDM! React!
 > > 喵喵
 
