@@ -21,7 +21,7 @@
 - [下载地址](https://github.com/kokolokksk/catcat-dm-react/releases/latest)
 
 ## Windows
-- 在Windows 10 上测试
+- 在Windows 10/11 上测试
 - 直接运行CatCatDM.exe
 
 ## Linux
