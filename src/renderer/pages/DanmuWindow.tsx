@@ -446,11 +446,19 @@ class DanmuWindow extends React.Component {
   onDanmuPopClick = (dm: BiliBiliDanmu, type: string) => {
     console.info(type);
     const { muaConfig } = this.state;
+    let formData: FormData = new FormData();
     switch (type) {
       case '1':
+        formData = new FormData();
+        formData.append('tuid', dm.uid as unknown as string);
+        formData.append('anchor_id', muaConfig.roomid as unknown as string);
+        formData.append('csrf_token', muaConfig.csrf as unknown as string);
+        formData.append('csrf', muaConfig.csrf as unknown as string);
+        formData.append('visit_id', '');
         axios
           .post(
-            `https://api.live.bilibili.com/xlive/app-ucenter/v2/xbanned/banned/AddBlack?tuid=${dm.uid}&anchor_id=${muaConfig.roomid}&csrf_token=${muaConfig.csrf}&csrf=${muaConfig.csrf}&visit_id=`
+            `https://api.live.bilibili.com/xlive/app-ucenter/v2/xbanned/banned/AddBlack`,
+            formData
           )
           .then((res) => {
             if (res.data.code === 0) {
@@ -477,9 +485,18 @@ class DanmuWindow extends React.Component {
           });
         break;
       case '2':
+        formData = new FormData();
+        formData.append('tuid', dm.uid as unknown as string);
+        formData.append('room_id', muaConfig.roomid as unknown as string);
+        formData.append('msg', dm.content as unknown as string);
+        formData.append('mobile_app', 'web');
+        formData.append('csrf_token', muaConfig.csrf as unknown as string);
+        formData.append('csrf', muaConfig.csrf as unknown as string);
+        formData.append('visit_id', '');
         axios
           .post(
-            `https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/AddSilentUser?tuid=${dm.uid}&room_id=${muaConfig.roomid}&msg=${dm.content}&mobile_app=web&csrf_token=${muaConfig.csrf}&csrf=${muaConfig.csrf}&visit_id=`
+            `https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/AddSilentUser`,
+            formData
           )
           .then((res) => {
             if (res.data.code === 0) {
@@ -503,6 +520,43 @@ class DanmuWindow extends React.Component {
           })
           .catch((e) => {
             console.error('禁言失败');
+          });
+        break;
+      case '3':
+        formData = new FormData();
+        formData.append('roomid', muaConfig.roomid as unknown as string);
+        formData.append('uid', dm.uid as unknown as string);
+        formData.append('csrf_token', muaConfig.csrf as unknown as string);
+        formData.append('csrf', muaConfig.csrf as unknown as string);
+        formData.append('visit_id', '');
+        axios
+          .post(`https://api.live.bilibili.com/liveact/shield_user`, formData, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              // console.error('拉黑成功');
+              toast({
+                title: '屏蔽成功',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+              });
+            } else {
+              // console.error('拉黑失败');
+              toast({
+                title: res.data.message,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+              });
+            }
+            return '';
+          })
+          .catch((e) => {
+            console.error('屏蔽失败');
           });
         break;
       default:
@@ -602,7 +656,7 @@ class DanmuWindow extends React.Component {
                           <PopoverBody>
                             <List spacing={3}>
                               <ListItem
-                                className=" cursor-pointer hover:bg-orange-300"
+                                className=" cursor-pointer hover:bg-gray-300"
                                 onClick={() => {
                                   this.onDanmuPopClick(danmu, '1');
                                 }}
@@ -613,7 +667,7 @@ class DanmuWindow extends React.Component {
                               <Divider />
                               <ListItem
                                 display="flex"
-                                className=" cursor-pointer hover:bg-orange-300 "
+                                className=" cursor-pointer hover:bg-gray-300 "
                                 onClick={() => {
                                   this.onDanmuPopClick(danmu, '2');
                                 }}
@@ -626,6 +680,23 @@ class DanmuWindow extends React.Component {
                                   src="https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/room-block.41c35f5..png"
                                 /> */}
                                 封禁
+                              </ListItem>
+                              <Divider />
+                              <ListItem
+                                display="flex"
+                                className=" cursor-pointer hover:bg-gray-300 "
+                                onClick={() => {
+                                  this.onDanmuPopClick(danmu, '3');
+                                }}
+                              >
+                                <ListIcon as={MdBlock} color="red.500" />
+                                {/* <img
+                                  alt="block"
+                                  height={24}
+                                  width={36}
+                                  src="https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/room-block.41c35f5..png"
+                                /> */}
+                                屏蔽
                               </ListItem>
                             </List>
                           </PopoverBody>

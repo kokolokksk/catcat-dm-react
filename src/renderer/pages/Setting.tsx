@@ -284,9 +284,6 @@ const Setting = () => {
           catConfigData[catConfigItem[index].name] = item;
         }
       });
-      // setCatConfigData({
-      //   ...catConfigData,
-      // });
       // eslint-disable-next-line promise/always-return
       try {
         if (!catConfigData.clientId) {
@@ -667,7 +664,7 @@ const Setting = () => {
           <SettingSelectItem
             name="主题"
             theme={catConfigData.theme}
-            v={catConfigData.theme || 'light'}
+            v={catConfigData.theme}
             c={commonSelectItemSave}
             skey="theme"
             options={[

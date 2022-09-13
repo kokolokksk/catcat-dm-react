@@ -29,6 +29,7 @@ const SettingSwitchItem = (prop: any | undefined) => {
     }
     return nVal;
   }, []);
+  console.info(v);
   if (skey === 'recentroomid') {
     const saveValue = dynamicOptions.map((item: any) => item.value).join(',');
     if (saveValue) {
@@ -61,7 +62,11 @@ const SettingSwitchItem = (prop: any | undefined) => {
           colorScheme={theme === 'dark' ? 'orange' : 'teal'}
         >
           {dynamicOptions.map((option: { value: string; label: string }) => (
-            <option style={{ cursor: 'pointer' }} value={option.value}>
+            <option
+              style={{ cursor: 'pointer' }}
+              value={option.value}
+              selected={option.value === v}
+            >
               {option.label}
             </option>
           ))}
