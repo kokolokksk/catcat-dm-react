@@ -45,10 +45,12 @@
 - [x] 发送弹幕
 - [x] 内置应用更新【仅exe版本】 
 - [x] 使用更加好听的TTS
+- [x] 直播画面预览
+- [x] 用户拉黑，封禁，屏蔽。
 
 
 #### 下一步
-- 直播间管理相关。
+- UI。
 
 ### 感谢（Thanks）
 - npm module [electron-referer](https://github.com/akameco/electron-referer)
