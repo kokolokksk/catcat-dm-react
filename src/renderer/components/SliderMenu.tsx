@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import {
   Badge,
   Button,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -16,6 +17,7 @@ import {
 import About from '../pages/About';
 import '../styles/slider-menu.css';
 import styles from '../styles/slider_menu.module.scss';
+import abStyles from '../styles/about.module.scss';
 import CatCatSign from './CatCatSign';
 import MenuItem from './MenuItem';
 import axios from 'axios';
@@ -110,7 +112,11 @@ const SliderMenu = (prop: any | undefined) => {
 
             <img className="photo" src={dataProp.faceImg} alt='' />
             <p />
-            {dataProp.nickname}  <div className={`${' w-2 h-2 rounded-full self-center' } ${liveColor}`}/>
+            <div className={abStyles.value && abStyles.title}>
+              <Link target="_blank" href={`https://live.bilibili.com/${roomid}`} rel="noreferrer">
+                {dataProp.nickname}
+              </Link>
+            </div><div className={`${' w-2 h-2 rounded-full self-center' } ${liveColor}`}/>
           </div>
           <div className="menu-list">
             <MenuItem menu = {data.menu_0} click = {openLove}/>
