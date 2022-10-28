@@ -11,7 +11,7 @@
  哔哩哔哩直播 弹幕姬：
   查看直播间弹幕。
 
-- 发送弹幕 与 修改 直播间标题 需要设置 ```SESSDATA```(```SESSDATA```) 与 ```csrf```(```bili_jct```)，登陆哔哩哔哩后 F12 复制cookies中的 ```SESSDATA``` 与 ```bili_jct``` 对应键值
+- 发送弹幕 与 修改 直播间标题 需要设置 ```SESSDATA```(```SESSDATA```) 与 ```csrf```(```bili_jct```)，登陆哔哩哔哩后 F12 复制cookies中的 ```SESSDATA``` 与 ```bili_jct``` 对应键值(获取使用app扫描登陆)
 - tts 需要Azure平台相应key
 - 弹幕阴影建议设置值```1px 1px 1px  #fff``` 或者 ```1px 1px 1px  #000```
 >应用界面
