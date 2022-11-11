@@ -651,7 +651,7 @@ class DanmuWindow extends React.Component {
                         }}
                       >
                         <PopoverTrigger>
-                          <a href="#">
+                          <a href="#" className="flex">
                             <Danmu
                               theme={themeMode}
                               nickname={danmu.nickname}
