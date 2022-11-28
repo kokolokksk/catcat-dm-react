@@ -41,6 +41,7 @@ declare interface MuaConfig {
   count: number;
   wave?: boolean;
   theme: string;
+  danmuDir?: string;
   [propName: string]: number | object | 0 | boolean | string | undefined;
 }
 export { BiliBiliDanmu, MuaConfig };

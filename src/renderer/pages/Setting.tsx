@@ -652,6 +652,14 @@ const Setting = () => {
             skey="alwaysOnTop"
           />
           <Divider />
+          <SettingInputItem
+            name="设置弹幕保存路径"
+            theme={catConfigData.theme}
+            v={catConfigData.danmuDir}
+            c={commonInputItemSave}
+            skey="danmuDir"
+          />
+          <Divider />
           {/* <SettingSwitchItem
             name="弹幕上传"
             v={catConfigData.catdb}

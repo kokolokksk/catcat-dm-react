@@ -69,6 +69,7 @@ const catConfigItem = [
   { name: 'real_roomid', type: 'number' },
   { name: 'area_id', type: 'string' },
   { name: 'parent_area_id', type: 'string' },
+  { name: 'danmuDir', type: 'string' },
 ];
 
 const giftData = [

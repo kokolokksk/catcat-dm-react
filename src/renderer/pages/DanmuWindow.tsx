@@ -118,6 +118,7 @@ class DanmuWindow extends React.Component {
       real_roomid: 0,
       area_id: 102,
       parent_area_id: 2,
+      danmuDir: '',
     };
     super(props);
     const arr = catConfigItem.map((item) =>
@@ -201,7 +202,7 @@ class DanmuWindow extends React.Component {
       });
       if (dm && stringify(dm.data) !== '{}') {
         this.uploadDanmu(dm);
-        this.writeDanmuToFile(dm, muaConfig.roomid);
+        this.writeDanmuToFile(dm, muaConfig.roomid, muaConfig.danmuDir);
         let merged = false;
         if (dm.type !== 3) {
           const listSize = allDmList.list.length;
@@ -353,7 +354,7 @@ class DanmuWindow extends React.Component {
     // interface: upload danmu to server
   };
 
-  writeDanmuToFile = (dm: BiliBiliDanmu, roomId: number) => {
+  writeDanmuToFile = (dm: BiliBiliDanmu, roomId: number, danmuDir: string) => {
     // interface: upload danmu to server
     if (dm.content) {
       if (!dm.fansName) {
@@ -364,13 +365,27 @@ class DanmuWindow extends React.Component {
       }
       const datetime = dayjs().format('YYYY-MM-DD HH:mm:ss');
       const date = dayjs().format('YYYY-MM-DD');
-      window.fs.appendFile(
-        `./${roomId}-danmu-${date}.txt`,
-        `${datetime} ${dm.nickname}[${dm.fansName}${dm.fansLevel}](${dm.uid}) : ${dm.content}\n`,
-        (err) => {
-          if (err) throw err;
+      console.log(danmuDir);
+      if (danmuDir) {
+        const regex =
+          /^[a-zA-Z]:\\([^\\:*<>|"?\r\n/]+\\)*([^\\:*<>|"?\r\n/]+)?$/;
+        if (regex.test(danmuDir)) {
+          if (!window.fs.existsSync(danmuDir)) {
+            window.fs.mkdirSync(danmuDir);
+          }
+          if (danmuDir.endsWith('\\' || '/')) {
+            // eslint-disable-next-line no-param-reassign
+            danmuDir = danmuDir.substring(0, danmuDir.length - 1);
+          }
+          window.fs.appendFile(
+            `${danmuDir}/${roomId}-danmu-${date}.txt`,
+            `${datetime} ${dm.nickname}[${dm.fansName}${dm.fansLevel}](${dm.uid}) : ${dm.content}\n`,
+            (err) => {
+              if (err) throw err;
+            }
+          );
         }
-      );
+      }
     }
   };
 
