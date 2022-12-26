@@ -17,6 +17,7 @@ import {
   globalShortcut,
   nativeTheme,
   session,
+  clipboard,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -441,6 +442,11 @@ ipcMain.on('onLive', (event, arg) => {
     }
   });
 });
+
+ipcMain.on('onCopy', (event, arg) => {
+  console.info(arg);
+  clipboard.writeText(arg[0]);
+  });
 
 ipcMain.on('setOnTop:setting', (event, arg) => {
   console.info(`setOnTop:setting ${arg[0]}`);

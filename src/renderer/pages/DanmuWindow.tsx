@@ -12,6 +12,8 @@ import {
   ListItem,
   ListIcon,
   Divider,
+  Button,
+  Link,
 } from '@chakra-ui/react';
 import { stringify } from 'querystring';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
@@ -24,7 +26,7 @@ import CatLog from 'renderer/utils/CatLog';
 import SuperChatBar from 'renderer/components/SuperChatBar';
 import BackgroundMiku from 'renderer/components/BackgroundMiku';
 import * as CONSTANT from 'renderer/@types/catcat/constan';
-import { MdCheckCircle, MdBlock } from 'react-icons/md';
+import { MdCheckCircle, MdBlock, MdCopyAll, MdOpenInBrowser, MdLiveTv } from 'react-icons/md';
 import {
   catConfigItem,
   getNewSessionId,
@@ -38,6 +40,7 @@ import ChatContainer from '../components/ChatContainer';
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
 import axios from 'axios';
+import { domMax } from 'framer-motion';
 
 type StateType = {
   pause: boolean;
@@ -585,6 +588,12 @@ class DanmuWindow extends React.Component {
             console.error('屏蔽失败');
           });
         break;
+      case '4':
+          window.electron.ipcRenderer.sendMessage('onCopy', [dm.nickname]);
+          break;
+      case '5':
+          window.electron.ipcRenderer.sendMessage('onCopy', [dm.content]);
+          break;
       default:
         break;
     }
@@ -679,50 +688,71 @@ class DanmuWindow extends React.Component {
                           <PopoverArrow />
                           <PopoverCloseButton />
                           <PopoverHeader>{danmu.nickname}</PopoverHeader>
-                          <PopoverBody>
+                          <PopoverBody zIndex={9}>
                             <List spacing={3}>
-                              <ListItem
-                                className=" cursor-pointer hover:bg-gray-300"
-                                onClick={() => {
-                                  this.onDanmuPopClick(danmu, '1');
-                                }}
-                              >
-                                <ListIcon as={MdBlock} color="red.500" />
-                                <a>拉黑</a>
+                              <ListItem>
+                                <Button
+                                  leftIcon={<MdBlock />}
+                                  className=" cursor-pointer hover:bg-gray-300"
+                                  onClick={() => {
+                                    this.onDanmuPopClick(danmu, '1');
+                                  }}
+                                >
+                                  拉黑
+                                </Button>
+                                <Button
+                                  leftIcon={<MdBlock />}
+                                  className=" cursor-pointer hover:bg-gray-300"
+                                  onClick={() => {
+                                    this.onDanmuPopClick(danmu, '2');
+                                  }}
+                                >
+                                  封禁
+                                </Button>
+                                <Button
+                                  leftIcon={<MdBlock />}
+                                  className=" cursor-pointer hover:bg-gray-300"
+                                  onClick={() => {
+                                    this.onDanmuPopClick(danmu, '3');
+                                  }}
+                                >
+                                  屏蔽
+                                </Button>
                               </ListItem>
                               <Divider />
-                              <ListItem
-                                display="flex"
-                                className=" cursor-pointer hover:bg-gray-300 "
-                                onClick={() => {
-                                  this.onDanmuPopClick(danmu, '2');
-                                }}
-                              >
-                                <ListIcon as={MdBlock} color="red.500" />
-                                {/* <img
-                                  alt="block"
-                                  height={24}
-                                  width={36}
-                                  src="https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/room-block.41c35f5..png"
-                                /> */}
-                                封禁
+                              <ListItem>
+                                <Button
+                                  leftIcon={<MdCopyAll />}
+                                  className=" cursor-pointer hover:bg-gray-300"
+                                  onClick={() => {
+                                    this.onDanmuPopClick(danmu, '4');
+                                  }}
+                                >
+                                  复制昵称
+                                </Button>
+                                <Button
+                                  leftIcon={<MdCopyAll />}
+                                  className=" cursor-pointer hover:bg-gray-300"
+                                  onClick={() => {
+                                    this.onDanmuPopClick(danmu, '5');
+                                  }}
+                                >
+                                  复制弹幕
+                                </Button>
                               </ListItem>
                               <Divider />
-                              <ListItem
-                                display="flex"
-                                className=" cursor-pointer hover:bg-gray-300 "
-                                onClick={() => {
-                                  this.onDanmuPopClick(danmu, '3');
-                                }}
-                              >
-                                <ListIcon as={MdBlock} color="red.500" />
-                                {/* <img
-                                  alt="block"
-                                  height={24}
-                                  width={36}
-                                  src="https://s1.hdslb.com/bfs/static/blive/blfe-live-room/static/img/room-block.41c35f5..png"
-                                /> */}
-                                屏蔽
+                              <ListItem>
+                                <Button
+                                  leftIcon={<MdOpenInBrowser />}
+                                  className=" cursor-pointer hover:bg-gray-300"
+                                  onClick={() => {
+                                    this.onDanmuPopClick(danmu, '6');
+                                  }}
+                                >
+                                  <Link target="_blank" href={'https://space.bilibili.com/'+danmu.uid} rel="noreferrer">
+                                    打开主页
+                                  </Link>
+                                </Button>
                               </ListItem>
                             </List>
                           </PopoverBody>
