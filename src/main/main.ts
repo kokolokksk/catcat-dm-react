@@ -48,6 +48,19 @@ export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
+    const proxyServer = store.get('proxy_server');
+    if (proxyServer) {
+      autoUpdater.netSession.setProxy({
+        proxyRules: `${proxyServer}`,
+      });
+    }
+    const morror = store.get('mirror');
+    if (morror) {
+      autoUpdater.setFeedURL({
+        provider: 'generic',
+        url: 'https://ririra.com/update/win',
+      });
+    }
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
@@ -499,6 +512,7 @@ autoUpdater.on('update-available', (info) => {
   sendStatusToWindow('Update available.');
 });
 autoUpdater.on('update-not-available', (info) => {
+  console.info(info);
   sendStatusToWindow('Update not available.');
 });
 autoUpdater.on('error', (err) => {

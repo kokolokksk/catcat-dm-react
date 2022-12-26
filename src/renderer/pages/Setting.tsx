@@ -660,6 +660,22 @@ const Setting = () => {
             skey="danmuDir"
           />
           <Divider />
+          <SettingSwitchItem
+            name="使用国内服务器下载更新"
+            theme={catConfigData.theme}
+            v={catConfigData.mirror || false}
+            c={commonSwitchItemSave}
+            skey="mirror"
+          />
+          <Divider />
+          {/* <SettingInputItem
+            name="设置更新代理服务器"
+            theme={catConfigData.theme}
+            v={catConfigData.port_server}
+            c={commonInputItemSave}
+            skey="port_server"
+          />
+          <Divider /> */}
           {/* <SettingSwitchItem
             name="弹幕上传"
             v={catConfigData.catdb}
