@@ -668,14 +668,14 @@ const Setting = () => {
             skey="mirror"
           />
           <Divider />
-          {/* <SettingInputItem
+          <SettingInputItem
             name="设置更新代理服务器"
             theme={catConfigData.theme}
             v={catConfigData.port_server}
             c={commonInputItemSave}
             skey="port_server"
           />
-          <Divider /> */}
+          <Divider />
           {/* <SettingSwitchItem
             name="弹幕上传"
             v={catConfigData.catdb}

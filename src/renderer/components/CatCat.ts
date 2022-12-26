@@ -71,6 +71,7 @@ const catConfigItem = [
   { name: 'parent_area_id', type: 'string' },
   { name: 'danmuDir', type: 'string' },
   { name: 'mirror', type: 'boolean' },
+  { name: 'port_server', type: 'string' },
 ];
 
 const giftData = [
