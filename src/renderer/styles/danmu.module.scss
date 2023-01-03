@@ -12,8 +12,8 @@
 		background-size: 50px 50px;
     display: flex;
     position: relative;
-    top: 24px;
-    height: calc(100vh - 24px);
+    top: 4vh;
+    height:96vh;
     width: 100vw;
     flex-flow: wrap;
     justify-content: center;
@@ -28,8 +28,8 @@
 		background-size: 50px 50px;
     display: flex;
     position: relative;
-    top: 24px;
-    height: calc(100vh - 24px);
+    top: 4vh;
+    height:96vh;
     width: 100vw;
     flex-flow: wrap;
     justify-content: center;
@@ -45,8 +45,8 @@
 		background-size: 50px 50px;
     display: flex;
     position: relative;
-    top: 24px;
-    height: calc(100vh - 24px);
+    top: 4vh;
+    height:96vh;
     width: 100vw;
     flex-flow: wrap;
     background-color: #ffffff;
@@ -62,8 +62,8 @@
 		background-size: 50px 50px;
     display: flex;
     position: relative;
-    top: 24px;
-    height: calc(100vh - 24px);
+    top: 4vh;
+    height:96vh;
     width: 100vw;
     flex-flow: wrap;
     justify-content: center;
@@ -78,8 +78,8 @@
 		background-size: 50px 50px;
     display: flex;
     position: relative;
-    top: 24px;
-    height: calc(100vh - 24px);
+    top: 4vh;
+    height:96vh;
     width: 100vw;
     flex-flow: wrap;
     justify-content: center;
@@ -108,7 +108,7 @@
     overflow: overlay;
     /* padding-top: 20vh; */
     overflow: hidden;
-    /*   height: 72vh; */
+    height: 72vh;
     z-index: 1;
     width: 100%;
     flex-wrap: wrap;
@@ -146,14 +146,14 @@
       }
 
       .chatContainer {
-        position: relative;
        display: flex;
        flex-direction: column-reverse;
         -webkit-app-region: no-drag;
         background-color: transparent;
         align-content: center;
-
+        position: absolute;
+        bottom: 0.4vh;
         width: 99%;
-
+        height: 8vh;
         z-index: 2;
       }

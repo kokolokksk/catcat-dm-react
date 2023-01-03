@@ -165,6 +165,10 @@ const SuperChatBar = (prop: any | undefined) => {
             style={{
               flexDirection: 'row',
               display: 'flex',
+              position: 'absolute',
+              top: '5vh',
+              left: 0,
+              width: '100%',
             }}
           >
             {scList.list.map((danmu: BiliBiliDanmu) => (

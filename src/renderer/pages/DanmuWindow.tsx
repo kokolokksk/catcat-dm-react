@@ -235,7 +235,7 @@ class DanmuWindow extends React.Component {
           }
           dm.keyy = data.keyy;
           if (!merged) {
-            if (allDmList.list.length > 7) {
+            if (allDmList.list.length >= 7) {
               allDmList.list.shift();
               CatLog.info('clear some damuka');
             }
