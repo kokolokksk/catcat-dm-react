@@ -35,7 +35,7 @@ const store = new Store();
 let mainWindow: BrowserWindow | null = null;
 let dm: BrowserWindow | null = null;
 let livePreviewWindow: BrowserWindow | null = null;
-
+let invisibleWindow: BrowserWindow | null = null;
 // IPC listener
 ipcMain.on('electron-store-get', (event, val) => {
   //  mainWindow?.webContents.send('main-process-message', store.path);
@@ -95,6 +95,87 @@ const installExtensions = async () => {
       forceDownload
     )
     .catch(console.log);
+};
+
+const createInvisibleWindow = async () => {
+  if (isDebug) {
+    await installExtensions();
+  }
+
+  const RESOURCES_PATH = app.isPackaged
+    ? path.join(process.resourcesPath, 'assets')
+    : path.join(__dirname, '../../assets');
+
+  const getAssetPath = (...paths: string[]): string => {
+    return path.join(RESOURCES_PATH, ...paths);
+  };
+
+  invisibleWindow = new BrowserWindow({
+    title: 'invisible',
+    height: 120,
+    useContentSize: false,
+    width: 120,
+    frame: false,
+    transparent: true,
+    webPreferences: {
+      sandbox: false,
+      nodeIntegration: true,
+      contextIsolation: true,
+      webSecurity: false,
+      preload: app.isPackaged
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, '../../.erb/dll/preload.js'),
+    },
+  });
+  invisibleWindow.setAlwaysOnTop(false);
+  invisibleWindow.loadURL(getHTMLPathBySearchKey('invisible'));
+  session.defaultSession.cookies.set({
+    url: 'https://api.bilibili.com/',
+    name: 'SESSDATA',
+    value: store.get('SESSDATA') as string,
+    sameSite: 'no_restriction',
+    domain: 'api.bilibili.com',
+  });
+  invisibleWindow.webContents.send(
+    'main-process-message',
+    resolveHtmlPath('index.html')
+  );
+  invisibleWindow.on('ready-to-show', () => {
+    if (!invisibleWindow) {
+      throw new Error('"invisibleWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      invisibleWindow.minimize();
+    } else {
+      invisibleWindow.show();
+    }
+  });
+
+  invisibleWindow.on('closed', () => {
+    invisibleWindow = null;
+  });
+
+  // const menuBuilder = new MenuBuilder(mainWindow);
+  // menuBuilder.buildMenu();
+
+  // Open urls in the user's browser
+  invisibleWindow.webContents.setWindowOpenHandler((edata) => {
+    shell.openExternal(edata.url);
+    return { action: 'deny' };
+  });
+
+  // Remove this if your app does not use auto updates
+  // eslint-disable-next-line
+  // new AppUpdater();
+  globalShortcut.register('CommandOrControl+Shift+M', () => {
+    console.log('CommandOrControl+Shift+M is pressed');
+    if (invisibleWindow != null && dm == null) {
+      invisibleWindow.webContents.openDevTools();
+    }
+    if (dm != null) {
+      dm.webContents.openDevTools();
+    }
+  });
 };
 
 const createWindow = async () => {
@@ -475,11 +556,12 @@ app
     if (live) {
       live.close();
     }
-    createWindow();
+    // createWindow();
+    createInvisibleWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
-      if (mainWindow === null) createWindow();
+      if (invisibleWindow === null) createInvisibleWindow();
     });
   })
   .catch(console.log);

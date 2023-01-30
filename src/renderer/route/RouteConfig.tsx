@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { useLocation } from 'react-router-dom';
 import DanmuWindow from 'renderer/pages/DanmuWindow';
+import Invisible from 'renderer/pages/Invisible';
 import LivePreview from 'renderer/pages/LivePreview';
 import Setting from 'renderer/pages/Setting';
 
@@ -15,6 +16,7 @@ const RouteConfig = (_props: any) => {
       dmWindow: <DanmuWindow />,
       main: <Setting />,
       livePreview: <LivePreview />,
+      invisible: <Invisible />,
     };
   };
 

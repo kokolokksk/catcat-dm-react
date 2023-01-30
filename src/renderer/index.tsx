@@ -8,10 +8,6 @@ const root = createRoot(document.getElementById('root')!);
 window.danmuApi.mainProcessMessage((_event: any, value: any) => {
   console.info(value);
 });
-root.render(
-  <ChakraProvider>
-    <App />
-  </ChakraProvider>
-);
+root.render(<App />);
 
 // window.removeLoading();

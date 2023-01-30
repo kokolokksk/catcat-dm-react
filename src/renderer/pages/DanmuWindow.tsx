@@ -39,8 +39,8 @@ import ChatContainer from '../components/ChatContainer';
 
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
+// eslint-disable-next-line import/order
 import axios from 'axios';
-import { domMax } from 'framer-motion';
 
 type StateType = {
   pause: boolean;
