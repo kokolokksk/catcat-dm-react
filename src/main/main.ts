@@ -127,8 +127,19 @@ const createInvisibleWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
-  invisibleWindow.setAlwaysOnTop(false);
+  invisibleWindow.setAlwaysOnTop(true);
   invisibleWindow.loadURL(getHTMLPathBySearchKey('invisible'));
+  // session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+  //   callback({
+  //     responseHeaders: {
+  //       ...details.responseHeaders,
+  //       'Content-Security-Policy': [
+  //         'worker-src * blob:',
+  //         'default-src * blob:',
+  //       ],
+  //     },
+  //   });
+  // });
   session.defaultSession.cookies.set({
     url: 'https://api.bilibili.com/',
     name: 'SESSDATA',
@@ -527,7 +538,7 @@ ipcMain.on('onLive', (event, arg) => {
 ipcMain.on('onCopy', (event, arg) => {
   console.info(arg);
   clipboard.writeText(arg[0]);
-  });
+});
 
 ipcMain.on('setOnTop:setting', (event, arg) => {
   console.info(`setOnTop:setting ${arg[0]}`);
