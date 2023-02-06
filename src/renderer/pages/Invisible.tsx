@@ -20,6 +20,7 @@ class Invisible extends React.Component<any, StateType> {
   speechConfig!: {
     speechSynthesisLanguage: string;
     speechSynthesisVoiceName: string;
+    speechRecognitionLanguage: string;
   };
 
   constructor(props: any) {
@@ -73,10 +74,11 @@ class Invisible extends React.Component<any, StateType> {
       // do setup check!
       if (!muaConfig.roomid || muaConfig.roomid === 0) {
         this.synthesizeToSpeaker('请先设置房间号');
-        // this.sttFromMic();
+        this.sttFromMic();
       } else {
         const num = this.splitToDigit(muaConfig.roomid.toString());
         this.synthesizeToSpeaker(`房间号设置为: ${num.join(' ')}`);
+        this.sttFromMic();
       }
     }
     CatLog.console('componentDidMount');
@@ -153,7 +155,8 @@ class Invisible extends React.Component<any, StateType> {
         res,
         'eastasia'
       );
-      this.speechConfig.speechSynthesisLanguage = 'zh-cn';
+      this.speechConfig.speechSynthesisLanguage = 'zh-CN';
+      this.speechConfig.speechRecognitionLanguage = 'zh-CN';
       this.speechConfig.speechSynthesisVoiceName = 'zh-CN-XiaoxiaoNeural';
       this.ttsOk = true;
     } else {
