@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { Configuration, OpenAIApi } from 'openai';
 import { createStandaloneToast } from '@chakra-ui/toast';
 import {
   Popover,
@@ -60,6 +61,12 @@ interface DanmuWindow {
   props: PropType;
 }
 const { toast } = createStandaloneToast();
+
+const configuration = new Configuration({
+  apiKey: 'sk-',
+});
+
+const openai = new OpenAIApi(configuration);
 
 class DanmuWindow extends React.Component {
   listHeightRef: any = '';
@@ -243,6 +250,21 @@ class DanmuWindow extends React.Component {
               scList.list.push(dm);
             }
             allDmList.list.push(dm);
+            if (dm.content?.startsWith('【') && dm.content?.endsWith('】')) {
+              const content = dm.content
+                .replaceAll('【', '')
+                .replaceAll('】', '');
+              const req = {
+                body: {
+                  messages: [{ role: 'user', content }],
+                },
+              };
+              const res: any = {
+                status: 200,
+                json: '',
+              };
+              // chatgpt(req, res, muaConfig);
+            }
             if (!pause) {
               allDmList.autoHeight = 310 - this.listHeightRef?.clientHeight;
             }
@@ -589,11 +611,11 @@ class DanmuWindow extends React.Component {
           });
         break;
       case '4':
-          window.electron.ipcRenderer.sendMessage('onCopy', [dm.nickname]);
-          break;
+        window.electron.ipcRenderer.sendMessage('onCopy', [dm.nickname]);
+        break;
       case '5':
-          window.electron.ipcRenderer.sendMessage('onCopy', [dm.content]);
-          break;
+        window.electron.ipcRenderer.sendMessage('onCopy', [dm.content]);
+        break;
       default:
         break;
     }
@@ -777,3 +799,63 @@ class DanmuWindow extends React.Component {
 }
 
 export default DanmuWindow;
+async function chatgpt(
+  req: { body: { messages: any } },
+  res: any,
+  muaConfig: MuaConfig
+) {
+  if (!configuration.apiKey) {
+    res.status = 500;
+    res.json = {
+      error: {
+        message:
+          'OpenAI API key not configured, please follow instructions in README.md',
+      },
+    };
+    return;
+  }
+  try {
+    const completion = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: req.body.messages,
+    });
+    res.status = 200;
+    res.json = { result: completion.data.choices[0].message?.content };
+    send({
+      value: `${`[${completion.data.choices[0].message?.content}` as string}]`,
+      roomid: muaConfig.roomid,
+      SESSDATA: muaConfig.SESSDATA,
+      csrf: muaConfig.csrf,
+      muaConfig,
+    });
+  } catch (error: any) {
+    // Consider adjusting the error handling logic for your use case
+    if (error.response) {
+      console.error(error.response.status, error.response.data);
+      res.status = error.response.status;
+      res.json = error.response.data;
+    } else {
+      console.error(`Error with OpenAI API request: ${error.message}`);
+      res.status = 500;
+      res.json = {
+        error: {
+          message: 'An error occurred during your request.',
+        },
+      };
+    }
+  }
+}
+
+async function send(arg0: {
+  value: string;
+  roomid: any;
+  SESSDATA: any;
+  csrf: any;
+  muaConfig: MuaConfig;
+}) {
+  window.electron.ipcRenderer.sendMessage('sendDanmu', [arg0]);
+}
+
+function sleep(time: number) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
