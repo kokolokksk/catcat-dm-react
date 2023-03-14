@@ -101,8 +101,8 @@ const ChatContainer = (prop: any | undefined) => {
         <Input
           style={
             theme === 'dark'
-              ? { background: '#00000052' }
-              : { background: '#ffffff52' }
+              ? { background: '#00000052', color: '#ffffff' }
+              : { background: '#ffffff52', color: '#000000' }
           }
           placeholder="Say Something"
           value={value}
