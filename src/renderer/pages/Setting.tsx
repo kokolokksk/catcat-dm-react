@@ -791,8 +791,20 @@ const Setting = () => {
             skey="ttsKey"
           />
           <Divider />
-          <Button onClick={openQrLogin}>扫码登陆</Button>
-          <Button onClick={syncUserInfo}>通过登陆信息更新弹幕姬</Button>
+          <SettingInputItem
+            name="TTS Server Url"
+            theme={catConfigData.theme}
+            v={catConfigData.ttsServerUrl || '-'}
+            c={commonInputItemSave}
+            skey="ttsServerUrl"
+          />
+          <Divider />
+          <Button onClick={openQrLogin} color="orange">
+            扫码登陆
+          </Button>
+          <Button onClick={syncUserInfo} color="orange">
+            通过登陆信息更新弹幕姬
+          </Button>
           {/* <ColorSelectContainer c={commonInputItemSave}/> */}
         </div>
       </div>

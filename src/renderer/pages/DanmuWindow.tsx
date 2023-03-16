@@ -28,6 +28,7 @@ import SuperChatBar from 'renderer/components/SuperChatBar';
 import BackgroundMiku from 'renderer/components/BackgroundMiku';
 import * as CONSTANT from 'renderer/@types/catcat/constan';
 import { MdCheckCircle, MdBlock, MdCopyAll, MdOpenInBrowser, MdLiveTv } from 'react-icons/md';
+import axios from 'axios';
 import {
   catConfigItem,
   getNewSessionId,
@@ -40,8 +41,7 @@ import ChatContainer from '../components/ChatContainer';
 
 import styles from '../styles/danmu.module.scss';
 import '../styles/dm_a.css';
-import axios from 'axios';
-import { domMax } from 'framer-motion';
+import { rejects } from 'assert';
 
 type StateType = {
   pause: boolean;
@@ -449,14 +449,41 @@ class DanmuWindow extends React.Component {
     }
   };
 
+  getAudioFromServer = (text: string) => {
+    const { muaConfig } = this.state;
+    this.speakStatus = false;
+    axios({
+      method: 'post',
+      url: `${muaConfig.ttsServerUrl}?content=${text}`,
+      responseType: 'arraybuffer',
+    })
+      .then((res) => {
+        const pUrl = window.URL.createObjectURL(new Blob([res.data]));
+        const audio = new Audio(pUrl);
+        audio.play();
+        return '';
+      })
+      .catch((e) => {
+        CatLog.console(e);
+      });
+  };
+
   speakDM = (dm: BiliBiliDanmu) => {
     const { muaConfig } = this.state;
     if (dm.type === 2 && (dm.price as number) > 0 && muaConfig.ttsGift) {
       const speakText = `感谢${dm.nickname}赠送的${dm.count}个${dm.giftName}`;
-      this.synthesizeToSpeaker(speakText);
+      if (muaConfig.ttsServerUrl) {
+        this.getAudioFromServer(speakText);
+      } else {
+        this.synthesizeToSpeaker(speakText);
+      }
     }
     if (muaConfig.ttsDanmu) {
-      this.synthesizeToSpeaker(`${dm.content}`);
+      if (muaConfig.ttsServerUrl) {
+        this.getAudioFromServer(`${dm.content}`);
+      } else {
+        this.synthesizeToSpeaker(`${dm.content}`);
+      }
     }
   };
 
