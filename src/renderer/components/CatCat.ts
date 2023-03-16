@@ -72,6 +72,7 @@ const catConfigItem = [
   { name: 'danmuDir', type: 'string' },
   { name: 'mirror', type: 'boolean' },
   { name: 'port_server', type: 'string' },
+  { name: 'ttsServerUrl', type: 'string' },
 ];
 
 const giftData = [

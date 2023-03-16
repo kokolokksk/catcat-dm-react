@@ -166,7 +166,7 @@ class DanmuWindow extends React.Component {
     CatLog.console('renderer dw');
     setInterval(() => {
       CatLog.console('try to read');
-      if (this.ttsOk) {
+      if (this.ttsOk || muaConfig.ttsServerUrl) {
         this.speakDanmuReal(null);
       }
     }, 2000);
@@ -273,7 +273,7 @@ class DanmuWindow extends React.Component {
           this.setState({
             allDmList,
           });
-          if (this.ttsOk) {
+          if (this.ttsOk || muaConfig.ttsServerUrl) {
             this.speakDanmuReal(dm);
           }
         } else {
@@ -451,20 +451,32 @@ class DanmuWindow extends React.Component {
 
   getAudioFromServer = (text: string) => {
     const { muaConfig } = this.state;
-    this.speakStatus = false;
+    const data = {
+      token: 'shsh',
+      text,
+    };
     axios({
       method: 'post',
-      url: `${muaConfig.ttsServerUrl}?content=${text}`,
+      url: `${muaConfig.ttsServerUrl}`,
       responseType: 'arraybuffer',
+      data: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
       .then((res) => {
+        CatLog.console(res);
         const pUrl = window.URL.createObjectURL(new Blob([res.data]));
         const audio = new Audio(pUrl);
         audio.play();
+        audio.onended = () => {
+          this.speakStatus = false;
+        };
         return '';
       })
       .catch((e) => {
         CatLog.console(e);
+        this.speakStatus = false;
       });
   };
 
@@ -478,6 +490,7 @@ class DanmuWindow extends React.Component {
         this.synthesizeToSpeaker(speakText);
       }
     }
+    console.info(`speakDM${muaConfig}`);
     if (muaConfig.ttsDanmu) {
       if (muaConfig.ttsServerUrl) {
         this.getAudioFromServer(`${dm.content}`);
