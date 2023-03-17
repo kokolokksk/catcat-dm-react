@@ -27,6 +27,7 @@ declare interface MuaConfig {
   ttsGift?: boolean;
   ttsKey?: string;
   ttsServerUrl?: string;
+  ttsServerToken?: string;
   alwaysOnTop?: boolean;
   catdb?: boolean;
   dmTs?: string;

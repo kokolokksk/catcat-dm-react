@@ -799,6 +799,14 @@ const Setting = () => {
             skey="ttsServerUrl"
           />
           <Divider />
+          <SettingInputItem
+            name="TTS Server token"
+            theme={catConfigData.theme}
+            v={catConfigData.ttsServerToken || '-'}
+            c={commonInputItemSave}
+            skey="ttsServerToken"
+          />
+          <Divider />
           <Button onClick={openQrLogin} color="orange">
             扫码登陆
           </Button>

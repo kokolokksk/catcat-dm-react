@@ -73,6 +73,7 @@ const catConfigItem = [
   { name: 'mirror', type: 'boolean' },
   { name: 'port_server', type: 'string' },
   { name: 'ttsServerUrl', type: 'string' },
+  { name: 'ttsServerToken', type: 'string' },
 ];
 
 const giftData = [
