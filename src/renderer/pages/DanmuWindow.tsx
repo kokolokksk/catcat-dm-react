@@ -492,10 +492,11 @@ class DanmuWindow extends React.Component {
     }
     console.info(`speakDM${muaConfig}`);
     if (muaConfig.ttsDanmu) {
+      const speakText = `${dm.nickname}说${dm.content}`;
       if (muaConfig.ttsServerUrl) {
-        this.getAudioFromServer(`${dm.content}`);
+        this.getAudioFromServer(speakText);
       } else {
-        this.synthesizeToSpeaker(`${dm.content}`);
+        this.synthesizeToSpeaker(speakText);
       }
     }
   };
