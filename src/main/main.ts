@@ -518,7 +518,7 @@ ipcMain.on('onCopy', (event, arg) => {
 ipcMain.on('setOnTop:setting', (event, arg) => {
   console.info(`setOnTop:setting ${arg[0]}`);
   if (arg) {
-    dm?.setAlwaysOnTop(arg[0]);
+    dm?.setAlwaysOnTop(arg[0], 'normal');
   }
 });
 /**
