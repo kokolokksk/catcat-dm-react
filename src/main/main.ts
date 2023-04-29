@@ -238,6 +238,67 @@ const createDMWindow = async () => {
   // eslint-disable-next-line
  // new AppUpdater();
 };
+
+const createYinWindow = async () => {
+  if (isDebug) {
+    await installExtensions();
+  }
+
+  const RESOURCES_PATH = app.isPackaged
+    ? path.join(process.resourcesPath, 'assets')
+    : path.join(__dirname, '../../assets');
+
+  const getAssetPath = (...paths: string[]): string => {
+    return path.join(RESOURCES_PATH, ...paths);
+  };
+
+  dm = new BrowserWindow({
+    title: 'Yin',
+    height: 512,
+    useContentSize: false,
+    width: 512,
+    frame: false,
+    transparent: true,
+    webPreferences: {
+      sandbox: false,
+      webSecurity: false,
+      preload: app.isPackaged
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, '../../.erb/dll/preload.js'),
+    },
+  });
+  dm.setMenuBarVisibility(false);
+  dm.loadURL(getHTMLPathBySearchKey('yin'));
+
+  dm.on('ready-to-show', () => {
+    if (!dm) {
+      throw new Error('"dm" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      dm.minimize();
+    } else {
+      dm.show();
+    }
+  });
+
+  dm.on('closed', () => {
+    live.close();
+    dm = null;
+  });
+
+  // const menuBuilder = new MenuBuilder(mainWindow);
+  // menuBuilder.buildMenu();
+
+  // Open urls in the user's browser
+  dm.webContents.setWindowOpenHandler((edata) => {
+    shell.openExternal(edata.url);
+    return { action: 'deny' };
+  });
+
+  // Remove this if your app does not use auto updates
+  // eslint-disable-next-line
+ // new AppUpdater();
+};
 const createLivePreviewWindow = async () => {
   if (isDebug) {
     await installExtensions();
@@ -300,6 +361,12 @@ const createLivePreviewWindow = async () => {
 ipcMain.on('createDmWindow', function (arg) {
   if (dm == null) {
     createDMWindow();
+  }
+});
+
+ipcMain.on('createYinWindow', function (arg) {
+  if (dm == null) {
+    createYinWindow();
   }
 });
 
