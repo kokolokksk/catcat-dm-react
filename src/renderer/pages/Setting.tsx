@@ -310,7 +310,7 @@ const Setting = () => {
         if (!catConfigData.clientId) {
           // eslint-disable-next-line promise/no-nesting
           axios
-            .get(`https://db.loli.monster/cat/client/generateClientId`, {
+            .get(`https://api.ririra.com/client/generateClientId`, {
               headers: {
                 version: pack.version,
               },
