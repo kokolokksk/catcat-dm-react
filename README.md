@@ -75,7 +75,7 @@ curl -X 'POST' \
 - generated from electron-react-boilerplate/electron-react-boilerplate
 
 ### 交流
-issue 或者 神秘代码（319833969）
+issue 或者 MzE5ODMzOTY5
 
 ## Star History
 
