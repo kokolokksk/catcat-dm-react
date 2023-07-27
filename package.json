@@ -120,6 +120,7 @@
     "react-markdown": "^8.0.3",
     "react-router-dom": "^6.3.0",
     "react-transition-group": "^4.4.2",
+    "three": "^0.154.0",
     "url": "^0.11.0",
     "webpack-merge": "^5.8.0"
   },
@@ -136,6 +137,7 @@
     "@types/react-test-renderer": "^18.0.0",
     "@types/react-transition-group": "^4.4.5",
     "@types/terser-webpack-plugin": "^5.0.4",
+    "@types/three": "^0.154.0",
     "@types/webpack-bundle-analyzer": "^4.4.2",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
     "@typescript-eslint/parser": "^5.23.0",

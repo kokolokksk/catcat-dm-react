@@ -1,5 +1,6 @@
 import { Component, ReactNode } from 'react';
 import { BiliBiliDanmu, MuaConfig } from 'renderer/@types/catcat';
+import MMD from '../components/mmd';
 
 type StateType = {
   pause: boolean;
@@ -27,14 +28,13 @@ class Yin extends Component {
 
   componentDidMount(): void {
     console.log('Yin');
+    new MMD().render();
   }
 
   render(): ReactNode {
     return (
       <>
-        <div>
-          <h1>Yin</h1>
-        </div>
+        <div id="three" style={{ width: '100vw', height: '100vh' }} />
       </>
     );
   }

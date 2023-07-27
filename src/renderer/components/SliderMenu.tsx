@@ -83,6 +83,9 @@ const SliderMenu = (prop: any | undefined) => {
   const startDanmuWindow = ()=> {
     window.electron.ipcRenderer.sendMessage('createDmWindow',[])
   }
+  const createYinWindow = ()=> {
+    window.electron.ipcRenderer.sendMessage('createYinWindow',[])
+  }
   const startLivePreview = ()=> {
     window.electron.ipcRenderer.sendMessage('createLivePreview',[])
   }
@@ -121,7 +124,7 @@ const SliderMenu = (prop: any | undefined) => {
           <div className="menu-list">
             <MenuItem menu = {data.menu_0} click = {openLove}/>
             <MenuItem menu = {data.menu_1} click = {startDanmuWindow}/>
-            <MenuItem menu = {data.menu_2} click = {startLivePreview}/>
+            <MenuItem menu = {data.menu_2} click = {createYinWindow}/>
             <MenuItem menu = {data.menu_3} click = {onOpen}/>
           </div>
           <CatCatSign color = {data.color} theme={theme} />
