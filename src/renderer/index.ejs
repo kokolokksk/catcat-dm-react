@@ -4,11 +4,18 @@
     <meta charset="utf-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="script-src 'self' 'unsafe-inline'"
+      content="script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' 'unsafe-hashes'"
     />
     <title>CatCatDM</title>
   </head>
   <body>
+  <script defer type="text/javascript" charset="utf-8" src="./static/three/ammo.wasm.js"></script>
+	<script defer>
+		// 初始化物理引擎
+		Ammo().then(function (AmmoLib) {
+			Ammo = AmmoLib;
+		});
+	</script>
     <div id="root"></div>
   </body>
 </html>

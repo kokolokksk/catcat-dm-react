@@ -96,6 +96,8 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@uiw/react-color-colorful": "^1.0.10",
+    "ammo.js": "^0.0.10",
+    "ammojs-typed": "^1.0.6",
     "axios": "^0.27.2",
     "bilibili-live-danmaku-api": "^1.1.0",
     "bilibili-live-ws": "^6.2.1",

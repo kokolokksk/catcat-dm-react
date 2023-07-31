@@ -13,5 +13,4 @@ root.render(
     <App />
   </ChakraProvider>
 );
-
 // window.removeLoading();

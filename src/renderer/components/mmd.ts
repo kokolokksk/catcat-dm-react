@@ -46,13 +46,14 @@ export default class ThreeProject {
 
     // 使用了 OrbitControls，camera 对象的 lookAt 方法失效
     // 这里通过调整  controls.target 控制初始摄像机的位置
-    controls.target = new THREE.Vector3(1.6, 14, -4);
+    controls.target = new THREE.Vector3(7, 5, -28);
     this.controls = controls;
   }
 
   callRenderer() {
     this.frameId = requestAnimationFrame(() => {
       this.controls.update();
+    //  console.info(this.controls.target);
       const time = this.clock.getDelta();
       helper.update(time);
       renderer.getRenderer().render(scene.getScene(), camera.getCamera());

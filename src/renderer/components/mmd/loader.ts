@@ -1,25 +1,30 @@
 import * as THREE from 'three';
 import { MMDLoader } from 'three/examples/jsm/loaders/MMDLoader';
-import { MMDAnimationHelper } from 'three/addons/animation/MMDAnimationHelper.js';
+import { MMDAnimationHelper } from 'three/examples/jsm/animation/MMDAnimationHelper';
 
 import scene from './scene';
 import camera from './camera';
 
 export const helper = new MMDAnimationHelper();
- helper.enable('ik', false);
 export class Loader {
   loadModels() {
     const loader = new MMDLoader();
+    // loader.load('E:/keli/可莉.pmx', function (mesh) {
+    //   scene.getScene().add(mesh);
+    //   loader.loadVPD('E:/keli/04.vpd', false, function (vpd) {});
+    // });
+
     loader.loadWithAnimation(
       'E:/keli/可莉.pmx', // called when the resource is loaded
-      'E:/git/cat/catcat-dm-react/src/renderer/assets/mmd/yaozi.vmd',
+      'E:/keli/yaozi.vmd',
       function onLoad(mmd) {
         console.info(mmd);
         helper.add(mmd.mesh, {
           animation: mmd.animation,
           physics: true,
         });
-		    scene.getScene().add(mmd.mesh );
+        loader.loadVPD('E:/keli/04.vpd', false, function (vpd) {});
+        scene.getScene().add(mmd.mesh);
       }
     );
     // loader.loadAnimation(

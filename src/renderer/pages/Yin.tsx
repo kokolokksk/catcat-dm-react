@@ -19,7 +19,6 @@ interface Yin {
   state: StateType;
   props: PropType;
 }
-
 class Yin extends Component {
   constructor(props: PropType) {
     super(props);
