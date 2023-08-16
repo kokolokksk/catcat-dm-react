@@ -33,7 +33,7 @@ class Yin extends Component {
   render(): ReactNode {
     return (
       <>
-        <div id="three" style={{ width: '100vw', height: '100vh' }} />
+        <div id="three" style={{ width: '20vw', height: '20vh' }} />
       </>
     );
   }

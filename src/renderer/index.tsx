@@ -8,9 +8,16 @@ const root = createRoot(document.getElementById('root')!);
 window.danmuApi.mainProcessMessage((_event: any, value: any) => {
   console.info(value);
 });
-root.render(
-  <ChakraProvider>
-    <App />
-  </ChakraProvider>
-);
+window.danmuApi.createWindowsName((_event: any, data: any) => {
+  console.info(data);
+  if (data === 'yin') {
+    root.render(<App />);
+  } else {
+    root.render(
+      <ChakraProvider>
+        <App />
+      </ChakraProvider>
+    );
+  }
+});
 // window.removeLoading();

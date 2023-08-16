@@ -166,6 +166,8 @@ const configuration: webpack.Configuration = {
     headers: { 'Access-Control-Allow-Origin': '*' },
     static: {
       publicPath: '/',
+      // add `public` support for devServer
+      directory: path.join(webpackPaths.appPath),
     },
     historyApiFallback: {
       verbose: true,

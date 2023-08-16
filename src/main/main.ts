@@ -149,6 +149,7 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
+    mainWindow?.webContents.send('create_windows_name', 'main');
   });
 
   mainWindow.on('closed', () => {
@@ -218,6 +219,7 @@ const createDMWindow = async () => {
     } else {
       dm.show();
     }
+    dm?.webContents.send('create_windows_name', 'dm');
   });
 
   dm.on('closed', () => {
@@ -254,22 +256,28 @@ const createYinWindow = async () => {
 
   dm = new BrowserWindow({
     title: 'Yin',
-    height: 512,
-    useContentSize: false,
-    width: 512,
     frame: false,
     transparent: true,
+    autoHideMenuBar: true,
+    skipTaskbar: true,
+    roundedCorners: false,
     webPreferences: {
       sandbox: false,
       webSecurity: false,
+      devTools: true,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
+  dm.setIgnoreMouseEvents(true, {
+    forward: true,
+  });
+  dm.maximize();
+  dm.setAlwaysOnTop(true, 'screen-saver');
   dm.setMenuBarVisibility(false);
+  dm.setVisibleOnAllWorkspaces(true);
   dm.loadURL(getHTMLPathBySearchKey('yin'));
-
   dm.on('ready-to-show', () => {
     if (!dm) {
       throw new Error('"dm" is not defined');
@@ -279,6 +287,7 @@ const createYinWindow = async () => {
     } else {
       dm.show();
     }
+    dm?.webContents.send('create_windows_name', 'yin');
   });
 
   dm.on('closed', () => {
@@ -341,6 +350,7 @@ const createLivePreviewWindow = async () => {
       } else {
         livePreviewWindow.show();
       }
+      livePreviewWindow?.webContents.send('create_windows_name', 'livePreview');
     });
   livePreviewWindow.loadURL(getHTMLPathBySearchKey('livePreview'));
 

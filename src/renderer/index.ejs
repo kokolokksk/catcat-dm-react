@@ -4,13 +4,15 @@
     <meta charset="utf-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' 'unsafe-hashes'"
+      content="script-src 'self' https://raw.githubusercontent.com 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' 'unsafe-hashes'"
     />
     <title>CatCatDM</title>
   </head>
   <body>
-  <script defer type="text/javascript" charset="utf-8" src="./static/three/ammo.wasm.js"></script>
-	<script defer>
+      <!-- load some `public` resource that no need to pack. -->
+  <script src="./public/other-bundle-file.js"></script>
+  <script src="./public/lib/three//ammo.wasm.js"></script>
+	<script>
 		// 初始化物理引擎
 		Ammo().then(function (AmmoLib) {
 			Ammo = AmmoLib;

@@ -6,9 +6,9 @@ export class Renderer {
   init(container: HTMLElement) {
     const { clientHeight, clientWidth } = container;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(clientWidth, clientHeight);
-    renderer.setClearColor(new THREE.Color(0x000000));
+    renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
 
     this._renderer = renderer;
