@@ -24,6 +24,7 @@ import log from 'electron-log';
 import { LiveWS } from 'bilibili-live-ws';
 import Store from 'electron-store';
 import { randomUUID } from 'crypto';
+import axios from 'axios';
 import { getHTMLPathBySearchKey, resolveHtmlPath } from './util';
 
 require('electron-referer')('https://live.bilibili.com');
@@ -31,7 +32,6 @@ const { send, updateRoomTitle } = require('bilibili-live-danmaku-api');
 
 let live: LiveWS;
 const store = new Store();
-
 let mainWindow: BrowserWindow | null = null;
 let dm: BrowserWindow | null = null;
 let livePreviewWindow: BrowserWindow | null = null;
@@ -492,11 +492,30 @@ ipcMain.on('onLive', (event, arg) => {
   console.info(arg);
   if (!live) {
     console.info('new liveWs instance added');
-    live = new LiveWS(Number(arg[0]));
+    console.info(arg[1]);
+    live = new LiveWS(Number(arg[0]), {
+      uid: Number(arg[1]),
+      key: store.get('key') as string,
+      buvid: store.get('buvid2') as string,
+      protover: 3,
+      // authBody: {
+      //   csrf: store.get('csrf') as string,
+      //   SESSDATA: store.get('SESSDATA') as string,
+      // },
+    });
   } else {
     live.close();
     console.info('old closed and new liveWs instance added');
-    live = new LiveWS(Number(arg[0]));
+    live = new LiveWS(Number(arg[0]), {
+      uid: Number(arg[1]),
+      key: store.get('key') as string,
+      buvid: store.get('buvid2') as string,
+      protover: 3,
+      // authBody: {
+      //   csrf: store.get('csrf') as string,
+      //   SESSDATA: store.get('SESSDATA') as string,
+      // },
+    });
   }
   live.on('open', () => {
     dm?.webContents.send(
@@ -507,11 +526,20 @@ ipcMain.on('onLive', (event, arg) => {
   live.on('live', () => {
     dm?.webContents.send('main-process-message', 'success connected server');
   });
-  live.on('heartbeat', (online: any) => {
-    dm?.webContents.send('update-online', online);
-  });
+  // live.on('heartbeat', (online: any) => {
+  //   dm?.webContents.send('update-online', online);
+  // });
   let tempData: any;
   live.on('msg', (data: any) => {
+    // console.info(data);
+    if (data.cmd === 'ONLINE_RANK_COUNT') {
+      // { count: 1978, online_count: 2255 }
+      let dmCount = data.data.count;
+      if (data.data.online_count) {
+        dmCount = data.data.online_count;
+      }
+      dm?.webContents.send('update-online', dmCount);
+    }
     if (tempData !== data) {
       data.keyy = randomUUID();
       dm?.webContents.send('update-msg', data);
@@ -549,6 +577,61 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
+    const cookie = {
+      url: 'https://data.bilibili.com',
+      name: 'bili_jct',
+      value: store.get('csrf') as string,
+    };
+    // eslint-disable-next-line promise/catch-or-return
+    session.defaultSession.cookies.set(cookie).then(
+      () => {
+        // success
+        console.log('success');
+        const cookie2 = {
+          url: 'https://data.bilibili.com',
+          name: 'SESSDATA',
+          value: store.get('SESSDATA') as string,
+        };
+        // eslint-disable-next-line promise/catch-or-return
+        session.defaultSession.cookies.set(cookie2).then(
+          () => {
+            // success
+            axios.defaults.withCredentials = true;
+            // eslint-disable-next-line promise/no-nesting
+            axios
+              .get(`https://data.bilibili.com/v/`)
+              // eslint-disable-next-line func-names
+              // eslint-disable-next-line promise/always-return
+              .then((res) => {
+                console.log(res);
+                console.log(res.headers['set-cookie']);
+                if (res.headers['set-cookie']) {
+                  const buvid2 = res.headers['set-cookie'][0]
+                    .split(';')[0]
+                    .split('=')[1];
+                  const buvid3 = res.headers['set-cookie'][1]
+                    .split(';')[0]
+                    .split('=')[1];
+                  store.set('buvid2', buvid2);
+                  store.set('buvid3', buvid3);
+                }
+              })
+              .catch(function (error) {
+                // handle error
+                console.log(error);
+              });
+            console.log('success');
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+
     if (live) {
       live.close();
     }

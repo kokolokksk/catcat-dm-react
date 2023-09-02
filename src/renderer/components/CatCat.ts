@@ -74,6 +74,7 @@ const catConfigItem = [
   { name: 'port_server', type: 'string' },
   { name: 'ttsServerUrl', type: 'string' },
   { name: 'ttsServerToken', type: 'string' },
+  { name: 'uid', type: 'string' },
 ];
 
 const giftData = [

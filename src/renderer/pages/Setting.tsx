@@ -58,6 +58,20 @@ const Setting = () => {
       return;
     }
     axios
+      .get(
+        `https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${num}`
+      )
+      // eslint-disable-next-line func-names
+      // eslint-disable-next-line promise/always-return
+      .then((res) => {
+        console.log(res);
+        window.electron.store.set('key', res.data.data.token);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+    axios
       .get(`https://api.live.bilibili.com/room/v1/Room/room_init?id=${num}`)
       // eslint-disable-next-line func-names
       // eslint-disable-next-line promise/always-return
@@ -441,11 +455,14 @@ const Setting = () => {
         if (res.data.code === 0 && res.data.status === true) {
           console.log(res.data);
           const { url } = res.data.data;
+          //"https://passport.biligame.com/crossDomain?DedeUserID=1999280&DedeUserID__ckMd5=c529d669bfdda3d8&Expires=15551000&SESSDATA=d26d14cc%2C1709198703%2C52904%2A91&bili_jct=b2e603a9bd2418eccd19c2aa8fcee3a0&gourl=http%3A%2F%2Fwww.bilibili.com"
+          const DedeUserID = url.split('&')[0].split('=')[1];
           const SESSDATA = url.split('&')[3].split('=')[1];
           const BILI_JCT = url.split('&')[4].split('=')[1];
           if (SESSDATA && BILI_JCT) {
             window.electron.store.set('SESSDATA', SESSDATA);
             window.electron.store.set('csrf', BILI_JCT);
+            window.electron.store.set('uid', DedeUserID);
             setCatConfigData({
               ...catConfigData,
               SESSDATA,

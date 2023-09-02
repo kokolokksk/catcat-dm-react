@@ -129,6 +129,7 @@ class DanmuWindow extends React.Component {
       area_id: 102,
       parent_area_id: 2,
       danmuDir: '',
+      uid: 0,
     };
     super(props);
     const arr = catConfigItem.map((item) =>
@@ -364,7 +365,7 @@ class DanmuWindow extends React.Component {
       resolve(window.electron.store.get('real_roomid'));
     })
       .then((res) => {
-        window.electron.ipcRenderer.sendMessage('onLive', [res]);
+        window.electron.ipcRenderer.sendMessage('onLive', [res, muaConfig.uid]);
         window.danmuApi.onUpdateOnliner((_event: any, value: any) => {
           this.setState({ count: value });
         });
