@@ -455,7 +455,6 @@ const Setting = () => {
         if (res.data.code === 0 && res.data.status === true) {
           console.log(res.data);
           const { url } = res.data.data;
-          //"https://passport.biligame.com/crossDomain?DedeUserID=1999280&DedeUserID__ckMd5=c529d669bfdda3d8&Expires=15551000&SESSDATA=d26d14cc%2C1709198703%2C52904%2A91&bili_jct=b2e603a9bd2418eccd19c2aa8fcee3a0&gourl=http%3A%2F%2Fwww.bilibili.com"
           const DedeUserID = url.split('&')[0].split('=')[1];
           const SESSDATA = url.split('&')[3].split('=')[1];
           const BILI_JCT = url.split('&')[4].split('=')[1];
