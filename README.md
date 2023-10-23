@@ -40,7 +40,7 @@ curl -X 'POST' \
 ~- 在Ubuntu 20.04 版本上测试。~ (尚未测试)
 - 进入目录 ```chmod +x CatCatDM```
 - 若提示  ```libgconf-2.so.4: cannot open shared object file: No such file or directory``` 则 ```apt-get update``` 再```apt-get install libgconf-2-4``` 然后执行 ```./CatCatDM```
-
+- @[zxp19821005](https://github.com/zxp19821005) 移植的ArchLinux的AUR，详见： [AUR](https://aur.archlinux.org/packages/catcat-dm-react)
 #### 待做列表
 - [x] 对接直播间
 - [x] 自定义房间号
