@@ -421,9 +421,10 @@ const Setting = () => {
   };
   let a: NodeJS.Timeout | undefined;
   let b: NodeJS.Timeout | undefined;
+  let c: NodeJS.Timeout | undefined;
   let loginWindowClose = true;
   let globalCount = 0;
-  const checkQrLogin = async (oauthKey: string, url: string) => {
+  const checkQrLogin = async (qrcode_key: string, url: string) => {
     console.log('checkQrLogin');
     globalCount += 1;
     console.log(globalCount);
@@ -438,21 +439,12 @@ const Setting = () => {
       return;
     }
     const data = await axios
-      .post(
-        `https://passport.bilibili.com/qrcode/getLoginInfo?oauthKey=${oauthKey}`,
-        {
-          oauthKey,
-          gourl: 'https://live.bilibili.com/',
-        },
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-        }
+      .get(
+        `https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key=${qrcode_key}`
       )
       .then(async (res) => {
         CatLog.console(res.data);
-        if (res.data.code === 0 && res.data.status === true) {
+        if (res.data.data.code === 0 && res.data.data.url !== '') {
           console.log(res.data);
           const { url } = res.data.data;
           const DedeUserID = url.split('&')[0].split('=')[1];
@@ -485,7 +477,7 @@ const Setting = () => {
             });
           }
         }
-        if (res.data.data === -4 && res.data.status === false) {
+        if (res.data.data.code === 86101) {
           console.log(res.data.message);
           setState({
             ...state,
@@ -494,10 +486,10 @@ const Setting = () => {
           });
           console.info('state:', isLoginOpen);
           a = setTimeout(() => {
-            checkQrLogin(oauthKey, url);
+            checkQrLogin(qrcode_key, url);
           }, 10000);
         }
-        if (res.data.data === -5 && res.data.status === false) {
+        if (res.data.data.code === 86090) {
           console.log(res.data.message);
           setState({
             ...state,
@@ -506,8 +498,20 @@ const Setting = () => {
           });
           console.info('state:', isLoginOpen);
           b = setTimeout(() => {
-            checkQrLogin(oauthKey, url);
+            checkQrLogin(qrcode_key, url);
           }, 10000);
+        }
+        if (res.data.data.code === 86038) {
+          console.log(res);
+          setState({
+            ...state,
+            qrUrl: url,
+            loginStatus: '二维码已失效',
+          });
+          console.info('state:', isLoginOpen);
+          c = setTimeout(() => {
+            checkQrLogin(qrcode_key, url);
+          }, 1000);
         }
         return res.data;
       });
@@ -515,7 +519,7 @@ const Setting = () => {
 
   const freshQrLogin = async () => {
     const data = await axios
-      .get('https://passport.bilibili.com/qrcode/getLoginUrl')
+      .get('https://passport.bilibili.com/x/passport-login/web/qrcode/generate')
       .then((res) => {
         // CatLog.console(res.data.data.url);
         setState({
@@ -524,7 +528,7 @@ const Setting = () => {
           loginStatus: '请使用哔哩哔哩App扫码',
         });
         setTimeout(() => {
-          checkQrLogin(res.data.data.oauthKey, res.data.data.url);
+          checkQrLogin(res.data.data.qrcode_key, res.data.data.url);
         }, 1000);
         return res.data.data;
       });
@@ -546,6 +550,7 @@ const Setting = () => {
   const tryCloseQrLogin = () => {
     clearTimeout(a);
     clearTimeout(b);
+    clearTimeout(c);
     CatLog.console('tryCloseQrLogin');
     loginWindowClose = true;
     onLoginClose();
