@@ -18,7 +18,7 @@ import {
 import axios from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
 import SettingSelectItem from 'renderer/components/SettingSelectItem';
-import { useEffect, useRef, useState } from 'react';
+import { MutableRefObject, createRef, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import CatLog from 'renderer/utils/CatLog';
 import SliderMenu from '../components/SliderMenu';
@@ -275,6 +275,11 @@ const Setting = () => {
       load(value.target.value);
     }
   };
+  const myRef = useRef<{ html: any; events: any }>({
+    html: 'some HTML',
+    events: 'some events',
+  });
+  myRef.current = { html: 'some HTML', events: 'some events' };
   useEffect(() => {
     // init data
     CatLog.console('init data');
@@ -306,6 +311,20 @@ const Setting = () => {
         total: data[2],
       });
     });
+    // window.danmuApi.loadPlugins((_event: any, data: any) => {
+    //   console.info(data);
+
+    //   const { name } = data;
+    //   // d ata.path.replace(/\\/g, '\\\\');
+    //   console.info(name);
+
+    //   import(`C://Users//Public//Roaming//catcat-dm-react//plugins//${name}.js`).then((res: any) => {
+    //     myRef.current = res.default;
+    //     console.info(myRef.current);
+    //     myRef.current.handleClick();
+    //     return '';
+    //   });
+    // });
     const arr = catConfigItem.map((item) =>
       window.electron.store.get(item.name)
     );

@@ -26,7 +26,8 @@ import Store from 'electron-store';
 import { randomUUID } from 'crypto';
 import axios from 'axios';
 import { getHTMLPathBySearchKey, resolveHtmlPath } from './util';
-
+import url from 'url';
+import fs from 'fs';
 require('electron-referer')('https://live.bilibili.com');
 const { send, updateRoomTitle } = require('bilibili-live-danmaku-api');
 
@@ -35,6 +36,7 @@ const store = new Store();
 let mainWindow: BrowserWindow | null = null;
 let dm: BrowserWindow | null = null;
 let livePreviewWindow: BrowserWindow | null = null;
+let pluginWindow: BrowserWindow | null = null;
 
 // IPC listener
 ipcMain.on('electron-store-get', (event, val) => {
@@ -150,6 +152,37 @@ const createWindow = async () => {
       mainWindow.show();
     }
     mainWindow?.webContents.send('create_windows_name', 'main');
+    // const rootPath = path.join(__dirname, '..');
+    // const appPackagePath = path.join(appPath, 'package.json');
+
+    // Load each tool dynamically
+    const appDataPath = app.getPath('appData');
+    console.log('AppData Path:', appDataPath);
+    const myAppDataPath = path.join(appDataPath, app.getName());
+    const pluginsConfigPath = path.join(myAppDataPath, 'plugins.json');
+    console.info(pluginsConfigPath);
+    const pluginsConfig = JSON.parse(
+      fs.readFileSync(pluginsConfigPath, 'utf-8')
+    );
+    pluginsConfig.plugins.forEach((plugin: { path: string; name: any; }) => {
+      try {
+        // Dynamically require the tool's JavaScript file
+        // const pluginPath = path.join(myAppDataPath, plugin.path);
+        // const pluginModule = require(pluginPath);
+        // console.log('Loaded plugin:', pluginModule);
+        // // Assuming there's an exports.html function in each tool file
+        // const pluginHtml = pluginModule.html;
+        // console.log(pluginHtml);
+        // // Assuming there's an exports.Events function in each tool file
+        // const pluginEvents =  pluginModule.events;
+        // console.log(pluginEvents);
+        // Do something with the toolHtml (e.g., append it to the main window)
+        console.info(mainWindow);
+        mainWindow?.webContents.send('load_plugins', { name: plugin.name });
+      } catch (error) {
+        console.error(`Failed to load tool ${plugin.name}:`, error);
+      }
+    });
   });
 
   mainWindow.on('closed', () => {
@@ -232,6 +265,95 @@ const createDMWindow = async () => {
 
   // Open urls in the user's browser
   dm.webContents.setWindowOpenHandler((edata) => {
+    shell.openExternal(edata.url);
+    return { action: 'deny' };
+  });
+
+  // Remove this if your app does not use auto updates
+  // eslint-disable-next-line
+ // new AppUpdater();
+};
+
+const createPluginWindow = async () => {
+  if (isDebug) {
+    await installExtensions();
+  }
+
+  const RESOURCES_PATH = app.isPackaged
+    ? path.join(process.resourcesPath, 'assets')
+    : path.join(__dirname, '../../assets');
+
+  const getAssetPath = (...paths: string[]): string => {
+    return path.join(RESOURCES_PATH, ...paths);
+  };
+
+  pluginWindow = new BrowserWindow({
+    title: 'Plugin Windwow',
+    height: 624,
+    useContentSize: false,
+    width: 455,
+    frame: false,
+    transparent: true,
+    webPreferences: {
+      sandbox: false,
+      webSecurity: false,
+      preload: app.isPackaged
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, '../../.erb/dll/preload.js'),
+    },
+  });
+  pluginWindow.setMenuBarVisibility(false);
+  pluginWindow.loadURL(getHTMLPathBySearchKey('pluginWindow'));
+
+  pluginWindow.on('ready-to-show', () => {
+    if (!pluginWindow) {
+      throw new Error('"pluginWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      pluginWindow.minimize();
+    } else {
+      pluginWindow.show();
+    }
+    pluginWindow?.webContents.send('create_windows_name', 'pluginWindow');
+    const appDataPath = app.getPath('appData');
+    console.log('AppData Path:', appDataPath);
+    const myAppDataPath = path.join(appDataPath, app.getName());
+    const pluginsConfigPath = path.join(myAppDataPath, 'plugins.json');
+    console.info(pluginsConfigPath);
+    const pluginsConfig = JSON.parse(
+      fs.readFileSync(pluginsConfigPath, 'utf-8')
+    );
+    pluginsConfig.plugins.forEach((plugin: { path: string; name: any; }) => {
+      try {
+        // Dynamically require the tool's JavaScript file
+        // const pluginPath = path.join(myAppDataPath, plugin.path);
+        // const pluginModule = require(pluginPath);
+        // console.log('Loaded plugin:', pluginModule);
+        // // Assuming there's an exports.html function in each tool file
+        // const pluginHtml = pluginModule.html;
+        // console.log(pluginHtml);
+        // // Assuming there's an exports.Events function in each tool file
+        // const pluginEvents =  pluginModule.events;
+        // console.log(pluginEvents);
+        // Do something with the toolHtml (e.g., append it to the main window)
+        console.info(mainWindow);
+        pluginWindow?.webContents.send('load_plugins', { name: plugin.name });
+      } catch (error) {
+        console.error(`Failed to load tool ${plugin.name}:`, error);
+      }
+    });
+  });
+
+  pluginWindow.on('closed', () => {
+    live.close();
+    pluginWindow = null;
+  });
+
+  // const menuBuilder = new MenuBuilder(mainWindow);
+  // menuBuilder.buildMenu();
+
+  // Open urls in the user's browser
+  pluginWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
@@ -367,6 +489,12 @@ const createLivePreviewWindow = async () => {
   // eslint-disable-next-line
  // new AppUpdater();
 };
+
+ipcMain.on('createPluginWindow', function (arg) {
+  if (pluginWindow == null) {
+    createPluginWindow();
+  }
+});
 
 ipcMain.on('createDmWindow', function (arg) {
   if (dm == null) {
@@ -635,6 +763,20 @@ app
     if (live) {
       live.close();
     }
+    const targetPath = 'C://Users//Public//Roaming//catcat-dm-react//plugins';
+    // 判断路径是否存在
+    if (!fs.existsSync(targetPath)) {
+      // 路径不存在，创建目录
+      try {
+        fs.mkdirSync(targetPath);
+        console.log('Directory created:', targetPath);
+      } catch (error) {
+        console.error('Error creating directory:', error);
+      }
+    } else {
+      console.log('Directory already exists:', targetPath);
+    }
+
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the

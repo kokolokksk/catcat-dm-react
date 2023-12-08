@@ -33,6 +33,7 @@ declare global {
       msgTips: (arg0: (_event: any, data: any) => void) => void;
       downProgress: (arg0: (_event: any, data: any) => void) => void;
       spaceInfo: (arg0: (_event: any, data: any) => void) => void;
+      loadPlugins: (arg0: (_event: any, data: any) => void) => void;
     };
     removeLoading: () => void;
   }

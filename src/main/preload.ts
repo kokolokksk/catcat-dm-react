@@ -78,6 +78,9 @@ contextBridge.exposeInMainWorld('danmuApi', {
   spaceInfo: (
     callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
   ) => ipcRenderer.on('space_info', callback),
+  loadPlugins: (
+    callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+  ) => ipcRenderer.on('load_plugins', callback),
 });
 contextBridge.exposeInMainWorld('theme', {
   change: (
