@@ -227,7 +227,7 @@ class DanmuWindow extends React.Component {
             if (needmerge) {
               merged = true;
               if (dm.type === 1) {
-                allDmList.list[index + (listSize - max)].content += '*2';
+                allDmList.list[index + (listSize - max)].content += '';
               } else if (dm.type === 2) {
                 allDmList.list[index + (listSize - max)].content = `赠送了${
                   tempDanmu.giftNum + dm.giftNum
