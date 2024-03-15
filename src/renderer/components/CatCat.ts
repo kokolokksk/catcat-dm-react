@@ -680,6 +680,9 @@ const transformMsg = async (
     case 'DANMU_MSG':
       await handleDanMuMSG(data, danmu, proxyApi);
       break;
+    case 'LIVE_INTERACTIVE_GAME':
+      await handleLIVEINTERACTIVEGAME(data, danmu, proxyApi);
+      break;
     case 'SEND_GIFT':
       handleSENDGIFT(data, danmu, params);
       break;
@@ -909,3 +912,60 @@ async function handleSENDGIFT(
 }
 
 export { catConfigItem, giftData, getNewSessionId, transformMsg, getGiftList };
+async  function handleLIVEINTERACTIVEGAME(data: any,
+  danmu: { [K: string]: any }, proxyApi: boolean) {
+    danmu.type = 1;
+  danmu.origin = data;
+  // eslint-disable-next-line prefer-destructuring
+  danmu.uid = data.data.uid;
+  // eslint-disable-next-line prefer-destructuring
+  danmu.nickname = data.data.uname;
+  // eslint-disable-next-line prefer-destructuring
+  danmu.content = data.data.msg;
+  danmu.price = 0;
+  danmu.giftNum = 0;
+  if (process.env.NODE_ENV === 'development') {
+    if (danmu.content.indexOf('cat2') !== -1) {
+      danmu.type = 2;
+    }
+    if (danmu.content.indexOf('cat4') !== -1) {
+      danmu.type = 4;
+      danmu.giftName = '提督';
+      danmu.price = '1998000';
+      danmu.origin = data;
+      danmu.content = '续费了1个提督';
+    }
+    if (danmu.content.indexOf('cat5') !== -1) {
+      danmu.type = 5;
+      danmu.giftName = 'sc';
+      danmu.content = superchat.data.message;
+      danmu.price = 1000000;
+      danmu.color = '#A3F6FF';
+      danmu.borderColor = '#DBFFFD';
+      danmu.priceColor = '#7DA4BD';
+      danmu.background_bottom_color = '#427D9E';
+      danmu.background_color = '#DBFFFD';
+      danmu.background_color_end = '#29718B';
+      danmu.background_color_start = '#4EA4C5';
+      danmu.background_image =
+        'https://i0.hdslb.com/bfs/live/a712efa5c6ebc67bafbe8352d3e74b820a00c13e.png';
+      danmu.background_price_color = '#7DA4BD';
+      danmu.origin = superchat;
+    }
+  }
+  danmu.noBorder = true;
+  emotionData.forEach((item) => {
+    if (item.name === danmu?.content) {
+      danmu.content = '';
+      danmu.giftImg = item.img;
+    }
+  });
+  // eslint-disable-next-line prefer-destructuring
+  danmu.timestamp = data.data.timestamp;
+  // eslint-disable-next-line prefer-destructuring
+  danmu.fansLevel = data.data.fans_medal_level;
+  // eslint-disable-next-line prefer-destructuring
+  // danmu.fansName = data.info[3][1];
+  await setFace(danmu, proxyApi);
+  }
+

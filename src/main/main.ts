@@ -616,21 +616,58 @@ ipcMain.handle('dark-mode:toggle', async (event) => {
 ipcMain.handle('dark-mode:system', () => {
   nativeTheme.themeSource = 'system';
 });
-ipcMain.on('onLive', (event, arg) => {
+ipcMain.on('onLive', async (event, arg) => {
   console.info(arg);
   if (!live) {
     console.info('new liveWs instance added');
     console.info(arg[1]);
-    live = new LiveWS(Number(arg[0]), {
-      uid: Number(arg[1]),
-      key: store.get('key') as string,
-      buvid: store.get('buvid2') as string,
-      protover: 3,
-      // authBody: {
-      //   csrf: store.get('csrf') as string,
-      //   SESSDATA: store.get('SESSDATA') as string,
-      // },
+    const cookieKey = {
+      url: 'https://live.bilibili.com',
+      name: 'SESSDATA',
+      value: store.get('SESSDATA') as string,
+    };
+    // eslint-disable-next-line promise/catch-or-return
+    await session.defaultSession.cookies.set(cookieKey);
+    await session.defaultSession.cookies.set({
+      url: 'https://api.live.bilibili.com',
+      name: 'SESSDATA',
+      value: store.get('SESSDATA') as string,
     });
+    await session.defaultSession.cookies.set({
+      url: 'https://api.live.bilibili.com',
+      name: 'buvid3',
+      value: store.get('buvid2') as string});
+     await session.defaultSession.cookies.set({
+      url: 'https://api.live.bilibili.com',
+      name: 'bili_jct',
+      value: store.get('csrf') as string}
+      );
+     // success
+        axios.defaults.withCredentials = true;
+        // eslint-disable-next-line promise/no-nesting
+      var res = await  axios
+          .get(`https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${arg[0]}`,{
+            headers: {
+              'Cookie': `bili_jct=${store.get('csrf')};SESSDATA=${store.get('SESSDATA')};buvid3=${store.get('buvid3')};`
+            }
+
+          })
+          // eslint-disable-next-line func-names
+          // eslint-disable-next-line promise/always-return
+          console.log(res);
+          store.set('key', res.data.data.token);
+          live = new LiveWS(Number(arg[0]), {
+            uid: Number(arg[1]),
+            key: res.data.data.token as string,
+            buvid: store.get('buvid2') as string,
+            protover: 3,
+            // authBody: {
+            //   csrf: store.get('csrf') as string,
+            //   SESSDATA: store.get('SESSDATA') as string,
+            // },
+          });
+        console.log('success');
+
   } else {
     live.close();
     console.info('old closed and new liveWs instance added');
@@ -645,6 +682,7 @@ ipcMain.on('onLive', (event, arg) => {
       // },
     });
   }
+
   live.on('open', () => {
     dm?.webContents.send(
       'main-process-message',
@@ -659,7 +697,7 @@ ipcMain.on('onLive', (event, arg) => {
   // });
   let tempData: any;
   live.on('msg', (data: any) => {
-    // console.info(data);
+    console.info(data);
     if (data.cmd === 'ONLINE_RANK_COUNT') {
       // { count: 1978, online_count: 2255 }
       let dmCount = data.data.count;
@@ -704,61 +742,62 @@ app.on('window-all-closed', () => {
 
 app
   .whenReady()
-  .then(() => {
+  .then(async () => {
+    const filter = { urls: ['https://*/*'] };
+        session.defaultSession.webRequest.onHeadersReceived(filter, (details, callback) => {
+            if (details.responseHeaders && details.responseHeaders['Set-Cookie']) {
+                for (let i = 0; i < details.responseHeaders['Set-Cookie'].length; i++) {
+                    details.responseHeaders['Set-Cookie'][i] += ';SameSite=None;Secure';
+                }
+            }
+            callback({ responseHeaders: details.responseHeaders });
+        });
     const cookie = {
       url: 'https://data.bilibili.com',
       name: 'bili_jct',
       value: store.get('csrf') as string,
     };
     // eslint-disable-next-line promise/catch-or-return
-    session.defaultSession.cookies.set(cookie).then(
-      () => {
-        // success
-        console.log('success');
-        const cookie2 = {
-          url: 'https://data.bilibili.com',
-          name: 'SESSDATA',
-          value: store.get('SESSDATA') as string,
-        };
-        // eslint-disable-next-line promise/catch-or-return
-        session.defaultSession.cookies.set(cookie2).then(
-          () => {
-            // success
-            axios.defaults.withCredentials = true;
-            // eslint-disable-next-line promise/no-nesting
-            axios
-              .get(`https://data.bilibili.com/v/`)
-              // eslint-disable-next-line func-names
-              // eslint-disable-next-line promise/always-return
-              .then((res) => {
-                console.log(res);
-                console.log(res.headers['set-cookie']);
-                if (res.headers['set-cookie']) {
-                  const buvid2 = res.headers['set-cookie'][0]
-                    .split(';')[0]
-                    .split('=')[1];
-                  const buvid3 = res.headers['set-cookie'][1]
-                    .split(';')[0]
-                    .split('=')[1];
-                  store.set('buvid2', buvid2);
-                  store.set('buvid3', buvid3);
-                }
-              })
-              .catch(function (error) {
-                // handle error
-                console.log(error);
-              });
-            console.log('success');
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+    await session.defaultSession.cookies.set(cookie);
+    const cookie2 = {
+      url: 'https://data.bilibili.com',
+      name: 'SESSDATA',
+      value: store.get('SESSDATA') as string,
+    };
+    // eslint-disable-next-line promise/catch-or-return
+    await session.defaultSession.cookies.set(cookie2);
+    axios.defaults.withCredentials = true;
+
+    // eslint-disable-next-line promise/no-nesting
+    axios
+      .get(`https://data.bilibili.com/v/`,{
+        headers: {
+          'Cookie': `bili_jct=${store.get('csrf')};SESSDATA=${store.get('SESSDATA')}`
+        }
+      })
+      // eslint-disable-next-line func-names
+      // eslint-disable-next-line promise/always-return
+      .then((res) => {
+        console.log(res);
+        console.log(res.headers['set-cookie']);
+        if (res.headers['set-cookie']) {
+          const buvid2 = res.headers['set-cookie'][0]
+            .split(';')[0]
+            .split('=')[1];
+          const buvid3 = res.headers['set-cookie'][1]
+            .split(';')[0]
+            .split('=')[1];
+          store.set('buvid2', buvid2);
+          store.set('buvid3', buvid3);
+        }
+      })
+
+      session.defaultSession.cookies.get({})
+      .then((cookies) => {
+        console.log(cookies)
+      }).catch((error) => {
+        console.log(error)
+      })
 
     if (live) {
       live.close();

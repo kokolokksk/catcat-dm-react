@@ -126,7 +126,7 @@ const SliderMenu = (prop: any | undefined) => {
           </div>
           <div className="menu-list">
             <MenuItem menu = {data.menu_0} click = {openLove}/>
-            <MenuItem menu = {data.menu_1} click = {startPluginWindow}/>
+            <MenuItem menu = {data.menu_1} click = {startDanmuWindow}/>
             <MenuItem menu = {data.menu_2} click = {startLivePreview}/>
             <MenuItem menu = {data.menu_3} click = {onOpen}/>
           </div>
