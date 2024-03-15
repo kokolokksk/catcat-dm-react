@@ -176,6 +176,7 @@
     "jest": "^28.1.0",
     "jest-environment-jsdom": "^28.1.0",
     "mini-css-extract-plugin": "^2.6.0",
+    "patch-package": "^8.0.0",
     "postcss": "^8.4.16",
     "postcss-loader": "^7.0.1",
     "prettier": "^2.6.2",
