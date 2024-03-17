@@ -1,8 +1,7 @@
 [![Build/release](https://github.com/kokolokksk/catcat-dm-react/actions/workflows/publish.yml/badge.svg?branch=main)](https://github.com/kokolokksk/catcat-dm-react/actions/workflows/publish.yml)
 [![HitCount](http://hits.dwyl.com/kokolokksk/catcat-dm-react.svg)](http://hits.dwyl.com/kokolokksk/catcat-dm-react)
 ![](https://img.shields.io/github/stars/kokolokksk/catcat-dm-react?color=green&style=flat-square)
-# CatCatDM React
-
+# 猫猫弹幕姬 ！
 ![](https://i0.hdslb.com/bfs/new_dyn/750c0c53bbee5e1d4f151b3ac7236bd21999280.png@120w_120h_1e_1c.webp)
 > CatCatDM! React!
 > > 喵喵
