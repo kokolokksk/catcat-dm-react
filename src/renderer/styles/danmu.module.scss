@@ -28,7 +28,6 @@
 		background-size: 50px 50px;
     display: flex;
     position: relative;
-    top: 4vh;
     height:96vh;
     width: 100vw;
     flex-flow: wrap;
@@ -68,8 +67,27 @@
     flex-flow: wrap;
     justify-content: center;
 }
+:root{
+  --chakra-colors-white: transparent !important;
+}
 .rootMiku {
-  background-color: #39C5BB;
+  background-color: #39c5bc2b;
+  -moz-box-shadow: 8px 8px 8px gray;
+		-webkit-box-shadow: 8px 8px 8px gray;
+		box-shadow: 1px 1px 0px gray;
+    -webkit-background-size: 50px 50px;
+		-moz-background-size: 50px 50px;
+		background-size: 50px 50px;
+    display: flex;
+    position: relative;
+    top: 4vh;
+    height:96vh;
+    width: 100vw;
+    flex-flow: wrap;
+    justify-content: center;
+}
+.rootTransparent {
+  background-color: transparent !important;
   -moz-box-shadow: 8px 8px 8px gray;
 		-webkit-box-shadow: 8px 8px 8px gray;
 		box-shadow: 1px 1px 0px gray;
@@ -91,10 +109,13 @@
     font-family:  'Consolas','zxfyyt','YouYuan';
     z-index: 5;
     margin-left: 5vw;
+    top: 4vh;
+    position: fixed;
   }
 
   .comeinLastMinute {
     right: 1%;
+    top: 4vh;
     margin-right: 5vw;
     position: fixed;
     background-color: transparent;

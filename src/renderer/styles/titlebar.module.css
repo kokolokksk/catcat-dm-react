@@ -122,6 +122,28 @@
   color: rgb(5, 5, 5) !important;
   background-color: red;
 }
+
+.titlebarIgnore {
+  position: fixed;
+  right: 60px;
+  margin-right: -10px;
+  width:24px;
+  height: 4vh;
+  padding: 5px;
+  display:flex;
+  color: rgb(0, 0, 0) !important;
+}
+.titlebarIgnore:hover {
+  position: fixed;
+  right: 60px;
+  margin-right: -10px;
+  width:24px;
+  height: 4vh;
+  padding: 5px;
+  display:flex;
+  color: rgb(5, 5, 5) !important;
+  background-color: transparent;
+}
 .titlebarMinusDark {
   position: fixed;
   right: 35px;
@@ -168,7 +190,7 @@
 
 // miku theme
 .titlebarMiku {
-  background-color: #39C5BB;
+  background-color: #39c5bc2a;
   height: 4vh;
   overflow: hidden;
   position: absolute;
@@ -186,7 +208,7 @@
   height: 4vh;
   display:flex;
   margin-right: -10px;
-  color: rgb(255, 255, 255) !important;
+  color: rgba(255, 255, 255, 0.497) !important;
 
 }
 .titlebarMinusMiku:hover {
@@ -197,8 +219,8 @@
   height: 4vh;
   display:flex;
   margin-right: -10px;
-  color: rgb(255, 255, 255) !important;
-  background-color: rgb(180, 200, 150);
+  color: rgba(255, 255, 255, 0.485) !important;
+  background-color: rgba(180, 200, 150, 0.489);
 }
 
 .titlebarCloseMiku {
@@ -209,7 +231,7 @@
   margin-right: 0px;
   width:24px;
   height: 4vh;
-  color: rgb(255, 255, 255) !important;
+  color: rgba(255, 255, 255, 0.425) !important;
 
 }
 .titlebarCloseMiku:hover {
@@ -222,4 +244,7 @@
   margin-right: 0px;
   color: rgb(255, 255, 255) !important;
   background-color:  red;
+}
+.classNone{
+  display: none;
 }

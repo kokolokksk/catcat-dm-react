@@ -161,28 +161,31 @@ const createWindow = async () => {
     const myAppDataPath = path.join(appDataPath, app.getName());
     const pluginsConfigPath = path.join(myAppDataPath, 'plugins.json');
     console.info(pluginsConfigPath);
-    const pluginsConfig = JSON.parse(
-      fs.readFileSync(pluginsConfigPath, 'utf-8')
-    );
-    pluginsConfig.plugins.forEach((plugin: { path: string; name: any; }) => {
-      try {
-        // Dynamically require the tool's JavaScript file
-        // const pluginPath = path.join(myAppDataPath, plugin.path);
-        // const pluginModule = require(pluginPath);
-        // console.log('Loaded plugin:', pluginModule);
-        // // Assuming there's an exports.html function in each tool file
-        // const pluginHtml = pluginModule.html;
-        // console.log(pluginHtml);
-        // // Assuming there's an exports.Events function in each tool file
-        // const pluginEvents =  pluginModule.events;
-        // console.log(pluginEvents);
-        // Do something with the toolHtml (e.g., append it to the main window)
-        console.info(mainWindow);
-        mainWindow?.webContents.send('load_plugins', { name: plugin.name });
-      } catch (error) {
-        console.error(`Failed to load tool ${plugin.name}:`, error);
-      }
-    });
+    if (fs.existsSync(pluginsConfigPath)) {
+      const pluginsConfig = JSON.parse(
+        fs.readFileSync(pluginsConfigPath, 'utf-8')
+      );
+      pluginsConfig.plugins.forEach((plugin: { path: string; name: any; }) => {
+        try {
+          // Dynamically require the tool's JavaScript file
+          // const pluginPath = path.join(myAppDataPath, plugin.path);
+          // const pluginModule = require(pluginPath);
+          // console.log('Loaded plugin:', pluginModule);
+          // // Assuming there's an exports.html function in each tool file
+          // const pluginHtml = pluginModule.html;
+          // console.log(pluginHtml);
+          // // Assuming there's an exports.Events function in each tool file
+          // const pluginEvents =  pluginModule.events;
+          // console.log(pluginEvents);
+          // Do something with the toolHtml (e.g., append it to the main window)
+          console.info(mainWindow);
+          mainWindow?.webContents.send('load_plugins', { name: plugin.name });
+        } catch (error) {
+          console.error(`Failed to load tool ${plugin.name}:`, error);
+        }
+      });
+    }
+
   });
 
   mainWindow.on('closed', () => {
@@ -242,7 +245,6 @@ const createDMWindow = async () => {
   });
   dm.setMenuBarVisibility(false);
   dm.loadURL(getHTMLPathBySearchKey('dmWindow'));
-
   dm.on('ready-to-show', () => {
     if (!dm) {
       throw new Error('"dm" is not defined');
@@ -489,6 +491,17 @@ const createLivePreviewWindow = async () => {
   // eslint-disable-next-line
  // new AppUpdater();
 };
+
+ipcMain.on('setIgnoreMouseEvents', function (arg) {
+  if (!dm) {
+    return;
+  }
+  if (arg) {
+    dm.setIgnoreMouseEvents(true);
+  } else {
+    dm.setIgnoreMouseEvents(false);
+  }
+});
 
 ipcMain.on('createPluginWindow', function (arg) {
   if (pluginWindow == null) {
