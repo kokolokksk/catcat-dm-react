@@ -15,6 +15,9 @@ import {
   Divider,
   Button,
   Link,
+  CSSProperties,
+  background,
+
 } from '@chakra-ui/react';
 import { stringify } from 'querystring';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
@@ -130,6 +133,7 @@ class DanmuWindow extends React.Component {
       parent_area_id: 2,
       danmuDir: '',
       uid: 0,
+      opacity: 1,
     };
     super(props);
     const arr = catConfigItem.map((item) =>
@@ -199,6 +203,15 @@ class DanmuWindow extends React.Component {
         muaConfig: {
           ...muaConfig,
           theme: data,
+        },
+      });
+    });
+    window.opacity.change((_event: any, data: any) => {
+      console.log(data);
+      this.setState({
+        muaConfig: {
+          ...muaConfig,
+          opacity: data[0],
         },
       });
     });
@@ -693,11 +706,25 @@ class DanmuWindow extends React.Component {
     }
     return (
       <>
-        <Titlebar theme={themeMode} />
+        <Titlebar
+          theme={themeMode}
+          style={
+            {
+              backgroundColor: `rgba(var(--root-color-rgb),${muaConfig.opacity})`,
+            } as React.CSSProperties
+          }
+        />
         {/* <BackgroundWave display={muaConfig.wave} /> */}
         {muaConfig.theme === 'wave' && <BackgroundWave />}
         {muaConfig.theme === 'miku' && <BackgroundMiku />}
-        <div className={rootTheme}>
+        <div
+          className={rootTheme}
+          style={
+            {
+              backgroundColor: `rgba(var(--root-color-rgb),${muaConfig.opacity})`,
+            } as React.CSSProperties
+          }
+        >
           <div className={styles.m_bg_top} />
           <div style={{ width: '100%', height: '5vh', display: 'flex' }}>
             <div className={styles.online}>

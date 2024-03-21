@@ -87,6 +87,11 @@ contextBridge.exposeInMainWorld('theme', {
     callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
   ) => ipcRenderer.on('theme:change', callback),
 });
+contextBridge.exposeInMainWorld('opacity', {
+  change: (
+    callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+  ) => ipcRenderer.on('opacity:change', callback),
+});
 contextBridge.exposeInMainWorld('darkMode', {
   toggle: () => ipcRenderer.invoke('dark-mode:toggle'),
   system: () => ipcRenderer.invoke('dark-mode:system'),

@@ -28,6 +28,7 @@ import { catConfigItem } from '../components/CatCat';
 import pack from '../../../package.json';
 // import '../samples/electron-store'
 import SettingSwitchItem from '../components/SettingSwitchItem';
+import SliderSelectItem from 'renderer/components/SliderSelectItem';
 // const catConfig = window.catConfig
 // catConfig.setDataPath('F://catConfig.json')
 
@@ -165,6 +166,13 @@ const Setting = () => {
         csrf: catConfigData.csrf,
       };
       window.electron.ipcRenderer.updateRoomTitle('updateRoomTitle', [arg]);
+    }
+    if (skey === 'opacity') {
+      setCatConfigData({
+        ...catConfigData,
+        opacity: value,
+      });
+      window.electron.ipcRenderer.sendMessage('opacity:change', [value]);
     }
     window.electron.store.set(skey, t);
   };
@@ -716,36 +724,6 @@ const Setting = () => {
             skey="port_server"
           />
           <Divider />
-          {/* <SettingSwitchItem
-            name="弹幕上传"
-            v={catConfigData.catdb}
-            c={commonSwitchItemSave}
-            skey="catdb"
-          />
-          <Divider /> */}
-          {/* <SettingSwitchItem
-            name="波浪"
-            theme={catConfigData.theme}
-            v={catConfigData.wave || false}
-            c={commonSwitchItemSave}
-            skey="wave"
-          />
-          <Divider /> */}
-          {/*
-          <SettingSwitchItem
-            name="粉丝牌显示"
-            v={catConfigData.fansDisplay || false}
-            c={commonSwitchItemSave}
-            skey="fansDisplay"
-          />
-          <Divider /> */}
-          {/* <SettingSwitchItem
-            name="深浅模式"
-            v={catConfigData.darkMode || false}
-            c={commonSwitchItemSave}
-            skey="darkMode"
-          />
-          <Divider /> */}
           <SettingSelectItem
             name="主题"
             theme={catConfigData.theme}
@@ -772,12 +750,13 @@ const Setting = () => {
             ]}
           />
           <Divider />
-          {/* <SettingSwitchItem
-            name="使用代理服务器请求弹幕用户头像"
-            v={catConfigData.proxyApi || false}
-            c={commonSwitchItemSave}
-            skey="proxyApi"
-          /> */}
+          <SliderSelectItem
+            name="设置透明度"
+            theme={catConfigData.theme}
+            v={catConfigData.opacity}
+            c={commonInputItemSave}
+            skey="opacity"
+          />
           <Divider />
           <SettingSwitchItem
             name="TTS感谢礼物"

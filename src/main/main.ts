@@ -249,6 +249,9 @@ const createDMWindow = async () => {
   });
   dm.setMenuBarVisibility(false);
   dm.loadURL(getHTMLPathBySearchKey('dmWindow'));
+  dm.webContents.insertCSS(
+    ':root{ --chakra-colors-white: transparent !important;}'
+  );
   dm.on('ready-to-show', () => {
     if (!dm) {
       throw new Error('"dm" is not defined');
@@ -352,6 +355,9 @@ const createLockWindow = async () => {
     },
   });
   lockWindow.setMenuBarVisibility(false);
+  lockWindow.webContents.insertCSS(
+    ':root{ --chakra-colors-white: transparent !important;}'
+  );
   console.info(process.platform.toString());
   if (
     process.platform.toString() === 'win32' ||
@@ -767,7 +773,13 @@ ipcMain.on('theme:change', (event, arg) => {
     dm.webContents.send('theme:change', arg);
   }
 });
-
+ipcMain.on('opacity:change', (event, arg) => {
+  console.info('come in opacity change');
+  console.info(nativeTheme.themeSource);
+  if (dm != null) {
+    dm.webContents.send('opacity:change', arg);
+  }
+});
 ipcMain.handle('dark-mode:toggle', async (event) => {
   console.info('come in dark toggle');
 });

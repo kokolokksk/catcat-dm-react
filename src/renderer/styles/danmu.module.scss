@@ -48,11 +48,11 @@
     height:96vh;
     width: 100vw;
     flex-flow: wrap;
-    background-color: #ffffff;
+    --root-light-color-rgb: #ffffff;
     justify-content: center;
 }
 .rootDark {
-  background-color: #1a202c;
+  --root-dark-color-rgb: #1a202c;
   -moz-box-shadow: 8px 8px 8px gray;
 		-webkit-box-shadow: 8px 8px 8px gray;
 		box-shadow: 1px 1px 0px gray;
@@ -67,11 +67,11 @@
     flex-flow: wrap;
     justify-content: center;
 }
-:root{
-  --chakra-colors-white: transparent !important;
-}
+// :root{
+//   --chakra-colors-white: transparent !important;
+// }
 .rootMiku {
-  background-color: #39c5bc2b;
+  --root-color-rgb: 57, 197, 187;
   -moz-box-shadow: 8px 8px 8px gray;
 		-webkit-box-shadow: 8px 8px 8px gray;
 		box-shadow: 1px 1px 0px gray;
