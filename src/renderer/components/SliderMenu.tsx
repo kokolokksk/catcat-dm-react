@@ -82,6 +82,10 @@ const SliderMenu = (prop: any | undefined) => {
   }
   const startDanmuWindow = ()=> {
     window.electron.ipcRenderer.sendMessage('createDmWindow',[])
+    setTimeout( () => {
+      window.electron.ipcRenderer.sendMessage('createLockWindow',[])
+    }, 1000)
+
   }
   const startPluginWindow = ()=> {
     window.electron.ipcRenderer.sendMessage('createPluginWindow',[])

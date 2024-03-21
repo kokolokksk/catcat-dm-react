@@ -18,6 +18,7 @@ import {
   nativeTheme,
   session,
   clipboard,
+  systemPreferences,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -28,7 +29,9 @@ import axios from 'axios';
 import { getHTMLPathBySearchKey, resolveHtmlPath } from './util';
 import url from 'url';
 import fs from 'fs';
+import { electron } from 'process';
 require('electron-referer')('https://live.bilibili.com');
+import os, { platform } from 'node:os';
 const { send, updateRoomTitle } = require('bilibili-live-danmaku-api');
 
 let live: LiveWS;
@@ -37,6 +40,7 @@ let mainWindow: BrowserWindow | null = null;
 let dm: BrowserWindow | null = null;
 let livePreviewWindow: BrowserWindow | null = null;
 let pluginWindow: BrowserWindow | null = null;
+let lockWindow: BrowserWindow |null = null;
 
 // IPC listener
 ipcMain.on('electron-store-get', (event, val) => {
@@ -185,7 +189,6 @@ const createWindow = async () => {
         }
       });
     }
-
   });
 
   mainWindow.on('closed', () => {
@@ -236,6 +239,7 @@ const createDMWindow = async () => {
     frame: false,
     transparent: true,
     webPreferences: {
+      backgroundThrottling: false,
       sandbox: false,
       webSecurity: false,
       preload: app.isPackaged
@@ -255,13 +259,53 @@ const createDMWindow = async () => {
       dm.show();
     }
     dm?.webContents.send('create_windows_name', 'dm');
+    if (dm) {
+      const p: number[] = dm.getPosition();
+      lockWindow?.setPosition(p[0], p[1]);
+    }
   });
 
   dm.on('closed', () => {
     live.close();
+    if (lockWindow?.closable) {
+      lockWindow.close();
+    }
     dm = null;
   });
 
+  dm.on('moved', () => {
+    // move lock window
+    if (dm) {
+      const nowPostion: number[] = dm.getPosition();
+      lockWindow?.setPosition(nowPostion[0], nowPostion[1]);
+    }
+  });
+
+  dm.on('resized', () => {
+    if (dm) {
+      const nowPostion: number[] = dm.getPosition();
+      lockWindow?.setPosition(nowPostion[0], nowPostion[1]);
+    }
+  });
+
+  dm.on('focus', () => {
+    if (dm) {
+      console.info('top lock');
+      lockWindow?.setAlwaysOnTop(true);
+      const nowPostion: number[] = dm.getPosition();
+      lockWindow?.setPosition(nowPostion[0], nowPostion[1]);
+    }
+  });
+  dm.on('minimize', () => {
+    lockWindow?.minimize();
+  });
+  dm.on('restore', () => {
+    lockWindow?.restore();
+  });
+  dm.on('hide', () => {
+    console.info('dm hide');
+    lockWindow?.hide();
+  });
   // const menuBuilder = new MenuBuilder(mainWindow);
   // menuBuilder.buildMenu();
 
@@ -276,6 +320,87 @@ const createDMWindow = async () => {
  // new AppUpdater();
 };
 
+const createLockWindow = async () => {
+  if (isDebug) {
+    await installExtensions();
+  }
+
+  const RESOURCES_PATH = app.isPackaged
+    ? path.join(process.resourcesPath, 'assets')
+    : path.join(__dirname, '../../assets');
+
+  const getAssetPath = (...paths: string[]): string => {
+    return path.join(RESOURCES_PATH, ...paths);
+  };
+
+  lockWindow = new BrowserWindow({
+    title: '*',
+    height: 50,
+    useContentSize: false,
+    width: 50,
+    frame: false,
+    transparent: true,
+    webPreferences: {
+      backgroundThrottling: false,
+      sandbox: false,
+      webSecurity: false,
+      preload: app.isPackaged
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, '../../.erb/dll/preload.js'),
+    },
+  });
+  lockWindow.setMenuBarVisibility(false);
+  console.info(process.platform.toString());
+  if (
+    process.platform.toString() === 'win32' ||
+    process.platform.toString() === 'darwin'
+  ) {
+    console.info('is win32 or darwin ');
+    lockWindow.setSkipTaskbar(true);
+  }
+  lockWindow.loadURL(getHTMLPathBySearchKey('lockWindow'));
+  lockWindow.on('ready-to-show', () => {
+    if (!lockWindow) {
+      throw new Error('"lockWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      lockWindow.minimize();
+    } else {
+      lockWindow.show();
+    }
+    lockWindow?.webContents.send('create_windows_name', 'lockWindow');
+  });
+
+  lockWindow.on('closed', () => {
+    lockWindow = null;
+  });
+
+  lockWindow.on('show', () => {
+    if (dm) {
+      dm.setAlwaysOnTop(false);
+      if (store.get('alwayOnTop')) {
+        dm.setAlwaysOnTop(true);
+      }
+      if (lockWindow) {
+        lockWindow.setAlwaysOnTop(true);
+      }
+    } else if (lockWindow) {
+      lockWindow.setAlwaysOnTop(true);
+    }
+  });
+  // const menuBuilder = new MenuBuilder(mainWindow);
+  // menuBuilder.buildMenu();
+
+  // Open urls in the user's browser
+  lockWindow.webContents.setWindowOpenHandler((edata) => {
+    shell.openExternal(edata.url);
+    return { action: 'deny' };
+  });
+
+  // Remove this if your app does not use auto updates
+  // eslint-disable-next-line
+ // new AppUpdater();
+};
 const createPluginWindow = async () => {
   if (isDebug) {
     await installExtensions();
@@ -492,14 +617,26 @@ const createLivePreviewWindow = async () => {
  // new AppUpdater();
 };
 
-ipcMain.on('setIgnoreMouseEvents', function (arg) {
-  if (!dm) {
+let lockState = true;
+ipcMain.on('setIgnoreMouseEvents', async function (arg) {
+  if (!dm || !lockWindow) {
     return;
   }
-  if (arg) {
+  if (lockState) {
+    dm.setAlwaysOnTop(false);
     dm.setIgnoreMouseEvents(true);
+    dm.setAlwaysOnTop(true);
+    lockWindow.setAlwaysOnTop(true);
+    lockState = false;
   } else {
     dm.setIgnoreMouseEvents(false);
+    dm.setAlwaysOnTop(false);
+    const dmTopState = store.get('alwaysOnTop');
+    if (await store.get('alwaysOnTop')) {
+      dm.setAlwaysOnTop(true);
+    }
+    lockWindow.setAlwaysOnTop(true);
+    lockState = true;
   }
 });
 
@@ -512,6 +649,12 @@ ipcMain.on('createPluginWindow', function (arg) {
 ipcMain.on('createDmWindow', function (arg) {
   if (dm == null) {
     createDMWindow();
+  }
+});
+
+ipcMain.on('createLockWindow', function (arg) {
+  if (lockWindow == null) {
+    createLockWindow();
   }
 });
 
@@ -650,15 +793,15 @@ ipcMain.on('onLive', async (event, arg) => {
       url: 'https://api.live.bilibili.com',
       name: 'buvid3',
       value: store.get('buvid2') as string});
-     await session.defaultSession.cookies.set({
+    await session.defaultSession.cookies.set({
       url: 'https://api.live.bilibili.com',
       name: 'bili_jct',
-      value: store.get('csrf') as string}
-      );
-     // success
-        axios.defaults.withCredentials = true;
-        // eslint-disable-next-line promise/no-nesting
-      var res = await  axios
+      value: store.get('csrf') as string,
+    });
+    // success
+    axios.defaults.withCredentials = true;
+    // eslint-disable-next-line promise/no-nesting
+    var res = await  axios
           .get(`https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${arg[0]}`,{
             headers: {
               'Cookie': `bili_jct=${store.get('csrf')};SESSDATA=${store.get('SESSDATA')};buvid3=${store.get('buvid3')};`

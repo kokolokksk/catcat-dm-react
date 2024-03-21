@@ -55,13 +55,13 @@ const Titlebar = (prop: any | undefined) => {
     <>
       <div className={titlebarClass}>
         <div className={style.dragArea} />
-        <div
+        {/* <div
           aria-hidden="true"
           className={`${titlebaIgnoreClass}`}
           onClick={ignoreMouse}
         >
           <LockIcon width={3} height={3} />
-        </div>
+        </div> */}
         <div
           aria-hidden="true"
           className={titlebarMinusClass}

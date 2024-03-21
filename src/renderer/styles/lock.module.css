@@ -1,0 +1,9 @@
+.lockIgnore {
+  right: 60px;
+  margin-right: -10px;
+  width:24px;
+  height: 4vh;
+  padding: 5px;
+  display:flex;
+  color: rgb(0, 0, 0) !important;
+}

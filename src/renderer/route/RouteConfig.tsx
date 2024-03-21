@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import { useLocation } from 'react-router-dom';
 import DanmuWindow from 'renderer/pages/DanmuWindow';
 import LivePreview from 'renderer/pages/LivePreview';
+import LockWindow from 'renderer/pages/LockWindow';
 import PluginWindow from 'renderer/pages/PluginWindow';
 import Setting from 'renderer/pages/Setting';
 import Yin from 'renderer/pages/Yin';
@@ -19,6 +20,7 @@ const RouteConfig = (_props: any) => {
       main: <Setting />,
       livePreview: <LivePreview />,
       pluginWindow: <PluginWindow />,
+      lockWindow: <LockWindow />,
     };
   };
 
