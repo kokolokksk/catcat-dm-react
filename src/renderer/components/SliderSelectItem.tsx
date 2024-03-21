@@ -1,5 +1,14 @@
-import { FormControl, FormLabel, Select, Slider, SliderFilledTrack, SliderMark, SliderThumb, SliderTrack, Tooltip, useColorMode } from '@chakra-ui/react';
-import React from 'react';
+import {
+  FormControl,
+  FormLabel,
+  Slider,
+  SliderFilledTrack,
+  SliderMark,
+  SliderThumb,
+  SliderTrack,
+  Tooltip,
+} from '@chakra-ui/react';
+import React, { useEffect } from 'react';
 import styles from '../styles/setting.module.scss';
 
 const SliderSelectItem = (prop: any | undefined) => {
@@ -8,13 +17,7 @@ const SliderSelectItem = (prop: any | undefined) => {
   };
   const [sliderValue, setSliderValue] = React.useState(5);
   const [showTooltip, setShowTooltip] = React.useState(false);
-  const saveSliderValue = (v: number) => {
-    console.info(v);
-  };
   const { theme, v, c, skey } = data;
-  // if (v) {
-  //   setSliderValue(v);
-  // }
   console.info(v);
   return (
     <div className={styles.setting_input_item}>
@@ -37,7 +40,6 @@ const SliderSelectItem = (prop: any | undefined) => {
           colorScheme="teal"
           onChange={(vv) => {
             setSliderValue(vv);
-            saveSliderValue(vv);
             c(skey, vv / 100);
           }}
           onMouseEnter={() => setShowTooltip(true)}

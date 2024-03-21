@@ -15,15 +15,15 @@ export class Loader {
     // });
 
     loader.loadWithAnimation(
-      'E:/keli/可莉.pmx', // called when the resource is loaded
-      'E:/keli/yaozi.vmd',
+      'E:/mmd/gen/lyl/莱依拉.pmx', // called when the resource is loaded
+      'E:/mmd/vmd/bh3/GHG_无烘培.vmd',
       function onLoad(mmd) {
         console.info(mmd);
-        helper.add(mmd.mesh, {
-          animation: mmd.animation,
-          physics: true,
-        });
-        loader.loadVPD('E:/keli/04.vpd', false, function (vpd) {});
+        // helper.add(mmd.mesh, {
+        //   animation: mmd.animation,
+        //   physics: true,
+        // });
+        // loader.loadVPD('E:/keli/04.vpd', false, function (vpd) {});
         scene.getScene().add(mmd.mesh);
       }
     );

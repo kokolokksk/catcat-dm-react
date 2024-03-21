@@ -1,5 +1,5 @@
 .titlebarLight{
-  background-color: #ffffff;
+  --root-light-color-rgb: 255, 255, 255;
   height: 4vh;
   overflow: hidden;
   position: absolute;
@@ -31,7 +31,7 @@
 }
 
 .titlebarDark{
-  background-color: #1a202c;
+  --root-dark-color-rgb: 	26, 32, 44;
   height: 4vh;
   overflow: hidden;
   position: absolute;
@@ -190,7 +190,8 @@
 
 // miku theme
 .titlebarMiku {
-  background-color: #39c5bc2a;
+  /* background-color: #39c5bc2a; */
+  --root-color-rgb: 57, 197, 187;
   height: 4vh;
   overflow: hidden;
   position: absolute;

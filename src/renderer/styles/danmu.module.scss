@@ -48,11 +48,11 @@
     height:96vh;
     width: 100vw;
     flex-flow: wrap;
-    --root-light-color-rgb: #ffffff;
+    --root-light-color-rgb: 255, 255, 255;
     justify-content: center;
 }
 .rootDark {
-  --root-dark-color-rgb: #1a202c;
+  --root-dark-color-rgb: 	26, 32, 44;
   -moz-box-shadow: 8px 8px 8px gray;
 		-webkit-box-shadow: 8px 8px 8px gray;
 		box-shadow: 1px 1px 0px gray;

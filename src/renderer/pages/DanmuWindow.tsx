@@ -687,18 +687,23 @@ class DanmuWindow extends React.Component {
     } = this.state;
     const themeMode = muaConfig.theme;
     let rootTheme = styles.root;
+    let backVar = 'rgba(var(--root-color-rgb)';
     switch (themeMode) {
       case 'light':
         rootTheme = styles.rootLight;
+        backVar = 'rgba(var(--root-light-color-rgb)';
         break;
       case 'dark':
         rootTheme = styles.rootDark;
+        backVar = 'rgba(var(--root-dark-color-rgb)';
         break;
       case 'wave':
         rootTheme = styles.rootWave;
+        backVar = 'none';
         break;
       case 'miku':
         rootTheme = styles.rootMiku;
+        backVar = 'rgba(var(--root-color-rgb)';
         break;
       default:
         rootTheme = styles.root;
@@ -706,14 +711,7 @@ class DanmuWindow extends React.Component {
     }
     return (
       <>
-        <Titlebar
-          theme={themeMode}
-          style={
-            {
-              backgroundColor: `rgba(var(--root-color-rgb),${muaConfig.opacity})`,
-            } as React.CSSProperties
-          }
-        />
+        <Titlebar theme={themeMode} opacity={muaConfig.opacity} />
         {/* <BackgroundWave display={muaConfig.wave} /> */}
         {muaConfig.theme === 'wave' && <BackgroundWave />}
         {muaConfig.theme === 'miku' && <BackgroundMiku />}
@@ -721,7 +719,7 @@ class DanmuWindow extends React.Component {
           className={rootTheme}
           style={
             {
-              backgroundColor: `rgba(var(--root-color-rgb),${muaConfig.opacity})`,
+              backgroundColor: `${backVar},${muaConfig.opacity})`,
             } as React.CSSProperties
           }
         >

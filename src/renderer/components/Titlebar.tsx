@@ -3,31 +3,36 @@ import { CloseIcon, LockIcon, MinusIcon, UnlockIcon } from '@chakra-ui/icons';
 import style from '../styles/titlebar.module.css';
 
 const Titlebar = (prop: any | undefined) => {
-  const { theme } = prop;
+  const { theme, opacity } = prop;
   let titlebarClass = style.titlebar;
   let titlebarCloseClass = style.titlebarClose;
   let titlebarMinusClass = style.titlebarMinus;
   let titlebaIgnoreClass = style.titlebarIgnore;
+  let backVar = 'rgba(var(--root-color-rgb)';
   switch (theme) {
     case 'light':
       titlebarClass = style.titlebarLight;
       titlebarCloseClass = style.titlebarCloseLight;
       titlebarMinusClass = style.titlebarMinusLight;
+      backVar = 'rgba(var(--root-light-color-rgb)';
       break;
     case 'dark':
       titlebarClass = style.titlebarDark;
       titlebarCloseClass = style.titlebarCloseDark;
       titlebarMinusClass = style.titlebarMinusDark;
+      backVar = 'rgba(var(--root-dark-color-rgb)';
       break;
     case 'wave':
       titlebarClass = style.titlebarWave;
       titlebarCloseClass = style.titlebarCloseWave;
       titlebarMinusClass = style.titlebarMinusWave;
+      backVar = 'none';
       break;
     case 'miku':
       titlebarClass = style.titlebarMiku;
       titlebarCloseClass = style.titlebarCloseMiku;
       titlebarMinusClass = style.titlebarMinusMiku;
+      backVar = 'rgba(var(--root-color-rgb)';
       break;
     default:
       titlebarClass = style.titlebar;
@@ -53,7 +58,14 @@ const Titlebar = (prop: any | undefined) => {
   };
   return (
     <>
-      <div className={titlebarClass}>
+      <div
+        className={titlebarClass}
+        style={
+          {
+            backgroundColor: `${backVar},${opacity})`,
+          } as React.CSSProperties
+        }
+      >
         <div className={style.dragArea} />
         {/* <div
           aria-hidden="true"
