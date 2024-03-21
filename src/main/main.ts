@@ -266,7 +266,9 @@ const createDMWindow = async () => {
   });
 
   dm.on('closed', () => {
-    live.close();
+    if (live) {
+      live.close();
+    }
     if (lockWindow?.closable) {
       lockWindow.close();
     }
@@ -721,6 +723,7 @@ ipcMain.on('closeWindow', (event, arg) => {
   for (let i = 0; i < arg.length; i++) {
     if (arg[i] === 'dm-close') {
       dm?.close();
+      lockWindow?.close();
     }
     if (arg[i] === 'main-close') {
       mainWindow?.close();
