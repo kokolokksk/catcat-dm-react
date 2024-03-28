@@ -199,6 +199,7 @@ class DanmuWindow extends React.Component {
     });
     window.theme.change((_event: any, data: any) => {
       console.log(data);
+      muaConfig.theme = data;
       this.setState({
         muaConfig: {
           ...muaConfig,
@@ -208,6 +209,8 @@ class DanmuWindow extends React.Component {
     });
     window.opacity.change((_event: any, data: any) => {
       console.log(data);
+      // eslint-disable-next-line prefer-destructuring
+      muaConfig.opacity = data[0];
       this.setState({
         muaConfig: {
           ...muaConfig,
