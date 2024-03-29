@@ -1,8 +1,8 @@
 {
   "name": "catcat-dm-react",
-  "productName": "catcat-dm-react",
-  "version": "2.0.0",
-  "description": "catcat-dm-react.",
+  "productName": "猫猫弹幕姬",
+  "version": "2.0.1",
+  "description": "猫猫弹幕姬",
   "author": "Loveloliii <loli@loli.monster>",
   "license": "MIT",
   "keywords": [

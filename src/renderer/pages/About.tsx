@@ -7,7 +7,7 @@ const About = () => {
   return (
     <>
       <div className={styles.version}>
-        <div className={styles.title}>CatCatDM</div>
+        <div className={styles.title}>猫猫弹幕姬</div>
         <div className={styles.items}>
           <div className={styles.item}>
             <div className={styles.name}>App:</div>

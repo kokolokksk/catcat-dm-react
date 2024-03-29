@@ -660,6 +660,13 @@ ipcMain.on('createDmWindow', function (arg) {
   }
 });
 
+ipcMain.on('openDmFile', function (arg) {
+  const dmDir = store.get('danmuDir');
+  if (dmDir) {
+    shell.openPath(dmDir.toString());
+  }
+});
+
 ipcMain.on('createLockWindow', function (arg) {
   if (lockWindow == null) {
     createLockWindow();

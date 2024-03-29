@@ -423,6 +423,13 @@ const Setting = () => {
               CatLog.console(e.message);
             });
         }
+        if (!catConfigData.opacity) {
+          catConfigData.opacity = 1;
+        }
+        if (!catConfigData.theme) {
+          catConfigData.theme = 'light';
+          window.electron.store.set('theme', 'light');
+        }
       } catch (e) {
         catConfigData.clientId = 'NetworkError';
       }
