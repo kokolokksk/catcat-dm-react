@@ -81,6 +81,8 @@ class DanmuWindow extends React.Component {
 
   count: number = 0;
 
+  keySeed: number = 0;
+
   // eslint-disable-next-line global-require
   sdk = require('microsoft-cognitiveservices-speech-sdk');
 
@@ -258,7 +260,7 @@ class DanmuWindow extends React.Component {
               }
             }
           }
-          dm.keyy = data.keyy;
+          dm.keyy = this.buildDanmuKey(data, dm);
           if (!merged) {
             if (allDmList.list.length >= 7) {
               allDmList.list.shift();
@@ -373,6 +375,22 @@ class DanmuWindow extends React.Component {
       same = true;
     }
     return same;
+  };
+
+  buildDanmuKey = (rawData: any, dm: BiliBiliDanmu) => {
+    const rawKey = rawData?.keyy;
+    if (rawKey !== undefined && rawKey !== null && rawKey !== '') {
+      return String(rawKey);
+    }
+
+    this.keySeed += 1;
+    return [
+      dm.timestamp || Date.now(),
+      dm.uid || 0,
+      dm.type || 0,
+      dm.content || dm.giftName || '',
+      this.keySeed,
+    ].join('-');
   };
 
   connectLive = async () => {

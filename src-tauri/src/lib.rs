@@ -14,10 +14,19 @@ use tauri::Manager;
 use tauri::Theme;
 use tauri::WebviewUrl;
 use tauri::WebviewWindowBuilder;
+use tauri::WindowEvent;
 
 struct AppState {
   store: Mutex<Map<String, Value>>,
   store_path: PathBuf,
+}
+
+#[derive(Clone, Copy)]
+struct WindowStateSnapshot {
+  x: f64,
+  y: f64,
+  width: f64,
+  height: f64,
 }
 
 fn ensure_parent_dir(path: &PathBuf) -> Result<(), String> {
@@ -33,8 +42,80 @@ fn persist_store(path: &PathBuf, store: &Map<String, Value>) -> Result<(), Strin
   fs::write(path, data).map_err(|e| e.to_string())
 }
 
+fn window_state_key(label: &str) -> String {
+  format!("window_state_{label}")
+}
+
+fn read_window_state(store: &Map<String, Value>, label: &str) -> Option<WindowStateSnapshot> {
+  let key = window_state_key(label);
+  let Value::Object(raw) = store.get(&key)? else {
+    return None;
+  };
+
+  Some(WindowStateSnapshot {
+    x: raw.get("x")?.as_f64()?,
+    y: raw.get("y")?.as_f64()?,
+    width: raw.get("width")?.as_f64()?,
+    height: raw.get("height")?.as_f64()?,
+  })
+}
+
+fn save_window_state(
+  state: &tauri::State<'_, AppState>,
+  label: &str,
+  snapshot: WindowStateSnapshot,
+) -> Result<(), String> {
+  let mut store = state.store.lock().map_err(|e| e.to_string())?;
+  store.insert(
+    window_state_key(label),
+    serde_json::json!({
+      "x": snapshot.x,
+      "y": snapshot.y,
+      "width": snapshot.width,
+      "height": snapshot.height,
+    }),
+  );
+  persist_store(&state.store_path, &store)
+}
+
+fn capture_window_state(window: &tauri::WebviewWindow) -> Result<WindowStateSnapshot, String> {
+  let scale_factor = window.scale_factor().map_err(|e| e.to_string())?;
+  let position = window
+    .outer_position()
+    .map_err(|e| e.to_string())?
+    .to_logical::<f64>(scale_factor);
+  let size = window
+    .inner_size()
+    .map_err(|e| e.to_string())?
+    .to_logical::<f64>(scale_factor);
+  Ok(WindowStateSnapshot {
+    x: position.x,
+    y: position.y,
+    width: size.width,
+    height: size.height,
+  })
+}
+
+fn register_window_state_tracking(
+  window: tauri::WebviewWindow,
+  label: &'static str,
+  app: tauri::AppHandle,
+) {
+  let tracked_window = window.clone();
+  window.on_window_event(move |event| match event {
+    WindowEvent::Moved(_) | WindowEvent::Resized(_) | WindowEvent::CloseRequested { .. } => {
+      if let Ok(snapshot) = capture_window_state(&tracked_window) {
+        let state = app.state::<AppState>();
+        let _ = save_window_state(&state, label, snapshot);
+      }
+    }
+    _ => {}
+  });
+}
+
 fn build_window(
   app: &tauri::AppHandle,
+  state: &tauri::State<'_, AppState>,
   label: &str,
   query: &str,
   width: f64,
@@ -52,7 +133,7 @@ fn build_window(
   }
 
   let url = WebviewUrl::App(format!("index.html?{query}").into());
-  let builder = WebviewWindowBuilder::new(app, label, url)
+  let mut builder = WebviewWindowBuilder::new(app, label, url)
     .title(title)
     .inner_size(width, height)
     .min_inner_size(min_width, min_height)
@@ -60,7 +141,26 @@ fn build_window(
     .resizable(resizable)
     .always_on_top(always_on_top);
 
-  builder.build().map_err(|e| e.to_string())?;
+  if let Some(snapshot) = {
+    let store = state.store.lock().map_err(|e| e.to_string())?;
+    read_window_state(&store, label)
+  } {
+    builder = builder
+      .position(snapshot.x, snapshot.y)
+      .inner_size(snapshot.width, snapshot.height);
+  }
+
+  let window = builder.build().map_err(|e| e.to_string())?;
+  let static_label = match label {
+    "dm" => "dm",
+    "live-preview" => "live-preview",
+    "plugin" => "plugin",
+    "yin" => "yin",
+    _ => "",
+  };
+  if !static_label.is_empty() {
+    register_window_state_tracking(window, static_label, app.clone());
+  }
   Ok(())
 }
 
@@ -277,6 +377,13 @@ fn avatar_mime_by_ext(ext: &str) -> &'static str {
 }
 
 #[tauri::command]
+fn pick_folder() -> Option<String> {
+  rfd::FileDialog::new()
+    .pick_folder()
+    .map(|path| path.to_string_lossy().to_string())
+}
+
+#[tauri::command]
 fn ipc_send_message(
   app: tauri::AppHandle,
   channel: String,
@@ -299,6 +406,7 @@ fn ipc_send_message(
     "createDmWindow" => {
       build_window(
         &app,
+        &state,
         "dm",
         "dmWindow",
         455.0,
@@ -315,6 +423,7 @@ fn ipc_send_message(
     "createLivePreview" => {
       build_window(
         &app,
+        &state,
         "live-preview",
         "livePreview",
         800.0,
@@ -331,6 +440,7 @@ fn ipc_send_message(
     "createYinWindow" => {
       build_window(
         &app,
+        &state,
         "yin",
         "yin",
         1280.0,
@@ -350,6 +460,7 @@ fn ipc_send_message(
     "createPluginWindow" => {
       build_window(
         &app,
+        &state,
         "plugin",
         "pluginWindow",
         455.0,
@@ -436,6 +547,18 @@ fn ipc_send_message(
         let _ = win.emit("opacity:change", args.clone());
       }
     }
+    "app-font:change" => {
+      for label in ["main", "live-preview", "yin", "plugin"] {
+        if let Some(win) = app.get_webview_window(label) {
+          let _ = win.emit("app-font:change", args.clone());
+        }
+      }
+    }
+    "dm-font:change" => {
+      if let Some(win) = app.get_webview_window("dm") {
+        let _ = win.emit("dm-font:change", args.clone());
+      }
+    }
     "onCopy" => {
       if let Some(text) = args.first().and_then(|v| v.as_str()) {
         let mut clipboard = Clipboard::new().map_err(|e| e.to_string())?;
@@ -484,7 +607,8 @@ pub fn run() {
       send_danmu,
       update_room_title,
       http_get_json,
-      cache_avatar
+      cache_avatar,
+      pick_folder
     ]);
 
   app

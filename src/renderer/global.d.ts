@@ -7,6 +7,9 @@ declare global {
         get: (key: string) => any;
         set: (key: string, val: any) => void;
       };
+      dialog: {
+        pickFolder: () => Promise<string | null>;
+      };
       ipcRenderer: {
         sendMessage: (channel: string, args: unknown[]) => void;
         updateRoomTitle: (channel: string, args: unknown[]) => void;
@@ -20,6 +23,12 @@ declare global {
       change: (handler: (_event: any, data: any) => void) => void;
     };
     opacity: {
+      change: (handler: (_event: any, data: any) => void) => void;
+    };
+    appFont: {
+      change: (handler: (_event: any, data: any) => void) => void;
+    };
+    dmFont: {
       change: (handler: (_event: any, data: any) => void) => void;
     };
     danmuApi: {

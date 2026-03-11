@@ -5,11 +5,12 @@
 #of
 {
     position: relative;
-    font-size: 32px;
+    font-size: calc(var(--window-font-size, 14px) * 2);
+    font-family: var(--window-font-family);
     line-height: 1;
     -ms-transform: rotate(332deg);
     -webkit-transform: rotate(332deg);
-    transform: rotate(324deg);
+    transform: rotate(328deg);
     margin-left: 6px;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
 }

@@ -22,6 +22,7 @@ const Danmu = (prop: any) => {
   const [giftImg, setGiftImg] = useState('');
   const faceImg = '';
   const [avatarSrc, setAvatarSrc] = useState(localAvatar);
+  const [giftImgSrc, setGiftImgSrc] = useState('');
   const [scBorder, setScBorder] = useState('');
   const theme = useColorMode();
   console.info(theme);
@@ -102,6 +103,33 @@ const Danmu = (prop: any) => {
       canceled = true;
     };
   }, [data?.data?.avatarFace]);
+
+  useEffect(() => {
+    let canceled = false;
+    const url = data?.data?.giftImg;
+    if (!url) {
+      setGiftImgSrc('');
+      return () => {
+        canceled = true;
+      };
+    }
+
+    cacheAvatarSrc(url)
+      .then((src) => {
+        if (!canceled) {
+          setGiftImgSrc(src || '');
+        }
+      })
+      .catch(() => {
+        if (!canceled) {
+          setGiftImgSrc(url);
+        }
+      });
+
+    return () => {
+      canceled = true;
+    };
+  }, [data?.data?.giftImg]);
   let danmuContainer;
   let gbContainer;
   let themeBackColor;
@@ -165,14 +193,16 @@ const Danmu = (prop: any) => {
         {/* <div className={styles.fans}>1</div> */}
       </div>
       <div className={styles.danmuContent}>{data.content}</div>
-      <img
-        alt=""
-        className={styles.chatImage}
-        style={{ display: isChatImgDisplayble }}
-        key={data.data.giftImg}
-        onError={changeChatDisplay}
-        src={data.data.giftImg}
-      />
+      {giftImgSrc ? (
+        <img
+          alt=""
+          className={styles.chatImage}
+          style={{ display: isChatImgDisplayble }}
+          key={giftImgSrc}
+          onError={changeChatDisplay}
+          src={giftImgSrc}
+        />
+      ) : null}
     </div>
   ) : data?.data.type === 2 ? (
     <div
@@ -200,14 +230,16 @@ const Danmu = (prop: any) => {
         {/* <div className={styles.fans}>1</div> */}
       </div>
       <div className={styles.danmuContent}>{data.content}</div>
-      <img
-        alt=""
-        className={styles.chatImage}
-        style={{ display: isGiftImgDisplayble }}
-        key={data.data.giftImg}
-        onError={changeGiftDisplay}
-        src={data.data.giftImg}
-      />
+      {giftImgSrc ? (
+        <img
+          alt=""
+          className={styles.chatImage}
+          style={{ display: isGiftImgDisplayble }}
+          key={giftImgSrc}
+          onError={changeGiftDisplay}
+          src={giftImgSrc}
+        />
+      ) : null}
       <div
         style={{
           color: 'orange',

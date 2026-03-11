@@ -15,15 +15,28 @@ const SliderSelectItem = (prop: any | undefined) => {
   const data = {
     ...prop,
   };
-  const [sliderValue, setSliderValue] = React.useState(5);
-  const [defaultValue, setDefaultValue] = React.useState(data.v * 100);
+  const {
+    theme,
+    v,
+    c,
+    skey,
+    min = 0,
+    max = 100,
+    step = 1,
+    marks,
+    formatLabel,
+    normalizeValue,
+  } = data;
+  const initialValue = Number(v ?? min);
+  const [sliderValue, setSliderValue] = React.useState(initialValue);
+  const [defaultValue, setDefaultValue] = React.useState(initialValue);
   const [showTooltip, setShowTooltip] = React.useState(false);
-  const { theme, v, c, skey } = data;
   useEffect(() => {
-    setSliderValue(data.v * 100);
-    setDefaultValue(data.v * 100);
+    const nextValue = Number(data.v ?? min);
+    setSliderValue(nextValue);
+    setDefaultValue(nextValue);
     console.info(`vvvv:${data.v}`);
-  }, [data.v]);
+  }, [data.v, min]);
   return (
     <div className={styles.setting_input_item}>
       <p className={styles.line} />
@@ -38,26 +51,29 @@ const SliderSelectItem = (prop: any | undefined) => {
           <Slider
             id="slider"
             defaultValue={defaultValue}
-            min={0}
-            max={100}
+            min={min}
+            max={max}
+            step={step}
             width={260}
             colorScheme={theme === 'dark' ? 'blue' : 'cyan'}
             onChange={(vv) => {
               setSliderValue(vv);
-              c(skey, vv / 100);
+              c(skey, normalizeValue ? normalizeValue(vv) : vv);
             }}
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
           >
-            <SliderMark value={25} mt="1" ml="-2.5" fontSize="8">
-              25%
-            </SliderMark>
-            <SliderMark value={50} mt="1" ml="-2.5" fontSize="8">
-              50%
-            </SliderMark>
-            <SliderMark value={75} mt="1" ml="-2.5" fontSize="8">
-              75%
-            </SliderMark>
+            {(marks || []).map((mark: any) => (
+              <SliderMark
+                key={`${skey}-${mark.value}`}
+                value={mark.value}
+                mt="1"
+                ml="-2.5"
+                fontSize="8"
+              >
+                {mark.label}
+              </SliderMark>
+            ))}
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
@@ -67,7 +83,7 @@ const SliderSelectItem = (prop: any | undefined) => {
               color="white"
               placement="top"
               isOpen={showTooltip}
-              label={`${sliderValue}%`}
+              label={formatLabel ? formatLabel(sliderValue) : String(sliderValue)}
             >
               <SliderThumb />
             </Tooltip>

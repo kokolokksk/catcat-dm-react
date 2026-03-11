@@ -9,7 +9,8 @@
 .superChatContainerWave,
 .superChatContainerMiku {
   align-items: center;
-  font-family: 'Avenir Next', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: var(--window-font-family, 'Avenir Next', 'PingFang SC', 'Microsoft YaHei', sans-serif);
+  font-size: var(--window-font-size, 14px);
   font-weight: 600;
   min-height: 58px;
   display: flex;

@@ -22,6 +22,7 @@
 
 import axios from 'axios';
 import { BiliBiliDanmu } from 'renderer/@types/catcat';
+import { tauriGetJson } from 'renderer/tauri/http';
 
 //     ]
 // const getConfigItem = () => {
@@ -76,6 +77,14 @@ const catConfigItem = [
   { name: 'ttsServerToken', type: 'string' },
   { name: 'uid', type: 'string' },
   { name: 'opacity', type: 'number' },
+  { name: 'appFontFamily', type: 'string' },
+  { name: 'appFontFileData', type: 'string' },
+  { name: 'appFontFileName', type: 'string' },
+  { name: 'appFontSize', type: 'number' },
+  { name: 'dmFontFamily', type: 'string' },
+  { name: 'dmFontFileData', type: 'string' },
+  { name: 'dmFontFileName', type: 'string' },
+  { name: 'dmFontSize', type: 'number' },
 ];
 
 const giftData = [
@@ -503,32 +512,37 @@ const getNewSessionId = () => {
   return stringBuilder;
 };
 
+function pickDanmuFace(data: any): string | undefined {
+  return (
+    data?.info?.[0]?.[15]?.user?.base?.face ||
+    data?.info?.[0]?.[15]?.user?.base?.face_url ||
+    data?.info?.[0]?.[15]?.user?.base?.avatar ||
+    data?.info?.[0]?.[13]?.url ||
+    data?.data?.uface ||
+    data?.data?.face
+  );
+}
+
 async function setFace(danmu: any, proxyApi: boolean) {
+  if (!danmu?.uid) return;
   const url = `https://api.live.bilibili.com/live_user/v1/Master/info?uid=${danmu.uid}`;
-  await axios({
-    url,
-    // https://api.live.bilibili.com/live_user/v1/Master/info?uid=${danmu.uid}
-  })
-    // eslint-disable-next-line func-names
-    // eslint-disable-next-line promise/always-return
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    // eslint-disable-next-line func-names
-    // eslint-disable-next-line promise/always-return
-    .then(function (response1) {
-      // eslint-disable-next-line promise/always-return
-      if (danmu) {
-        if (proxyApi) {
-          danmu.avatarFace = response1.data.face;
-        } else {
-          danmu.avatarFace = response1.data.data.info.face;
-        }
-        // response1.data.data.info.face
-      }
-    })
-    // eslint-disable-next-line func-names
-    .catch(function (error) {
-      console.log(error);
+  try {
+    const response1 = await tauriGetJson(url, {
+      'User-Agent':
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      Referer: 'https://live.bilibili.com/',
+      Origin: 'https://live.bilibili.com',
+      Accept: 'application/json, text/plain, */*',
     });
+    if (!danmu) return;
+    if (proxyApi) {
+      danmu.avatarFace = response1?.face || danmu.avatarFace;
+    } else {
+      danmu.avatarFace = response1?.data?.info?.face || danmu.avatarFace;
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
 const superchat = {
   cmd: 'SUPER_CHAT_MESSAGE',
@@ -611,6 +625,7 @@ async function handleDanMuMSG(
   danmu.content = data.info[1];
   danmu.price = 0;
   danmu.giftNum = 0;
+  danmu.avatarFace = pickDanmuFace(data);
   if (process.env.NODE_ENV === 'development') {
     if (danmu.content.indexOf('cat2') !== -1) {
       danmu.type = 2;
@@ -653,7 +668,9 @@ async function handleDanMuMSG(
   danmu.fansLevel = data.info[3][0];
   // eslint-disable-next-line prefer-destructuring
   danmu.fansName = data.info[3][1];
-  await setFace(danmu, proxyApi);
+  if (!danmu.avatarFace) {
+    await setFace(danmu, proxyApi);
+  }
 }
 
 const transformMsg = async (
@@ -856,19 +873,22 @@ async function getGiftList(params: {
   area_parent_id: string;
   area_id: string;
 }) {
-  const data = await axios
-    .get(
-      `https://api.live.bilibili.com/xlive/web-room/v1/giftPanel/giftConfig?platform=${params.platform}&room_id=${params.room_id}&area_parent_id=${params.area_parent_id}&area_id=${params.area_id}`
-    )
-    .then((res) => {
-      console.log(res.data);
-      return res.data;
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+  const data = await tauriGetJson(
+    `https://api.live.bilibili.com/xlive/web-room/v1/giftPanel/giftConfig?platform=${params.platform}&room_id=${params.room_id}&area_parent_id=${params.area_parent_id}&area_id=${params.area_id}`,
+    {
+      'User-Agent':
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      Referer: `https://live.bilibili.com/${params.room_id}`,
+      Origin: 'https://live.bilibili.com',
+      Accept: 'application/json, text/plain, */*',
+    }
+  ).catch((err) => {
+    console.error(err);
+    return undefined;
+  });
+
   const giftList: { name: string; img: string }[] = [];
-  data.data.list.forEach((item: any) => {
+  data?.data?.list?.forEach((item: any) => {
     giftList.push({
       name: item.name,
       img: item.webp,
@@ -902,7 +922,7 @@ async function handleSENDGIFT(
   danmu.price = data.data.num * data.data.discount_price;
   danmu.avatarFace = data.data.face;
   let gifts = await getGiftList(params);
-  if (gifts.length > 0) {
+  if (gifts.length === 0) {
     gifts = giftData;
   }
   gifts.forEach((item) => {
@@ -913,9 +933,12 @@ async function handleSENDGIFT(
 }
 
 export { catConfigItem, giftData, getNewSessionId, transformMsg, getGiftList };
-async  function handleLIVEINTERACTIVEGAME(data: any,
-  danmu: { [K: string]: any }, proxyApi: boolean) {
-    danmu.type = 1;
+async function handleLIVEINTERACTIVEGAME(
+  data: any,
+  danmu: { [K: string]: any },
+  proxyApi: boolean
+) {
+  danmu.type = 1;
   danmu.origin = data;
   // eslint-disable-next-line prefer-destructuring
   danmu.uid = data.data.uid;
@@ -925,6 +948,7 @@ async  function handleLIVEINTERACTIVEGAME(data: any,
   danmu.content = data.data.msg;
   danmu.price = 0;
   danmu.giftNum = 0;
+  danmu.avatarFace = pickDanmuFace(data);
   if (process.env.NODE_ENV === 'development') {
     if (danmu.content.indexOf('cat2') !== -1) {
       danmu.type = 2;
@@ -967,6 +991,7 @@ async  function handleLIVEINTERACTIVEGAME(data: any,
   danmu.fansLevel = data.data.fans_medal_level;
   // eslint-disable-next-line prefer-destructuring
   // danmu.fansName = data.info[3][1];
-  await setFace(danmu, proxyApi);
+  if (!danmu.avatarFace) {
+    await setFace(danmu, proxyApi);
   }
-
+}

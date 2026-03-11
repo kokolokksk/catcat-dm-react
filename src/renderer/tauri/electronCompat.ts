@@ -92,7 +92,8 @@ const startLive = async (args: unknown[]) => {
     }
 
     const cookieParts = [];
-    if (storeCache.SESSDATA) cookieParts.push(`SESSDATA=${storeCache.SESSDATA}`);
+    if (storeCache.SESSDATA)
+      cookieParts.push(`SESSDATA=${storeCache.SESSDATA}`);
     if (storeCache.csrf) cookieParts.push(`bili_jct=${storeCache.csrf}`);
     const cookie = cookieParts.join('; ');
     const headers: Record<string, string> = {
@@ -121,7 +122,10 @@ const startLive = async (args: unknown[]) => {
     if (!conf) {
       const apiCode = primary?.code;
       const apiMsg = primary?.message || primary?.msg || 'unknown';
-      emitEvent('msg-tips', `弹幕连接初始化失败 (code=${apiCode}, msg=${apiMsg})`);
+      emitEvent(
+        'msg-tips',
+        `弹幕连接初始化失败 (code=${apiCode}, msg=${apiMsg})`
+      );
       return;
     }
 
@@ -141,8 +145,12 @@ const startLive = async (args: unknown[]) => {
       address,
     });
 
-    liveInstance.on('open', () => emitEvent('main-process-message', 'trying connect to server······'));
-    liveInstance.on('live', () => emitEvent('main-process-message', 'success connected server'));
+    liveInstance.on('open', () =>
+      emitEvent('main-process-message', 'trying connect to server······')
+    );
+    liveInstance.on('live', () =>
+      emitEvent('main-process-message', 'success connected server')
+    );
     liveInstance.on('error', (err: any) => {
       emitEvent(
         'msg-tips',
@@ -189,6 +197,12 @@ void listen('theme:change', (event) => {
 void listen('opacity:change', (event) => {
   emitEvent('opacity:change', event.payload);
 });
+void listen('app-font:change', (event) => {
+  emitEvent('app-font:change', event.payload);
+});
+void listen('dm-font:change', (event) => {
+  emitEvent('dm-font:change', event.payload);
+});
 
 window.removeLoading = () => {};
 
@@ -199,6 +213,16 @@ window.electron = {
       storeCache[key] = val;
       saveStore();
       void invoke('store_set', { key, val }).catch(() => {});
+    },
+  },
+  dialog: {
+    pickFolder: async () => {
+      try {
+        const result = (await invoke('pick_folder')) as string | null;
+        return result || null;
+      } catch (_e) {
+        return null;
+      }
     },
   },
   ipcRenderer: {
@@ -225,9 +249,17 @@ window.electron = {
       if (channel === 'opacity:change') {
         emitEvent('opacity:change', normalizedArgs);
       }
-      void invoke('ipc_send_message', { channel, args: normalizedArgs }).catch((e) => {
-        console.error(`[ipc_send_message] ${channel} failed`, e);
-      });
+      if (channel === 'app-font:change') {
+        emitEvent('app-font:change', normalizedArgs);
+      }
+      if (channel === 'dm-font:change') {
+        emitEvent('dm-font:change', normalizedArgs);
+      }
+      void invoke('ipc_send_message', { channel, args: normalizedArgs }).catch(
+        (e) => {
+          console.error(`[ipc_send_message] ${channel} failed`, e);
+        }
+      );
     },
     updateRoomTitle: (channel: string, args: unknown[] | unknown) => {
       const normalizedArgs = Array.isArray(args) ? args : [args];
@@ -235,11 +267,15 @@ window.electron = {
         void updateRoom(normalizedArgs);
         return;
       }
-      void invoke('ipc_send_message', { channel, args: normalizedArgs }).catch(() => {});
+      void invoke('ipc_send_message', { channel, args: normalizedArgs }).catch(
+        () => {}
+      );
     },
     spaceInfo: (channel: string, args: unknown[] | unknown) => {
       const normalizedArgs = Array.isArray(args) ? args : [args];
-      void invoke('ipc_send_message', { channel, args: normalizedArgs }).catch(() => {});
+      void invoke('ipc_send_message', { channel, args: normalizedArgs }).catch(
+        () => {}
+      );
     },
   },
 };
@@ -254,6 +290,14 @@ window.theme = {
 
 window.opacity = {
   change: (cb: Listener) => onEvent('opacity:change', cb),
+};
+
+window.appFont = {
+  change: (cb: Listener) => onEvent('app-font:change', cb),
+};
+
+window.dmFont = {
+  change: (cb: Listener) => onEvent('dm-font:change', cb),
 };
 
 window.danmuApi = {

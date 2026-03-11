@@ -18,7 +18,14 @@ import {
 import axios from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
 import SettingSelectItem from 'renderer/components/SettingSelectItem';
-import { MutableRefObject, createRef, useEffect, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  MutableRefObject,
+  createRef,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import ReactMarkdown from 'react-markdown';
 import CatLog from 'renderer/utils/CatLog';
 import SliderMenu from '../components/SliderMenu';
@@ -34,6 +41,29 @@ import SliderSelectItem from 'renderer/components/SliderSelectItem';
 // catConfig.setDataPath('F://catConfig.json')
 
 const Setting = () => {
+  const FONT_OPTIONS = [
+    {
+      value:
+        "'SF Pro Display', 'Avenir Next', 'PingFang SC', 'Microsoft YaHei', sans-serif",
+      label: 'SF Pro / Avenir',
+    },
+    {
+      value: "'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif",
+      label: 'PingFang SC',
+    },
+    {
+      value: "'Microsoft YaHei', 'PingFang SC', sans-serif",
+      label: 'Microsoft YaHei',
+    },
+    {
+      value: "'Helvetica Neue', Helvetica, Arial, 'PingFang SC', sans-serif",
+      label: 'Helvetica Neue',
+    },
+    {
+      value: "Consolas, Monaco, 'Courier New', monospace",
+      label: 'Consolas Mono',
+    },
+  ];
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isUpdateOpen,
@@ -48,12 +78,54 @@ const Setting = () => {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const cancelUpdateRef = useRef<HTMLButtonElement>(null);
   const cancelLoginRef = useRef<HTMLButtonElement>(null);
+  const appFontFileInputRef = useRef<HTMLInputElement>(null);
+  const dmFontFileInputRef = useRef<HTMLInputElement>(null);
   const tempRoomId = 0;
   const toast = useToast();
   const obj: { [K: string]: any } = {};
   const [catConfigData, setCatConfigData] = useState(obj);
   const [state, setState] = useState(obj);
   const color = useColorMode();
+  const resolveAppFontFamily = (nextPatch: Record<string, unknown> = {}) => {
+    const nextState = {
+      ...catConfigData,
+      ...nextPatch,
+    };
+    return nextState.appFontFamily || FONT_OPTIONS[0].value;
+  };
+  const resolveDmFontFamily = (nextPatch: Record<string, unknown> = {}) => {
+    const nextState = {
+      ...catConfigData,
+      ...nextPatch,
+    };
+    return nextState.dmFontFamily || FONT_OPTIONS[0].value;
+  };
+  const emitFontChange = (
+    scope: 'app' | 'dm',
+    nextPatch: Record<string, unknown> = {}
+  ) => {
+    const nextState = {
+      ...catConfigData,
+      ...nextPatch,
+    };
+    window.electron.ipcRenderer.sendMessage(
+      scope === 'app' ? 'app-font:change' : 'dm-font:change',
+      [
+        scope === 'app'
+          ? resolveAppFontFamily(nextPatch)
+          : resolveDmFontFamily(nextPatch),
+        scope === 'app'
+          ? nextState.appFontSize || 14
+          : nextState.dmFontSize || 14,
+        scope === 'app'
+          ? nextState.appFontFileData || ''
+          : nextState.dmFontFileData || '',
+        scope === 'app'
+          ? nextState.appFontFileName || ''
+          : nextState.dmFontFileName || '',
+      ]
+    );
+  };
   const load = (num: number) => {
     CatLog.console('on load user img and nickname');
     if (!num) {
@@ -69,7 +141,9 @@ const Setting = () => {
       .catch(function (error) {
         console.log(error);
       });
-    tauriGetJson(`https://api.live.bilibili.com/room/v1/Room/room_init?id=${num}`)
+    tauriGetJson(
+      `https://api.live.bilibili.com/room/v1/Room/room_init?id=${num}`
+    )
       // eslint-disable-next-line func-names
       // eslint-disable-next-line promise/always-return
       .then(function (response: any) {
@@ -78,7 +152,9 @@ const Setting = () => {
         const { uid } = response.data;
         // eslint-disable-next-line promise/always-return
         if (uid) {
-          tauriGetJson(`https://api.live.bilibili.com/live_user/v1/Master/info?uid=${uid}`)
+          tauriGetJson(
+            `https://api.live.bilibili.com/live_user/v1/Master/info?uid=${uid}`
+          )
             // eslint-disable-next-line func-names
             // eslint-disable-next-line promise/always-return
             // eslint-disable-next-line @typescript-eslint/no-shadow
@@ -104,7 +180,9 @@ const Setting = () => {
         // handle error
         console.log(error);
       });
-    tauriGetJson(`https://api.live.bilibili.com/room/v1/Room/get_info?room_id=${num}`)
+    tauriGetJson(
+      `https://api.live.bilibili.com/room/v1/Room/get_info?room_id=${num}`
+    )
       .then((response2: any) => {
         console.log(response2);
         setCatConfigData({
@@ -164,6 +242,23 @@ const Setting = () => {
         opacity: value,
       });
       window.electron.ipcRenderer.sendMessage('opacity:change', [value]);
+    }
+    if (skey === 'appFontSize' || skey === 'dmFontSize') {
+      const parsed = Number(value);
+      t = Number.isFinite(parsed) && parsed > 0 ? parsed : 14;
+      setCatConfigData({
+        ...catConfigData,
+        [skey]: t,
+      });
+      emitFontChange(skey === 'appFontSize' ? 'app' : 'dm', { [skey]: t });
+    }
+    if (
+      !['roomid', 'opacity', 'appFontSize', 'dmFontSize'].includes(String(skey))
+    ) {
+      setCatConfigData({
+        ...catConfigData,
+        [skey]: t,
+      });
     }
     window.electron.store.set(skey, t);
   };
@@ -258,6 +353,138 @@ const Setting = () => {
         value.target.value
       );
     }
+    if (skey === 'appFontFamily' || skey === 'dmFontFamily') {
+      setCatConfigData({
+        ...catConfigData,
+        [skey]: value.target.value,
+      });
+      window.electron.ipcRenderer.sendMessage(
+        skey === 'appFontFamily' ? 'app-font:change' : 'dm-font:change',
+        [
+          value.target.value,
+          skey === 'appFontFamily'
+            ? catConfigData.appFontSize || 14
+            : catConfigData.dmFontSize || 14,
+          skey === 'appFontFamily'
+            ? catConfigData.appFontFileData || ''
+            : catConfigData.dmFontFileData || '',
+          skey === 'appFontFamily'
+            ? catConfigData.appFontFileName || ''
+            : catConfigData.dmFontFileName || '',
+        ]
+      );
+    }
+  };
+
+  const readFontFile = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(new Error('read font file failed'));
+      reader.readAsDataURL(file);
+    });
+
+  const handleFontFileSelect = async (
+    scope: 'app' | 'dm',
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const { files } = event.target;
+    const file = files?.[0];
+    if (!file) {
+      return;
+    }
+    try {
+      const fileData = await readFontFile(file);
+      const patch =
+        scope === 'app'
+          ? {
+              appFontFileData: fileData,
+              appFontFileName: file.name,
+            }
+          : {
+              dmFontFileData: fileData,
+              dmFontFileName: file.name,
+            };
+      setCatConfigData({
+        ...catConfigData,
+        ...patch,
+      });
+      Object.entries(patch).forEach(([key, val]) => {
+        window.electron.store.set(key, val);
+      });
+      window.electron.ipcRenderer.sendMessage(
+        scope === 'app' ? 'app-font:change' : 'dm-font:change',
+        [
+          scope === 'app'
+            ? catConfigData.appFontFamily || FONT_OPTIONS[0].value
+            : catConfigData.dmFontFamily || FONT_OPTIONS[0].value,
+          scope === 'app'
+            ? catConfigData.appFontSize || 14
+            : catConfigData.dmFontSize || 14,
+          fileData,
+          file.name,
+        ]
+      );
+      toast({
+        title: '提示',
+        description: `${scope === 'app' ? '应用' : '弹幕窗口'}字体文件已加载`,
+        status: 'success',
+        duration: 2500,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: '提示',
+        description: '字体文件读取失败',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      event.target.value = '';
+    }
+  };
+
+  const clearFontFile = (scope: 'app' | 'dm') => {
+    const patch =
+      scope === 'app'
+        ? {
+            appFontFileData: '',
+            appFontFileName: '',
+          }
+        : {
+            dmFontFileData: '',
+            dmFontFileName: '',
+          };
+    setCatConfigData({
+      ...catConfigData,
+      ...patch,
+    });
+    Object.entries(patch).forEach(([key, val]) => {
+      window.electron.store.set(key, val);
+    });
+    window.electron.ipcRenderer.sendMessage(
+      scope === 'app' ? 'app-font:change' : 'dm-font:change',
+      [
+        scope === 'app' ? resolveAppFontFamily() : resolveDmFontFamily(),
+        scope === 'app'
+          ? catConfigData.appFontSize || 14
+          : catConfigData.dmFontSize || 14,
+        '',
+        '',
+      ]
+    );
+  };
+  const pickDanmuDir = async () => {
+    const folder = await window.electron.dialog.pickFolder();
+    if (!folder) {
+      return;
+    }
+    setCatConfigData({
+      ...catConfigData,
+      danmuDir: folder,
+    });
+    window.electron.store.set('danmuDir', folder);
   };
   const selectRoom = async (skey: any, value: any) => {
     if (!value.target.value) {
@@ -273,6 +500,44 @@ const Setting = () => {
       window.electron.store.set('roomid', Number(value.target.value));
       load(value.target.value);
     }
+  };
+
+  const normalizeRecentRoomIds = (raw: string | undefined) => {
+    if (!raw) return [];
+    return raw
+      .split(',')
+      .map((item) => item.trim())
+      .filter((item, index, arr) => item && arr.indexOf(item) === index);
+  };
+
+  const removeRecentRoomId = (roomId: string | number) => {
+    const target = String(roomId || '').trim();
+    if (!target) {
+      return;
+    }
+    const nextRecentRoomId = normalizeRecentRoomIds(catConfigData.recentroomid)
+      .filter((item) => item !== target)
+      .join(',');
+    const nextRoomId =
+      String(catConfigData.roomid || '') === target
+        ? Number(nextRecentRoomId.split(',')[0] || 0)
+        : catConfigData.roomid;
+
+    setCatConfigData({
+      ...catConfigData,
+      recentroomid: nextRecentRoomId,
+      roomid: nextRoomId || '',
+    });
+    window.electron.store.set('recentroomid', nextRecentRoomId);
+    window.electron.store.set('roomid', nextRoomId || 0);
+  };
+
+  const clearRecentRoomIds = () => {
+    setCatConfigData({
+      ...catConfigData,
+      recentroomid: '',
+    });
+    window.electron.store.set('recentroomid', '');
   };
   const myRef = useRef<{ html: any; events: any }>({
     html: 'some HTML',
@@ -408,6 +673,22 @@ const Setting = () => {
           catConfigData.theme = 'light';
           window.electron.store.set('theme', 'light');
         }
+        if (!catConfigData.appFontFamily) {
+          catConfigData.appFontFamily = FONT_OPTIONS[0].value;
+          window.electron.store.set('appFontFamily', FONT_OPTIONS[0].value);
+        }
+        if (!catConfigData.dmFontFamily) {
+          catConfigData.dmFontFamily = FONT_OPTIONS[0].value;
+          window.electron.store.set('dmFontFamily', FONT_OPTIONS[0].value);
+        }
+        if (!catConfigData.appFontSize) {
+          catConfigData.appFontSize = 14;
+          window.electron.store.set('appFontSize', 14);
+        }
+        if (!catConfigData.dmFontSize) {
+          catConfigData.dmFontSize = 14;
+          window.electron.store.set('dmFontSize', 14);
+        }
       } catch (e) {
         catConfigData.clientId = 'NetworkError';
       }
@@ -451,98 +732,97 @@ const Setting = () => {
       return;
     }
     const data = await tauriGetJson(
-        `https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key=${qrcode_key}`
-      )
-      .then(async (res: any) => {
-        CatLog.console(res);
-        if (res.data.code === 0 && res.data.url !== '') {
-          console.log(res);
-          const { url } = res.data;
-          const DedeUserID = url.split('&')[0].split('=')[1];
-          const SESSDATA = url.split('&')[3].split('=')[1];
-          const BILI_JCT = url.split('&')[4].split('=')[1];
-          if (SESSDATA && BILI_JCT) {
-            window.electron.store.set('SESSDATA', SESSDATA);
-            window.electron.store.set('csrf', BILI_JCT);
-            window.electron.store.set('uid', DedeUserID);
-            setCatConfigData({
-              ...catConfigData,
-              SESSDATA,
-              csrf: BILI_JCT,
-            });
-            onLoginClose();
-            toast({
-              title: '提示',
-              description: '登录成功,凭证已更新。',
-              status: 'success',
-              duration: 5000,
-              isClosable: true,
-            });
-          } else {
-            toast({
-              title: '提示',
-              description: '登录失败',
-              status: 'error',
-              duration: 5000,
-              isClosable: true,
-            });
-          }
-        }
-        if (res.data.code === 86101) {
-          console.log(res.message);
-          setState({
-            ...state,
-            qrUrl: url,
-            loginStatus: '请使用哔哩哔哩App扫码',
+      `https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key=${qrcode_key}`
+    ).then(async (res: any) => {
+      CatLog.console(res);
+      if (res.data.code === 0 && res.data.url !== '') {
+        console.log(res);
+        const { url } = res.data;
+        const DedeUserID = url.split('&')[0].split('=')[1];
+        const SESSDATA = url.split('&')[3].split('=')[1];
+        const BILI_JCT = url.split('&')[4].split('=')[1];
+        if (SESSDATA && BILI_JCT) {
+          window.electron.store.set('SESSDATA', SESSDATA);
+          window.electron.store.set('csrf', BILI_JCT);
+          window.electron.store.set('uid', DedeUserID);
+          setCatConfigData({
+            ...catConfigData,
+            SESSDATA,
+            csrf: BILI_JCT,
           });
-          console.info('state:', isLoginOpen);
-          a = setTimeout(() => {
-            checkQrLogin(qrcode_key, url);
-          }, 10000);
-        }
-        if (res.data.code === 86090) {
-          console.log(res.message);
-          setState({
-            ...state,
-            qrUrl: url,
-            loginStatus: '已扫描，请确认登录',
+          onLoginClose();
+          toast({
+            title: '提示',
+            description: '登录成功,凭证已更新。',
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
           });
-          console.info('state:', isLoginOpen);
-          b = setTimeout(() => {
-            checkQrLogin(qrcode_key, url);
-          }, 10000);
-        }
-        if (res.data.code === 86038) {
-          console.log(res);
-          setState({
-            ...state,
-            qrUrl: url,
-            loginStatus: '二维码已失效',
+        } else {
+          toast({
+            title: '提示',
+            description: '登录失败',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
           });
-          console.info('state:', isLoginOpen);
-          c = setTimeout(() => {
-            checkQrLogin(qrcode_key, url);
-          }, 1000);
         }
-        return res;
-      });
+      }
+      if (res.data.code === 86101) {
+        console.log(res.message);
+        setState({
+          ...state,
+          qrUrl: url,
+          loginStatus: '请使用哔哩哔哩App扫码',
+        });
+        console.info('state:', isLoginOpen);
+        a = setTimeout(() => {
+          checkQrLogin(qrcode_key, url);
+        }, 10000);
+      }
+      if (res.data.code === 86090) {
+        console.log(res.message);
+        setState({
+          ...state,
+          qrUrl: url,
+          loginStatus: '已扫描，请确认登录',
+        });
+        console.info('state:', isLoginOpen);
+        b = setTimeout(() => {
+          checkQrLogin(qrcode_key, url);
+        }, 10000);
+      }
+      if (res.data.code === 86038) {
+        console.log(res);
+        setState({
+          ...state,
+          qrUrl: url,
+          loginStatus: '二维码已失效',
+        });
+        console.info('state:', isLoginOpen);
+        c = setTimeout(() => {
+          checkQrLogin(qrcode_key, url);
+        }, 1000);
+      }
+      return res;
+    });
   };
 
   const freshQrLogin = async () => {
     const data = await tauriGetJson(
       'https://passport.bilibili.com/x/passport-login/web/qrcode/generate'
     ).then((res: any) => {
-        // CatLog.console(res.data.data.url);
-        setState({
-          ...state,
-          qrUrl: res.data.url,
-          loginStatus: '请使用哔哩哔哩App扫码',
-        });
-        setTimeout(() => {
-          checkQrLogin(res.data.qrcode_key, res.data.url);
-        }, 1000);
-        return res.data;
+      // CatLog.console(res.data.data.url);
+      setState({
+        ...state,
+        qrUrl: res.data.url,
+        loginStatus: '请使用哔哩哔哩App扫码',
       });
+      setTimeout(() => {
+        checkQrLogin(res.data.qrcode_key, res.data.url);
+      }, 1000);
+      return res.data;
+    });
     CatLog.console(data);
   };
 
@@ -633,7 +913,8 @@ const Setting = () => {
                 <p className={styles.subtitle}>猫猫弹幕姬 · Tauri Edition</p>
               </div>
               <div className={styles.statusPill}>
-                房间: {catConfigData.roomid || '-'} · 主题: {catConfigData.theme || 'light'}
+                房间: {catConfigData.roomid || '-'} · 主题:{' '}
+                {catConfigData.theme || 'light'}
               </div>
             </div>
 
@@ -655,6 +936,8 @@ const Setting = () => {
                   skey="recentroomid"
                   key={catConfigData.recentroomid}
                   options={catConfigData.recentroomid}
+                  onDeleteCurrent={removeRecentRoomId}
+                  onClearAll={clearRecentRoomIds}
                 />
                 <SettingInputItem
                   name="更新直播间标题"
@@ -677,13 +960,20 @@ const Setting = () => {
                   c={commonSwitchItemSave}
                   skey="alwaysOnTop"
                 />
-                <SettingInputItem
-                  name="设置弹幕保存路径"
-                  theme={catConfigData.theme}
-                  v={catConfigData.danmuDir}
-                  c={commonInputItemSave}
-                  skey="danmuDir"
-                />
+                <div className={styles.setting_input_item}>
+                  <p className={styles.line} />
+                  <Flex alignItems="center" className={styles.filePickerRow}>
+                    <span className={styles.rowLabel}>设置弹幕保存路径</span>
+                    <div className={styles.filePickerMeta}>
+                      {catConfigData.danmuDir || '未选择文件夹'}
+                    </div>
+                    <div className={styles.filePickerActions}>
+                      <Button size="sm" variant="ghost" onClick={pickDanmuDir}>
+                        选择文件夹
+                      </Button>
+                    </div>
+                  </Flex>
+                </div>
               </div>
 
               <div className={styles.sectionCard}>
@@ -716,9 +1006,19 @@ const Setting = () => {
                 <SliderSelectItem
                   name="设置透明度"
                   theme={catConfigData.theme}
-                  v={catConfigData.opacity}
+                  v={(catConfigData.opacity || 1) * 100}
                   c={commonInputItemSave}
                   skey="opacity"
+                  min={0}
+                  max={100}
+                  step={1}
+                  normalizeValue={(vv: number) => vv / 100}
+                  formatLabel={(vv: number) => `${vv}%`}
+                  marks={[
+                    { value: 25, label: '25%' },
+                    { value: 50, label: '50%' },
+                    { value: 75, label: '75%' },
+                  ]}
                 />
                 <SettingSwitchItem
                   name="TTS感谢礼物"
@@ -741,19 +1041,136 @@ const Setting = () => {
                   c={commonSwitchItemSave}
                   skey="allowUpdate"
                 />
-                <SettingSwitchItem
-                  name="使用国内服务器下载更新"
-                  theme={catConfigData.theme}
-                  v={catConfigData.mirror || false}
-                  c={commonSwitchItemSave}
-                  skey="mirror"
-                />
                 <SettingInputItem
                   name="设置更新代理服务器"
                   theme={catConfigData.theme}
                   v={catConfigData.port_server}
                   c={commonInputItemSave}
                   skey="port_server"
+                />
+              </div>
+
+              <div className={styles.sectionCard}>
+                <h3 className={styles.sectionTitle}>TYPOGRAPHY</h3>
+                <input
+                  ref={appFontFileInputRef}
+                  type="file"
+                  accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2"
+                  className={styles.hiddenFileInput}
+                  onChange={(event) => {
+                    handleFontFileSelect('app', event).catch(() => {});
+                  }}
+                />
+                <SettingSelectItem
+                  name="应用字体"
+                  theme={catConfigData.theme}
+                  v={catConfigData.appFontFamily || FONT_OPTIONS[0].value}
+                  c={commonSelectItemSave}
+                  skey="appFontFamily"
+                  options={FONT_OPTIONS}
+                />
+                <div className={styles.setting_input_item}>
+                  <p className={styles.line} />
+                  <Flex alignItems="center" className={styles.filePickerRow}>
+                    <span className={styles.rowLabel}>本地应用字体文件</span>
+                    <div className={styles.filePickerMeta}>
+                      {catConfigData.appFontFileName || '未选择字体文件'}
+                    </div>
+                    <div className={styles.filePickerActions}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => appFontFileInputRef.current?.click()}
+                      >
+                        选择文件
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => clearFontFile('app')}
+                        isDisabled={!catConfigData.appFontFileData}
+                      >
+                        清除
+                      </Button>
+                    </div>
+                  </Flex>
+                </div>
+                <SliderSelectItem
+                  name="应用字号"
+                  theme={catConfigData.theme}
+                  v={catConfigData.appFontSize || 14}
+                  c={commonInputItemSave}
+                  skey="appFontSize"
+                  min={10}
+                  max={28}
+                  step={1}
+                  formatLabel={(vv: number) => `${vv}px`}
+                  marks={[
+                    { value: 12, label: '12' },
+                    { value: 16, label: '16' },
+                    { value: 20, label: '20' },
+                    { value: 24, label: '24' },
+                  ]}
+                />
+                <input
+                  ref={dmFontFileInputRef}
+                  type="file"
+                  accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2"
+                  className={styles.hiddenFileInput}
+                  onChange={(event) => {
+                    handleFontFileSelect('dm', event).catch(() => {});
+                  }}
+                />
+                <SettingSelectItem
+                  name="弹幕窗口字体"
+                  theme={catConfigData.theme}
+                  v={catConfigData.dmFontFamily || FONT_OPTIONS[0].value}
+                  c={commonSelectItemSave}
+                  skey="dmFontFamily"
+                  options={FONT_OPTIONS}
+                />
+                <div className={styles.setting_input_item}>
+                  <p className={styles.line} />
+                  <Flex alignItems="center" className={styles.filePickerRow}>
+                    <span className={styles.rowLabel}>本地弹幕字体文件</span>
+                    <div className={styles.filePickerMeta}>
+                      {catConfigData.dmFontFileName || '未选择字体文件'}
+                    </div>
+                    <div className={styles.filePickerActions}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => dmFontFileInputRef.current?.click()}
+                      >
+                        选择文件
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => clearFontFile('dm')}
+                        isDisabled={!catConfigData.dmFontFileData}
+                      >
+                        清除
+                      </Button>
+                    </div>
+                  </Flex>
+                </div>
+                <SliderSelectItem
+                  name="弹幕窗口字号"
+                  theme={catConfigData.theme}
+                  v={catConfigData.dmFontSize || 14}
+                  c={commonInputItemSave}
+                  skey="dmFontSize"
+                  min={10}
+                  max={32}
+                  step={1}
+                  formatLabel={(vv: number) => `${vv}px`}
+                  marks={[
+                    { value: 12, label: '12' },
+                    { value: 16, label: '16' },
+                    { value: 20, label: '20' },
+                    { value: 28, label: '28' },
+                  ]}
                 />
               </div>
 
@@ -765,6 +1182,7 @@ const Setting = () => {
                   v={catConfigData.SESSDATA || '-'}
                   c={commonInputItemSave}
                   skey="SESSDATA"
+                  mask
                 />
                 <SettingInputItem
                   name="csrf"
@@ -772,6 +1190,7 @@ const Setting = () => {
                   v={catConfigData.csrf || '-'}
                   c={commonInputItemSave}
                   skey="csrf"
+                  mask
                 />
                 <SettingInputItem
                   name="TTS KEY"
@@ -779,6 +1198,7 @@ const Setting = () => {
                   v={catConfigData.ttsKey || '-'}
                   c={commonInputItemSave}
                   skey="ttsKey"
+                  mask
                 />
                 <SettingInputItem
                   name="TTS Server Url"
@@ -786,6 +1206,7 @@ const Setting = () => {
                   v={catConfigData.ttsServerUrl || '-'}
                   c={commonInputItemSave}
                   skey="ttsServerUrl"
+                  mask
                 />
                 <SettingInputItem
                   name="TTS Server token"
@@ -793,12 +1214,21 @@ const Setting = () => {
                   v={catConfigData.ttsServerToken || '-'}
                   c={commonInputItemSave}
                   skey="ttsServerToken"
+                  mask
                 />
                 <div className={styles.actions}>
-                  <Button onClick={openQrLogin} colorScheme="blue" className={styles.actionBtn}>
+                  <Button
+                    onClick={openQrLogin}
+                    colorScheme="blue"
+                    className={styles.actionBtn}
+                  >
                     扫码登陆
                   </Button>
-                  <Button onClick={syncUserInfo} colorScheme="cyan" className={styles.actionBtn}>
+                  <Button
+                    onClick={syncUserInfo}
+                    colorScheme="cyan"
+                    className={styles.actionBtn}
+                  >
                     同步登录信息
                   </Button>
                 </div>
@@ -813,8 +1243,16 @@ const Setting = () => {
         onClose={onClose}
       >
         <AlertDialogOverlay>
-          <AlertDialogContent className={theme === 'dark' ? styles.dialogDark : styles.dialogLight}>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold" className={styles.dialogHeader}>
+          <AlertDialogContent
+            className={
+              theme === 'dark' ? styles.dialogDark : styles.dialogLight
+            }
+          >
+            <AlertDialogHeader
+              fontSize="lg"
+              fontWeight="bold"
+              className={styles.dialogHeader}
+            >
               更新提示
             </AlertDialogHeader>
 
@@ -864,8 +1302,16 @@ const Setting = () => {
         onClose={onUpdateClose}
       >
         <AlertDialogOverlay>
-          <AlertDialogContent className={theme === 'dark' ? styles.dialogDark : styles.dialogLight}>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold" className={styles.dialogHeader}>
+          <AlertDialogContent
+            className={
+              theme === 'dark' ? styles.dialogDark : styles.dialogLight
+            }
+          >
+            <AlertDialogHeader
+              fontSize="lg"
+              fontWeight="bold"
+              className={styles.dialogHeader}
+            >
               更新中
             </AlertDialogHeader>
 
@@ -897,8 +1343,16 @@ const Setting = () => {
         motionPreset="none"
       >
         <AlertDialogOverlay>
-          <AlertDialogContent className={theme === 'dark' ? styles.dialogDark : styles.dialogLight}>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold" className={styles.dialogHeader}>
+          <AlertDialogContent
+            className={
+              theme === 'dark' ? styles.dialogDark : styles.dialogLight
+            }
+          >
+            <AlertDialogHeader
+              fontSize="lg"
+              fontWeight="bold"
+              className={styles.dialogHeader}
+            >
               {state.loginStatus}
             </AlertDialogHeader>
 

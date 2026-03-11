@@ -10,7 +10,6 @@ import {
   PopoverTrigger,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import { TransitionGroup } from 'react-transition-group';
 import { BiliBiliDanmu } from 'renderer/@types/catcat';
 import style from '../styles/super_chat_bar.module.scss';
 import danmucStyle from '../styles/danmuc.module.scss';
@@ -195,29 +194,26 @@ const SuperChatBar = (prop: any | undefined) => {
   return (
     <>
       <div className={superChatBarClass}>
-        <TransitionGroup>
-          <div
-            style={{
-              flexDirection: 'row',
-              display: 'flex',
-              position: 'absolute',
-              top: '5vh',
-              left: 0,
-              width: '100%',
-            }}
-          >
-            {scList.list.map((danmu: BiliBiliDanmu) => (
-              // eslint-disable-next-line react/jsx-no-undef
-
-              <MiniSuperChat
-                theme={theme}
-                nickname={danmu.nickname}
-                content={danmu.content}
-                data={danmu}
-              />
-            ))}
-          </div>
-        </TransitionGroup>
+        <div
+          style={{
+            flexDirection: 'row',
+            display: 'flex',
+            position: 'absolute',
+            top: '5vh',
+            left: 0,
+            width: '100%',
+          }}
+        >
+          {scList.list.map((danmu: BiliBiliDanmu) => (
+            <MiniSuperChat
+              key={`sc-${danmu.id || danmu.keyy || danmu.timestamp}-${danmu.uid}`}
+              theme={theme}
+              nickname={danmu.nickname}
+              content={danmu.content}
+              data={danmu}
+            />
+          ))}
+        </div>
       </div>
     </>
   );

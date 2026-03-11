@@ -2,9 +2,12 @@
  * Base webpack config used across other specific configs
  */
 
+import { createRequire } from 'module';
 import webpack from 'webpack';
-import webpackPaths from './webpack.paths';
-import { dependencies as externals } from '../../release/app/package.json';
+import webpackPaths from './webpack.paths.ts';
+
+const require = createRequire(import.meta.url);
+const { dependencies: externals } = require('../../release/app/package.json');
 
 const configuration: webpack.Configuration = {
   externals: [...Object.keys(externals || {})],

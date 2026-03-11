@@ -1,7 +1,10 @@
 import { execSync } from 'child_process';
+import { createRequire } from 'module';
 import fs from 'fs';
-import { dependencies } from '../../release/app/package.json';
-import webpackPaths from '../configs/webpack.paths';
+import webpackPaths from '../configs/webpack.paths.ts';
+
+const require = createRequire(import.meta.url);
+const { dependencies } = require('../../release/app/package.json');
 
 if (
   Object.keys(dependencies || {}).length > 0 &&

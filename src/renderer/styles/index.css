@@ -1,7 +1,13 @@
+:root {
+  --window-font-family: 'SF Pro Display', 'Avenir Next', 'PingFang SC',
+    'Microsoft YaHei', sans-serif;
+  --window-font-size: 14px;
+}
+
 body {
   margin: 0;
-  font-family: 'SF Pro Display', 'Avenir Next', 'PingFang SC', 'Microsoft YaHei',
-    sans-serif;
+  font-family: var(--window-font-family);
+  font-size: var(--window-font-size);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   user-select: none;
@@ -10,6 +16,14 @@ body {
   -ms-user-select: none;
   background: radial-gradient(circle at top right, #dcf0ff 0%, #f2f8ff 38%, #f7fafc 100%);
   color: #1c2533;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: var(--window-font-family);
+  font-size: var(--window-font-size);
 }
 
 * {

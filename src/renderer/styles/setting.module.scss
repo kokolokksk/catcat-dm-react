@@ -141,6 +141,52 @@
   margin-right: 14px !important;
 }
 
+.selectWithActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hiddenFileInput {
+  display: none;
+}
+
+.filePickerRow {
+  width: 100%;
+  gap: 12px;
+}
+
+.filePickerMeta {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  color: #2a6699;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pageDark .filePickerMeta {
+  color: #7ec7ff;
+}
+
+.maskedPreview {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--window-font-family);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.filePickerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .actions {
   margin-top: 8px;
   display: flex;
