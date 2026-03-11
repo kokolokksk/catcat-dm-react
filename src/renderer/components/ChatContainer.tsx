@@ -91,45 +91,71 @@ const ChatContainer = (prop: any | undefined) => {
       <InputGroup>
         <InputLeftElement
           pointerEvents="none"
-          color="gray.300"
+          color={theme === 'dark' ? '#88baf2' : '#7f95b6'}
           fontSize="1.2em"
           children={leftIcon}
           background={`url(${leftIconBg}) no-repeat`}
-          style={{ backgroundSize: '90% 90%' }}
+          style={{ backgroundSize: '90% 90%', top: '2px' }}
         />
         <Input
           style={
             theme === 'dark'
-              ? {
-                  background: 'rgba(11,18,31,0.65)',
-                  color: '#e7f0ff',
-                  borderRadius: '10px',
-                  border: '1px solid #4f6a8d',
-                }
-              : {
-                  background: 'rgba(255,255,255,0.84)',
-                  color: '#1c3555',
-                  borderRadius: '10px',
-                  border: '1px solid #a8bfdc',
-                }
+                ? {
+                    background:
+                      'linear-gradient(180deg, rgba(10,18,30,0.78), rgba(16,27,43,0.78))',
+                    color: '#e7f0ff',
+                    borderRadius: '16px',
+                    border: '1px solid rgba(96, 128, 171, 0.8)',
+                    height: '68px',
+                    paddingLeft: '46px',
+                    paddingRight: '102px',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+                  }
+                : {
+                    background:
+                      'linear-gradient(180deg, rgba(255,255,255,0.98), rgba(244,248,253,0.94))',
+                    color: '#1c3555',
+                    borderRadius: '16px',
+                    border: '1px solid rgba(168, 191, 220, 0.92)',
+                    height: '68px',
+                    paddingLeft: '46px',
+                    paddingRight: '102px',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.72)',
+                  }
           }
-          placeholder="发送弹幕..."
+          _placeholder={{
+            color:
+              theme === 'dark'
+                ? 'rgba(207, 224, 247, 0.52)'
+                : 'rgba(91, 117, 154, 0.58)',
+          }}
+          placeholder="发送弹幕，进入直播间即时展示..."
           value={value}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
-        <InputRightElement>
+        <InputRightElement width="96px" height="100%" pr="8px">
           <Button
-            color={theme === 'dark' ? '#d9ebff' : '#1f3f66'}
-            bg={theme === 'dark' ? '#2e4668' : '#dceaff'}
+            color={theme === 'dark' ? '#ecf6ff' : '#1d4d82'}
+            bg={
+              theme === 'dark'
+                ? 'linear-gradient(180deg, #3b5f8f, #2f4d75)'
+                : 'linear-gradient(180deg, #d8ebff, #bfdcff)'
+            }
             border={
-              theme === 'dark' ? '1px solid #5f7ea8' : '1px solid #a8bfdc'
+              theme === 'dark' ? '1px solid #6d94c4' : '1px solid #94b6de'
             }
             _hover={{
-              bg: theme === 'dark' ? '#3b5a84' : '#cddff8',
+              bg: theme === 'dark' ? '#476d9f' : '#c8e0ff',
             }}
             onClick={handleClick}
-            style={{ height: '92%', borderRadius: '8px' }}
+            style={{
+              height: '54px',
+              width: '78px',
+              borderRadius: '14px',
+              fontWeight: 700,
+              letterSpacing: '0.04em',
+            }}
           >
             发送
           </Button>

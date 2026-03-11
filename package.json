@@ -41,7 +41,7 @@
     "start:main": "cross-env NODE_ENV=development electronmon -r ts-node/register/transpile-only .",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "start:renderer:tauri": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true SKIP_MAIN_PROCESS=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
+    "start:renderer:tauri": "cross-env NODE_ENV=development SKIP_MAIN_PROCESS=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test": "jest",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",

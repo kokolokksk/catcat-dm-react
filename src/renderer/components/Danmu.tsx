@@ -171,7 +171,7 @@ const Danmu = (prop: any) => {
         styles.noDrag
       }`}
     >
-      <div className={styles.avatarContainer}>
+      <div className={styles.avatarRail}>
         <img
           alt=""
           className={styles.avatar}
@@ -186,13 +186,13 @@ const Danmu = (prop: any) => {
           }
         />
       </div>
-      <div className={styles.fansAndNickname}>
-        <div className={styles.nickname}> {data.nickname}:</div>
+      <div className={styles.messageBody}>
+        <div className={styles.messageMeta}>
+          <div className={styles.nickname}>{data.nickname}</div>
+          <div className={styles.messageTag}>DANMU</div>
+        </div>
+        <div className={styles.danmuContent}>{data.content}</div>
       </div>
-      <div className={styles.fansAndNickname}>
-        {/* <div className={styles.fans}>1</div> */}
-      </div>
-      <div className={styles.danmuContent}>{data.content}</div>
       {giftImgSrc ? (
         <img
           alt=""
@@ -210,26 +210,28 @@ const Danmu = (prop: any) => {
         styles.noDrag
       }`}
     >
-      <img
-        alt=""
-        className={styles.avatar}
-        style={{ display: isDisplayble }}
-        onError={onAvatarError}
-        src={avatarSrc}
-      />
-      <Divider
-        orientation="vertical"
-        className={
-          theme.colorMode === 'dark' ? styles.dividerDark : styles.divider
-        }
-      />
-      <div className={styles.fansAndNickname}>
-        <div className={styles.nickname}> {data.nickname}</div>
+      <div className={styles.avatarRail}>
+        <img
+          alt=""
+          className={styles.avatar}
+          style={{ display: isDisplayble }}
+          onError={onAvatarError}
+          src={avatarSrc}
+        />
+        <Divider
+          orientation="vertical"
+          className={
+            theme.colorMode === 'dark' ? styles.dividerDark : styles.divider
+          }
+        />
       </div>
-      <div className={styles.fansAndNickname}>
-        {/* <div className={styles.fans}>1</div> */}
+      <div className={styles.messageBody}>
+        <div className={styles.messageMeta}>
+          <div className={styles.nickname}>{data.nickname}</div>
+          <div className={styles.messageTag}>GIFT</div>
+        </div>
+        <div className={styles.danmuContent}>{data.content}</div>
       </div>
-      <div className={styles.danmuContent}>{data.content}</div>
       {giftImgSrc ? (
         <img
           alt=""
@@ -241,10 +243,8 @@ const Danmu = (prop: any) => {
         />
       ) : null}
       <div
+        className={styles.priceBadge}
         style={{
-          color: 'orange',
-          backgroundColor: '#6F4D76',
-          border: 'solid 1px teal',
           display: isGiftPriceDisplayble,
         }}
       >

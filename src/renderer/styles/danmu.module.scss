@@ -7,85 +7,127 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  top: 0;
-  height: 100vh;
-  width: 100vw;
+  top: 3px;
+  left: 3px;
+  height: calc(100vh - 6px);
+  width: calc(100vw - 6px);
   justify-content: flex-start;
-  border-radius: 14px;
+  border-radius: 18px;
   overflow: hidden;
-  padding: 10px 10px 8px;
-  gap: 10px;
+  padding: 14px 14px 12px;
+  gap: 12px;
+  box-shadow: inset 0 0 0 1px rgba(118, 149, 191, 0.14),
+    0 14px 34px rgba(8, 17, 31, 0.1);
 }
 
 .root {
   --root-color-rgb: 14, 31, 52;
-  background: #243348;
-  border: 1px solid #5d7ea8;
+  background: radial-gradient(
+      circle at top right,
+      rgba(113, 168, 235, 0.16),
+      transparent 28%
+    ),
+    linear-gradient(160deg, #1d2c40 0%, #162233 100%);
 }
 
 .rootLight {
   --root-light-color-rgb: 236, 244, 255;
-  background: #eef4fc;
-  border: 1px solid #9ab3d1;
+  background: radial-gradient(
+      circle at top right,
+      rgba(74, 137, 219, 0.12),
+      transparent 24%
+    ),
+    linear-gradient(160deg, #eef4fc 0%, #e4edf9 100%);
 }
 
 .rootDark {
   --root-dark-color-rgb: 9, 17, 30;
-  background: #1a2433;
-  border: 1px solid #4f6a8d;
+  background: radial-gradient(
+      circle at top right,
+      rgba(87, 135, 207, 0.14),
+      transparent 28%
+    ),
+    linear-gradient(160deg, #101827 0%, #0d1420 100%);
 }
 
 .rootWave {
   background: #162f4e;
-  border: 1px solid #4c79a9;
 }
 
 .rootMiku {
   --root-color-rgb: 57, 197, 187;
   background: #183c3b;
-  border: 1px solid #4a9a95;
 }
 
 .rootTransparent {
   background-color: transparent !important;
+  box-shadow: none;
 }
 
 .headerBar {
-  height: 38px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  padding: 0 4px;
+  padding: 2px 6px 0;
   z-index: 5;
+  min-height: 58px;
+}
+
+.metricGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metricCaption {
+  padding-left: 8px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(122, 153, 197, 0.84);
+  pointer-events: none;
 }
 
 .online {
-  height: 30px;
-  padding: 0 12px;
+  min-height: 38px;
+  padding: 0 16px;
   border-radius: 999px;
-  line-height: 30px;
-  background: #23344c;
-  color: #93cbff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(21, 35, 54, 0.74);
+  color: #dcecff;
   font-family: 'Avenir Next', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   font-size: 13px;
-  border: 1px solid #6d8eb8;
+  border: 1px solid rgba(124, 161, 210, 0.7);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .comeinLastMinute {
-  height: 30px;
-  padding: 0 12px;
+  min-height: 38px;
+  padding: 0 16px;
   border-radius: 999px;
-  line-height: 30px;
-  background: #23344c;
-  color: #93cbff;
-  border: 1px solid #6d8eb8;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(21, 35, 54, 0.74);
+  color: #dcecff;
+  border: 1px solid rgba(124, 161, 210, 0.7);
   font-family: 'Avenir Next', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   font-size: 13px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.metricLabel {
+  opacity: 0.86;
+  font-weight: 600;
 }
 
 .metricValue {
-  color: #ffb454;
+  color: #ffbe63;
   font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.02em;
 }
 
 .contentPane {
@@ -103,13 +145,17 @@
   min-height: 0;
   z-index: 1;
   width: 100%;
-  border-radius: 14px;
-  background: rgba(18, 31, 49, 0.38);
-  border-top: 1px solid #6b8ab2;
-  border-bottom: 1px solid #6b8ab2;
-  border-left: 1px solid #6b8ab2;
-  border-right: 1px solid #6b8ab2;
-  padding: 12px 10px;
+  border-radius: 24px;
+  background: linear-gradient(
+      180deg,
+      rgba(10, 21, 36, 0.14),
+      rgba(10, 21, 36, 0.08)
+    ),
+    rgba(18, 31, 49, 0.46);
+  border: 1px solid rgba(107, 138, 178, 0.82);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 18px 44px rgba(6, 14, 27, 0.18);
+  padding: 18px 14px 22px;
 }
 
 .drag {
@@ -134,14 +180,41 @@
 
 .chatContainer {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   -webkit-app-region: no-drag;
   width: 100%;
-  min-height: 72px;
-  border-radius: 12px;
-  border: 1px solid #6d8eb8;
-  background: #223249;
-  padding: 4px;
+  gap: 6px;
+  min-height: 112px;
+  border-radius: 22px;
+  border: 1px solid rgba(109, 142, 184, 0.8);
+  background: linear-gradient(
+    180deg,
+    rgba(32, 47, 70, 0.96),
+    rgba(24, 37, 56, 0.95)
+  );
+  padding: 14px 14px 12px;
+  box-shadow: 0 14px 34px rgba(7, 17, 31, 0.2);
+}
+
+.chatContainerHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px;
+  margin-bottom: -4px;
+}
+
+.chatContainerTitle {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(155, 198, 247, 0.82);
+}
+
+.chatContainerHint {
+  font-size: 10px;
+  color: rgba(205, 225, 250, 0.52);
 }
 
 .listWrap {
@@ -163,19 +236,43 @@
 
 .rootLight .online,
 .rootLight .comeinLastMinute {
-  background: #f5f9ff;
+  background: rgba(250, 252, 255, 0.94);
   color: #2e4d74;
   border-color: #a8bfdc;
 }
 
 .rootLight .c_bg {
-  background: rgba(255, 255, 255, 0.72);
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.78),
+      rgba(245, 249, 255, 0.72)
+    ),
+    rgba(255, 255, 255, 0.72);
   border-color: #a8bfdc;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 18px 44px rgba(78, 112, 152, 0.12);
 }
 
 .rootLight .chatContainer {
-  background: #f6f9ff;
+  background: linear-gradient(
+    180deg,
+    rgba(250, 252, 255, 0.98),
+    rgba(239, 245, 253, 0.94)
+  );
   border-color: #a8bfdc;
+  box-shadow: 0 14px 30px rgba(97, 128, 164, 0.14);
+}
+
+.rootLight .metricCaption {
+  color: #6e8eb8;
+}
+
+.rootLight .chatContainerTitle {
+  color: rgba(77, 121, 175, 0.78);
+}
+
+.rootLight .chatContainerHint {
+  color: rgba(106, 134, 171, 0.56);
 }
 
 .rootLight .dmPopover {
@@ -196,7 +293,11 @@
 }
 
 .rootDark .chatContainer {
-  background: #1a2433;
+  background: linear-gradient(
+    180deg,
+    rgba(21, 33, 52, 0.98),
+    rgba(14, 24, 39, 0.96)
+  );
   border-color: #4f6a8d;
 }
 

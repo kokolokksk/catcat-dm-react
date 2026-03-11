@@ -14,8 +14,27 @@ body {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  background: radial-gradient(circle at top right, #dcf0ff 0%, #f2f8ff 38%, #f7fafc 100%);
+  background: radial-gradient(
+    circle at top right,
+    #dcf0ff 0%,
+    #f2f8ff 38%,
+    #f7fafc 100%
+  );
   color: #1c2533;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+html.dm-window-html {
+  background: var(--dm-window-shell-bg, transparent);
+}
+
+body.dm-window {
+  background: var(--dm-window-shell-bg, transparent) !important;
+  overflow: hidden;
 }
 
 button,
@@ -32,6 +51,11 @@ textarea {
 
 #root {
   height: 100vh;
+}
+
+#root.dm-window-root {
+  height: 100vh;
+  background: transparent;
 }
 
 code {

@@ -17,7 +17,6 @@ import {
   Link,
   CSSProperties,
   background,
-
 } from '@chakra-ui/react';
 import { stringify } from 'querystring';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
@@ -30,7 +29,13 @@ import CatLog from 'renderer/utils/CatLog';
 import SuperChatBar from 'renderer/components/SuperChatBar';
 import BackgroundMiku from 'renderer/components/BackgroundMiku';
 import * as CONSTANT from 'renderer/@types/catcat/constan';
-import { MdCheckCircle, MdBlock, MdCopyAll, MdOpenInBrowser, MdLiveTv } from 'react-icons/md';
+import {
+  MdCheckCircle,
+  MdBlock,
+  MdCopyAll,
+  MdOpenInBrowser,
+  MdLiveTv,
+} from 'react-icons/md';
 import axios from 'axios';
 import { invoke } from '@tauri-apps/api/core';
 import {
@@ -95,6 +100,27 @@ class DanmuWindow extends React.Component {
   speechConfig!: {
     speechSynthesisLanguage: string;
     speechSynthesisVoiceName: string;
+  };
+
+  syncWindowShell = (theme: string, opacity: number | string | undefined) => {
+    const alpha = Number(opacity);
+    const normalizedOpacity = Number.isFinite(alpha) ? alpha : 1;
+    const shellBg = (() => {
+      switch (theme) {
+        case 'light':
+          return `radial-gradient(circle at top right, rgba(74, 137, 219, 0.12), transparent 24%), linear-gradient(160deg, rgba(238, 244, 252, ${normalizedOpacity}) 0%, rgba(228, 237, 249, ${normalizedOpacity}) 100%)`;
+        case 'dark':
+          return `radial-gradient(circle at top right, rgba(87, 135, 207, 0.14), transparent 28%), linear-gradient(160deg, rgba(16, 24, 39, ${normalizedOpacity}) 0%, rgba(13, 20, 32, ${normalizedOpacity}) 100%)`;
+        case 'wave':
+          return `linear-gradient(160deg, rgba(22, 47, 78, ${normalizedOpacity}) 0%, rgba(17, 37, 62, ${normalizedOpacity}) 100%)`;
+        case 'miku':
+          return `linear-gradient(160deg, rgba(24, 60, 59, ${normalizedOpacity}) 0%, rgba(18, 48, 47, ${normalizedOpacity}) 100%)`;
+        default:
+          return `radial-gradient(circle at top right, rgba(113, 168, 235, 0.16), transparent 28%), linear-gradient(160deg, rgba(29, 44, 64, ${normalizedOpacity}) 0%, rgba(22, 34, 51, ${normalizedOpacity}) 100%)`;
+      }
+    })();
+    document.documentElement.style.setProperty('--dm-window-shell-bg', shellBg);
+    document.body.style.setProperty('--dm-window-shell-bg', shellBg);
   };
 
   initMsg: BiliBiliDanmu = {
@@ -172,6 +198,7 @@ class DanmuWindow extends React.Component {
   componentDidMount() {
     const { muaConfig, allDmList, scList, comeInList, pause } = this.state;
     CatLog.console('renderer dw');
+    this.syncWindowShell(muaConfig.theme || 'light', muaConfig.opacity);
     setInterval(() => {
       CatLog.console('try to read');
       if (this.ttsOk || muaConfig.ttsServerUrl) {
@@ -203,6 +230,7 @@ class DanmuWindow extends React.Component {
     window.theme.change((_event: any, data: any) => {
       console.log(data);
       muaConfig.theme = data;
+      this.syncWindowShell(data, muaConfig.opacity);
       this.setState({
         muaConfig: {
           ...muaConfig,
@@ -214,6 +242,7 @@ class DanmuWindow extends React.Component {
       console.log(data);
       // eslint-disable-next-line prefer-destructuring
       muaConfig.opacity = data[0];
+      this.syncWindowShell(muaConfig.theme || 'light', data[0]);
       this.setState({
         muaConfig: {
           ...muaConfig,
@@ -732,16 +761,22 @@ class DanmuWindow extends React.Component {
             } as React.CSSProperties
           }
         >
-          <div className={styles.headerBar}>
-            <div className={styles.online}>
-              {`人气: `}
-              <span className={styles.metricValue}>{count || 0}</span>
+          <div className={`${styles.headerBar} ${styles.drag}`} data-tauri-drag-region>
+            <div className={styles.metricGroup}>
+              <div className={styles.metricCaption}>Live Signal</div>
+              <div className={`${styles.online} ${styles.noDrag}`}>
+                <span className={styles.metricLabel}>人气</span>
+                <span className={styles.metricValue}>{count || 0}</span>
+              </div>
             </div>
-            <div className={styles.comeinLastMinute}>
-              <span>进入/分钟：</span>
-              <span className={styles.metricValue}>
-                {comeInLastMinute || 0}
-              </span>
+            <div className={styles.metricGroup}>
+              <div className={styles.metricCaption}>Traffic Pulse</div>
+              <div className={`${styles.comeinLastMinute} ${styles.noDrag}`}>
+                <span className={styles.metricLabel}>进入/分钟</span>
+                <span className={styles.metricValue}>
+                  {comeInLastMinute || 0}
+                </span>
+              </div>
             </div>
           </div>
           <div className={styles.contentPane}>
@@ -879,6 +914,10 @@ class DanmuWindow extends React.Component {
             <ComeInDisplay data={comeInList} />
           </div>
           <div className={styles.chatContainer}>
+            <div className={styles.chatContainerHeader}>
+              <span className={styles.chatContainerTitle}>MESSAGE CONSOLE</span>
+              <span className={styles.chatContainerHint}>实时发送直播弹幕</span>
+            </div>
             <ChatContainer config={muaConfig} theme={themeMode} />
           </div>
         </div>

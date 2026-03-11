@@ -53,13 +53,14 @@ const Titlebar = (prop: any | undefined) => {
     <>
       <div
         className={titlebarClass}
+        data-tauri-drag-region
         style={
           {
             backgroundColor: `${backVar},${opacity})`,
           } as React.CSSProperties
         }
       >
-        <div className={style.dragArea} />
+        <div className={style.dragArea} data-tauri-drag-region />
         {/* <div
           aria-hidden="true"
           className={`${titlebaIgnoreClass}`}
@@ -70,6 +71,7 @@ const Titlebar = (prop: any | undefined) => {
         <div
           aria-hidden="true"
           className={titlebarMinusClass}
+          data-tauri-drag-region={false}
           onClick={handleMinusClick}
         >
           <MinusIcon width={3} height={3} />
@@ -77,6 +79,7 @@ const Titlebar = (prop: any | undefined) => {
         <div
           aria-hidden="true"
           className={`${titlebarCloseClass}`}
+          data-tauri-drag-region={false}
           onClick={handleClick}
         >
           <CloseIcon width={3} height={3} />

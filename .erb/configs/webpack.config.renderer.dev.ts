@@ -7,9 +7,13 @@ import chalk from 'chalk';
 import { merge } from 'webpack-merge';
 import { execSync, spawn } from 'child_process';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-import baseConfig from './webpack.config.base.ts';
-import webpackPaths from './webpack.paths.ts';
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
+import baseConfigRaw from './webpack.config.base.cjs';
+import webpackPaths from './webpack.paths.cjs';
 import checkNodeEnv from '../scripts/check-node-env.js';
+
+const baseConfig = baseConfigRaw as webpack.Configuration;
 
 // When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
 // at the dev webpack config is not accidentally run in a production environment
@@ -19,9 +23,8 @@ if (process.env.NODE_ENV === 'production') {
 
 const port = process.env.PORT || 1212;
 const manifest = path.resolve(webpackPaths.dllPath, 'renderer.json');
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const requiredByDLLConfig = module.parent!.filename.includes(
-  'webpack.config.renderer.dev.dll'
+const requiredByDLLConfig = process.argv.some((arg) =>
+  arg.includes('webpack.config.renderer.dev.dll')
 );
 
 /**
@@ -79,7 +82,7 @@ const configuration: webpack.Configuration = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [require('tailwindcss'), require('autoprefixer')],
+                plugins: [tailwindcss, autoprefixer],
               },
             },
           },
@@ -106,11 +109,12 @@ const configuration: webpack.Configuration = {
   },
   plugins: [
     ...(requiredByDLLConfig
-      ? []
-      : [
+        ? []
+        : [
+          // Read the DLL manifest directly so this config stays ESM-safe.
           new webpack.DllReferencePlugin({
             context: webpackPaths.dllPath,
-            manifest: require(manifest),
+            manifest: JSON.parse(fs.readFileSync(manifest, 'utf-8')),
             sourceType: 'var',
           }),
         ]),

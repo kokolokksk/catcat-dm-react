@@ -9,26 +9,43 @@
 .superChatContainerWave,
 .superChatContainerMiku {
   align-items: center;
-  font-family: var(--window-font-family, 'Avenir Next', 'PingFang SC', 'Microsoft YaHei', sans-serif);
+  font-family: var(
+    --window-font-family,
+    'Avenir Next',
+    'PingFang SC',
+    'Microsoft YaHei',
+    sans-serif
+  );
   font-size: var(--window-font-size, 14px);
   font-weight: 600;
-  min-height: 58px;
+  min-height: 72px;
   display: flex;
-  margin: 8px 10px;
-  padding: 8px 10px;
-  border-radius: 14px;
+  align-items: stretch;
+  margin: 10px 8px;
+  padding: 12px 14px;
+  border-radius: 20px;
   border: 1px solid #6f8fb8;
-  box-shadow: 0 8px 18px rgba(7, 18, 34, 0.18);
-  backdrop-filter: blur(2px);
+  box-shadow: 0 10px 28px rgba(7, 18, 34, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: transform 180ms ease, box-shadow 180ms ease,
+    border-color 180ms ease;
 }
 
 .danmuContainer {
-  background: linear-gradient(140deg, rgba(243, 249, 255, 0.96), rgba(229, 240, 255, 0.95));
+  background: linear-gradient(
+    140deg,
+    rgba(252, 254, 255, 0.98),
+    rgba(236, 244, 255, 0.96)
+  );
   color: #1f3a5c;
 }
 
 .danmuContainerDark {
-  background: linear-gradient(140deg, rgba(31, 47, 71, 0.94), rgba(24, 37, 56, 0.94));
+  background: linear-gradient(
+    140deg,
+    rgba(31, 47, 71, 0.96),
+    rgba(23, 35, 52, 0.96)
+  );
   color: #d6e7ff;
 }
 .giftContainer {
@@ -36,7 +53,11 @@
 }
 .danmuContainerMiku {
   border-color: #55bcb1;
-  background: linear-gradient(140deg, rgba(224, 255, 248, 0.9), rgba(192, 241, 236, 0.88));
+  background: linear-gradient(
+    140deg,
+    rgba(231, 255, 249, 0.95),
+    rgba(198, 244, 238, 0.92)
+  );
   color: #0c413d;
 }
 .hoverClassMiku:hover {
@@ -50,32 +71,56 @@
 .gbContainer {
   border-color: #6f8fb8;
   color: #d9e9ff;
-  background: linear-gradient(140deg, rgba(42, 58, 86, 0.95), rgba(30, 45, 69, 0.94));
+  background: linear-gradient(
+    140deg,
+    rgba(42, 58, 86, 0.96),
+    rgba(28, 42, 64, 0.95)
+  );
 }
-.comeinContainer{
+.comeinContainer {
   position: absolute;
   bottom: 10vh;
-    margin-left: 5vw;
-    z-index: 2;
-    }
+  margin-left: 5vw;
+  z-index: 2;
+}
 .superChatContainer {
-  background: linear-gradient(140deg, rgba(42, 58, 86, 0.95), rgba(30, 45, 69, 0.94));
+  background: linear-gradient(
+    140deg,
+    rgba(42, 58, 86, 0.95),
+    rgba(30, 45, 69, 0.94)
+  );
   color: #d9e9ff;
 }
 .superChatContainerDark {
-  background: linear-gradient(140deg, rgba(30, 44, 67, 0.95), rgba(22, 34, 53, 0.95));
+  background: linear-gradient(
+    140deg,
+    rgba(30, 44, 67, 0.95),
+    rgba(22, 34, 53, 0.95)
+  );
   color: #dbe9ff;
 }
 .superChatContainerLight {
-  background: linear-gradient(140deg, rgba(248, 252, 255, 0.96), rgba(232, 241, 255, 0.94));
+  background: linear-gradient(
+    140deg,
+    rgba(248, 252, 255, 0.96),
+    rgba(232, 241, 255, 0.94)
+  );
   color: #274267;
 }
 .superChatContainerWave {
-  background: linear-gradient(140deg, rgba(46, 72, 106, 0.9), rgba(31, 53, 83, 0.9));
+  background: linear-gradient(
+    140deg,
+    rgba(46, 72, 106, 0.9),
+    rgba(31, 53, 83, 0.9)
+  );
   color: #d7e9ff;
 }
 .superChatContainerMiku {
-  background: linear-gradient(140deg, rgba(224, 255, 248, 0.93), rgba(191, 244, 236, 0.9));
+  background: linear-gradient(
+    140deg,
+    rgba(224, 255, 248, 0.93),
+    rgba(191, 244, 236, 0.9)
+  );
   border-color: #55bcb1;
   color: #0c413d;
 }
@@ -85,71 +130,128 @@
   line-height: 1.35;
 }
 .avatar {
-    margin-left: 4px;
-    height: 42px;
-    width: 42px;
-    border-radius: 50%;
-    border: 1px solid rgba(130, 164, 204, 0.7);
-    object-fit: cover;
+  height: 48px;
+  width: 48px;
+  border-radius: 16px;
+  border: 1px solid rgba(130, 164, 204, 0.7);
+  object-fit: cover;
+  box-shadow: 0 8px 20px rgba(56, 88, 130, 0.16);
 }
 .chatImage {
-  margin-left: 10px;
-  height: 36px;
-  width: 36px;
-  border-radius: 8px;
+  margin-left: 12px;
+  height: 42px;
+  width: 42px;
+  border-radius: 12px;
   object-fit: cover;
+  border: 1px solid rgba(127, 160, 204, 0.52);
 }
-.avatarContainer {
+.avatarContainer,
+.avatarRail {
   display: flex;
   position: relative;
   align-items: center;
+  align-self: stretch;
 }
 .divider {
-  margin-left: 10px !important;
-  margin-right: 10px !important;
+  margin-left: 14px !important;
+  margin-right: 14px !important;
   border-color: #8aa6cb !important;
   border-left-width: 1px !important;
   border-style: solid !important;
-  height: 28px !important;
+  height: auto !important;
 }
 
 .dividerDark {
-  margin-left: 10px !important;
-  margin-right: 10px !important;
+  margin-left: 14px !important;
+  margin-right: 14px !important;
   border-color: #5f7ea8 !important;
   border-left-width: 1px !important;
   border-style: solid !important;
-  height: 28px !important;
+  height: auto !important;
 }
 
-.fansAndNickname {
-    align-self: center;
-    font-size: 13px;
-    min-width: 0;
+.messageBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  flex: 1;
+}
+
+.messageMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.messageTag {
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+  color: #77aef1;
+  background: rgba(104, 149, 208, 0.12);
+  border: 1px solid rgba(116, 160, 221, 0.26);
 }
 
 .nickname {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 140px;
+  max-width: 180px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 .danmuContent {
-    margin-left: 6px;
-    align-self: center;
-    line-height: 1.35;
-    font-size: 14px;
-    min-width: 0;
-    flex: 1;
-    word-break: break-word;
+  align-self: stretch;
+  line-height: 1.5;
+  font-size: 15px;
+  min-width: 0;
+  flex: 1;
+  word-break: break-word;
+  color: inherit;
 }
-.dmName{
-    font-family: "YouYuan";
-    font-size: 10pt;
-    z-index: 3;
-    transition: all 1s ease-in 0;
-    transform: translateY(2vh);
-      }
+.priceBadge {
+  align-self: center;
+  margin-left: 12px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(103, 194, 188, 0.45);
+  background: linear-gradient(
+    180deg,
+    rgba(68, 44, 82, 0.96),
+    rgba(52, 33, 65, 0.96)
+  );
+  color: #ffc56d;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.danmuContainer:hover,
+.danmuContainerDark:hover,
+.danmuContainerMiku:hover,
+.gbContainer:hover,
+.gbContainerMiku:hover,
+.superChatContainer:hover,
+.superChatContainerDark:hover,
+.superChatContainerLight:hover,
+.superChatContainerWave:hover,
+.superChatContainerMiku:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(7, 18, 34, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.dmName {
+  font-family: 'YouYuan';
+  font-size: 10pt;
+  z-index: 3;
+  transition: all 1s ease-in 0;
+  transform: translateY(2vh);
+}
 .noDrag {
   -webkit-app-region: no-drag;
 }
