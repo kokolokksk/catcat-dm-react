@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import { Flex, useColorMode, useToast } from '@chakra-ui/react';
-import axios from 'axios';
+import { Flex, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import CatLog from 'renderer/utils/CatLog';
 import { catConfigItem } from '../components/CatCat';
 import Hls from 'hls.js';
+import styles from '../styles/live_preview.module.scss';
+import { tauriGetJson } from '../tauri/http';
 
 const LivePreview = () => {
   const pRef = React.useRef<HTMLVideoElement | null>(null);
   const toast = useToast();
   const obj: { [K: string]: any } = {};
   const [catConfigData, setCatConfigData] = useState(obj);
-  const [state, setState] = useState(obj);
-  const color = useColorMode();
 
   useEffect(() => {
     // init data
@@ -39,6 +38,12 @@ const LivePreview = () => {
         CatLog.console(e);
       }
     });
+    window.theme.change((_event: any, data: any) => {
+      setCatConfigData((prev: any) => ({
+        ...prev,
+        theme: Array.isArray(data) ? data[0] : data,
+      }));
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
@@ -53,20 +58,19 @@ const LivePreview = () => {
       console.error('roomid is null');
       return;
     }
-    axios
-      .get(
-        `http://api.live.bilibili.com/room/v1/Room/playUrl?cid=${catConfigData.roomid}&qn=10000&platform=h5`
-      )
-      .then((res) => {
+    tauriGetJson(
+      `https://api.live.bilibili.com/room/v1/Room/playUrl?cid=${catConfigData.roomid}&qn=10000&platform=h5`
+    )
+      .then((res: any) => {
         console.info(res);
         if (Hls.isSupported()) {
           console.info('hls is supported');
           const hls = new Hls();
-          hls.loadSource(res.data.data.durl[0].url);
+          hls.loadSource(res.data.durl[0].url);
           hls.attachMedia(pRef.current as HTMLVideoElement);
         } else if (pRef.current) {
           console.info('hls is not supported');
-          pRef.current.src = res.data.data.durl[0].url;
+          pRef.current.src = res.data.durl[0].url;
         }
         return res;
       })
@@ -75,31 +79,23 @@ const LivePreview = () => {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [catConfigData.roomid]);
-  const { theme } = catConfigData;
-  let pageTheme;
-  // switch (theme) {
-  //   case 'light':
-  //     pageTheme = styles.page;
-  //     break;
-  //   case 'dark':
-  //     pageTheme = styles.pageDark;
-  //     break;
-  //   default:
-  //     pageTheme = styles.page;
-  //     break;
-  // }
-
   return (
-    <Flex height="100vh">
-      <video
-        ref={pRef}
-        className="video"
-        controls
-        autoPlay
-        playsInline
-        muted
-        controlsList="nodownload"
-      />
+    <Flex className={catConfigData.theme === 'dark' ? styles.rootDark : styles.root}>
+      <div className={styles.panel}>
+        <div className={styles.head}>
+          <span className={styles.title}>Live Preview</span>
+          <span className={styles.status}>Room: {catConfigData.roomid || '-'}</span>
+        </div>
+        <video
+          ref={pRef}
+          className={styles.video}
+          controls
+          autoPlay
+          playsInline
+          muted
+          controlsList="nodownload"
+        />
+      </div>
     </Flex>
   );
 };

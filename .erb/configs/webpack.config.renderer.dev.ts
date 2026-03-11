@@ -173,6 +173,9 @@ const configuration: webpack.Configuration = {
       verbose: true,
     },
     setupMiddlewares(middlewares) {
+      if (process.env.SKIP_MAIN_PROCESS === 'true') {
+        return middlewares;
+      }
       console.log('Starting preload.js builder...');
       const preloadProcess = spawn('npm', ['run', 'start:preload'], {
         shell: true,

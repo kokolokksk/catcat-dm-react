@@ -25,6 +25,7 @@ import SliderMenu from '../components/SliderMenu';
 import styles from '../styles/setting.module.scss';
 import SettingInputItem from '../components/SettingInputItem';
 import { catConfigItem } from '../components/CatCat';
+import { tauriGetJson } from '../tauri/http';
 import pack from '../../../package.json';
 // import '../samples/electron-store'
 import SettingSwitchItem from '../components/SettingSwitchItem';
@@ -58,49 +59,40 @@ const Setting = () => {
     if (!num) {
       return;
     }
-    axios
-      .get(
-        `https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${num}`
-      )
-      // eslint-disable-next-line func-names
-      // eslint-disable-next-line promise/always-return
-      .then((res) => {
+    tauriGetJson(
+      `https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${num}`
+    )
+      .then((res: any) => {
         console.log(res);
-        window.electron.store.set('key', res.data.data.token);
+        window.electron.store.set('key', res.data.token);
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
       });
-    axios
-      .get(`https://api.live.bilibili.com/room/v1/Room/room_init?id=${num}`)
+    tauriGetJson(`https://api.live.bilibili.com/room/v1/Room/room_init?id=${num}`)
       // eslint-disable-next-line func-names
       // eslint-disable-next-line promise/always-return
-      .then(function (response) {
+      .then(function (response: any) {
         // handle success
         console.log(response);
-        const { uid } = response.data.data;
+        const { uid } = response.data;
         // eslint-disable-next-line promise/always-return
         if (uid) {
-          axios.defaults.withCredentials = true;
-          // eslint-disable-next-line promise/no-nesting
-          axios({
-            url: `https://api.live.bilibili.com/live_user/v1/Master/info?uid=${uid}`,
-          })
+          tauriGetJson(`https://api.live.bilibili.com/live_user/v1/Master/info?uid=${uid}`)
             // eslint-disable-next-line func-names
             // eslint-disable-next-line promise/always-return
             // eslint-disable-next-line @typescript-eslint/no-shadow
             // eslint-disable-next-line func-names
             // eslint-disable-next-line promise/always-return
-            .then(function (response1) {
+            .then(function (response1: any) {
               console.log(response1);
               setCatConfigData({
                 ...catConfigData,
-                faceImg: response1.data.data.info.face,
-                nickname: response1.data.data.info.uname,
-                live_status: response.data.data.live_status,
+                faceImg: response1.data.info.face,
+                nickname: response1.data.info.uname,
+                live_status: response.data.live_status,
               });
-              catConfigData.live_status = response.data.data.live_status;
+              catConfigData.live_status = response.data.live_status;
             })
             // eslint-disable-next-line func-names
             .catch(function (error) {
@@ -112,21 +104,20 @@ const Setting = () => {
         // handle error
         console.log(error);
       });
-    axios
-      .get(`http://api.live.bilibili.com/room/v1/Room/get_info?room_id=${num}`)
-      .then((response2) => {
+    tauriGetJson(`https://api.live.bilibili.com/room/v1/Room/get_info?room_id=${num}`)
+      .then((response2: any) => {
         console.log(response2);
         setCatConfigData({
           ...catConfigData,
-          real_roomid: response2.data.data.room_id,
-          area_id: response2.data.data.area_id,
-          parent_area_id: response2.data.data.parent_area_id,
+          real_roomid: response2.data.room_id,
+          area_id: response2.data.area_id,
+          parent_area_id: response2.data.parent_area_id,
         });
-        window.electron.store.set('real_roomid', response2.data.data.room_id);
-        window.electron.store.set('area_id', response2.data.data.area_id);
+        window.electron.store.set('real_roomid', response2.data.room_id);
+        window.electron.store.set('area_id', response2.data.area_id);
         window.electron.store.set(
           'parent_area_id',
-          response2.data.data.parent_area_id
+          response2.data.parent_area_id
         );
         return response2;
       })
@@ -349,24 +340,11 @@ const Setting = () => {
       // eslint-disable-next-line promise/always-return
       try {
         if (!catConfigData.clientId) {
-          // eslint-disable-next-line promise/no-nesting
-          axios
-            .get(`https://api.ririra.com/client/generateClientId`, {
-              headers: {
-                version: pack.version,
-              },
-            })
-            // eslint-disable-next-line promise/always-return
-            .then(function (response) {
-              // handle success
-              console.log(response);
-              catConfigData.clientId = response.data;
-              commonInputItemSave('clientId', response.data);
-            })
-            .catch(function (error: unknown) {
-              // handle error
-              console.log(error);
-            });
+          const localClientId =
+            globalThis.crypto?.randomUUID?.() ??
+            `local-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+          catConfigData.clientId = localClientId;
+          commonInputItemSave('clientId', localClientId);
         }
         if (catConfigData.roomid) {
           load(catConfigData.roomid);
@@ -472,15 +450,14 @@ const Setting = () => {
       });
       return;
     }
-    const data = await axios
-      .get(
+    const data = await tauriGetJson(
         `https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key=${qrcode_key}`
       )
-      .then(async (res) => {
-        CatLog.console(res.data);
-        if (res.data.data.code === 0 && res.data.data.url !== '') {
-          console.log(res.data);
-          const { url } = res.data.data;
+      .then(async (res: any) => {
+        CatLog.console(res);
+        if (res.data.code === 0 && res.data.url !== '') {
+          console.log(res);
+          const { url } = res.data;
           const DedeUserID = url.split('&')[0].split('=')[1];
           const SESSDATA = url.split('&')[3].split('=')[1];
           const BILI_JCT = url.split('&')[4].split('=')[1];
@@ -511,8 +488,8 @@ const Setting = () => {
             });
           }
         }
-        if (res.data.data.code === 86101) {
-          console.log(res.data.message);
+        if (res.data.code === 86101) {
+          console.log(res.message);
           setState({
             ...state,
             qrUrl: url,
@@ -523,8 +500,8 @@ const Setting = () => {
             checkQrLogin(qrcode_key, url);
           }, 10000);
         }
-        if (res.data.data.code === 86090) {
-          console.log(res.data.message);
+        if (res.data.code === 86090) {
+          console.log(res.message);
           setState({
             ...state,
             qrUrl: url,
@@ -535,7 +512,7 @@ const Setting = () => {
             checkQrLogin(qrcode_key, url);
           }, 10000);
         }
-        if (res.data.data.code === 86038) {
+        if (res.data.code === 86038) {
           console.log(res);
           setState({
             ...state,
@@ -547,24 +524,24 @@ const Setting = () => {
             checkQrLogin(qrcode_key, url);
           }, 1000);
         }
-        return res.data;
+        return res;
       });
   };
 
   const freshQrLogin = async () => {
-    const data = await axios
-      .get('https://passport.bilibili.com/x/passport-login/web/qrcode/generate')
-      .then((res) => {
+    const data = await tauriGetJson(
+      'https://passport.bilibili.com/x/passport-login/web/qrcode/generate'
+    ).then((res: any) => {
         // CatLog.console(res.data.data.url);
         setState({
           ...state,
-          qrUrl: res.data.data.url,
+          qrUrl: res.data.url,
           loginStatus: '请使用哔哩哔哩App扫码',
         });
         setTimeout(() => {
-          checkQrLogin(res.data.data.qrcode_key, res.data.data.url);
+          checkQrLogin(res.data.qrcode_key, res.data.url);
         }, 1000);
-        return res.data.data;
+        return res.data;
       });
     CatLog.console(data);
   };
@@ -597,33 +574,15 @@ const Setting = () => {
       duration: 2000,
       isClosable: true,
     });
-    axios.defaults.withCredentials = true;
-    const user = await axios.get('https://api.bilibili.com/x/space/myinfo?', {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'same-site': 'none',
-        'cross-site': 'none',
-        'Access-Control-Allow-Credentials': 'true',
-      },
-    });
-    CatLog.console(user.data);
-    if (user.data.code === 0) {
-      const { data } = user.data;
+    const user = await tauriGetJson('https://api.bilibili.com/x/space/myinfo?');
+    CatLog.console(user);
+    if (user.code === 0) {
+      const { data } = user;
       const { uname, face, mid } = data;
-      const liveInfo = await axios.get(
-        `http://api.bilibili.com/x/space/acc/info?mid=${mid}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'same-site': 'none',
-            'cross-site': 'none',
-            'Access-Control-Allow-Credentials': 'true',
-          },
-        }
+      const liveInfo = await tauriGetJson(
+        `https://api.bilibili.com/x/space/acc/info?mid=${mid}`
       );
-      const { data: liveData } = liveInfo.data;
+      const { data: liveData } = liveInfo;
       const { roomid, title: roomtitle } = liveData.live_room;
       setCatConfigData({
         ...catConfigData,
@@ -656,7 +615,7 @@ const Setting = () => {
   };
 
   return (
-    <Flex height="100vh">
+    <Flex className={styles.layoutRoot}>
       <SliderMenu
         roomid={catConfigData.roomid}
         theme={catConfigData.theme}
@@ -664,182 +623,188 @@ const Setting = () => {
         faceImg={catConfigData.faceImg}
         live_status={catConfigData.live_status}
       />
-      <Divider orientation="vertical" />
+      <Divider orientation="vertical" className={styles.sideDivider} />
       <div className={pageTheme}>
-        <div className={styles.setting}>
-          <SettingInputItem
-            name="房间号"
-            theme={catConfigData.theme}
-            v={catConfigData.roomid}
-            c={commonInputItemSave}
-            skey="roomid"
-          />
-          <SettingSelectItem
-            name="最近使用房间号"
-            theme={catConfigData.theme}
-            v={catConfigData.roomid || '-'}
-            c={selectRoom}
-            skey="recentroomid"
-            key={catConfigData.recentroomid}
-            options={catConfigData.recentroomid}
-          />
-          <SettingInputItem
-            name="更新直播间标题"
-            theme={catConfigData.theme}
-            v={catConfigData.roomtitle}
-            c={commonInputItemSave}
-            skey="roomtitle"
-          />
-          <Divider />
-          <SettingInputItem
-            theme={catConfigData.theme}
-            name="弹幕阴影"
-            v={catConfigData.dmTs || '1px 1px 1px #fff'}
-            c={commonInputItemSave}
-            skey="dmTs"
-          />
-          <Divider />
-          <SettingSwitchItem
-            name="弹幕窗口置顶"
-            theme={catConfigData.theme}
-            v={catConfigData.alwaysOnTop}
-            c={commonSwitchItemSave}
-            skey="alwaysOnTop"
-          />
-          <Divider />
-          <SettingInputItem
-            name="设置弹幕保存路径"
-            theme={catConfigData.theme}
-            v={catConfigData.danmuDir}
-            c={commonInputItemSave}
-            skey="danmuDir"
-          />
-          <Divider />
-          <SettingSwitchItem
-            name="使用国内服务器下载更新"
-            theme={catConfigData.theme}
-            v={catConfigData.mirror || false}
-            c={commonSwitchItemSave}
-            skey="mirror"
-          />
-          <Divider />
-          <SettingInputItem
-            name="设置更新代理服务器"
-            theme={catConfigData.theme}
-            v={catConfigData.port_server}
-            c={commonInputItemSave}
-            skey="port_server"
-          />
-          <Divider />
-          <SettingSelectItem
-            name="主题"
-            theme={catConfigData.theme}
-            v={catConfigData.theme}
-            c={commonSelectItemSave}
-            skey="theme"
-            options={[
-              {
-                value: 'light',
-                label: '浅色',
-              },
-              {
-                value: 'dark',
-                label: '深色',
-              },
-              {
-                value: 'wave',
-                label: '波浪',
-              },
-              {
-                value: 'miku',
-                label: '初音',
-              },
-            ]}
-          />
-          <Divider />
-          <SliderSelectItem
-            name="设置透明度"
-            theme={catConfigData.theme}
-            v={catConfigData.opacity}
-            c={commonInputItemSave}
-            skey="opacity"
-          />
-          <Divider />
-          <SettingSwitchItem
-            name="TTS感谢礼物"
-            theme={catConfigData.theme}
-            v={catConfigData.ttsGift || false}
-            c={commonSwitchItemSave}
-            skey="ttsGift"
-          />
-          <Divider />
-          <SettingSwitchItem
-            name="TTS阅读弹幕"
-            theme={catConfigData.theme}
-            v={catConfigData.ttsDanmu || false}
-            c={commonSwitchItemSave}
-            skey="ttsDanmu"
-          />
-          <Divider />
-          <SettingSwitchItem
-            name="允许检测更新"
-            theme={catConfigData.allowUpdate}
-            v={catConfigData.allowUpdate || false}
-            c={commonSwitchItemSave}
-            skey="allowUpdate"
-          />
-          {/* <Divider/>
-        <SettingSwitchItem name='TTS' v={catConfigData.tts || false} c={commonSwitchItemSave} skey={'tts'}/>
-        <Divider/>
-        <SettingSwitchItem name='礼物感谢' v={catConfigData.ttsGift || false} c={commonSwitchItemSave} skey={'ttsGift'}/> */}
-          <Divider />
-          <SettingInputItem
-            name="SESSDATA"
-            theme={catConfigData.theme}
-            v={catConfigData.SESSDATA || '-'}
-            c={commonInputItemSave}
-            skey="SESSDATA"
-          />
-          <Divider />
-          <SettingInputItem
-            name="csrf"
-            theme={catConfigData.theme}
-            v={catConfigData.csrf || '-'}
-            c={commonInputItemSave}
-            skey="csrf"
-          />
-          <Divider />
-          <SettingInputItem
-            name="TTS KEY"
-            theme={catConfigData.theme}
-            v={catConfigData.ttsKey || '-'}
-            c={commonInputItemSave}
-            skey="ttsKey"
-          />
-          <Divider />
-          <SettingInputItem
-            name="TTS Server Url"
-            theme={catConfigData.theme}
-            v={catConfigData.ttsServerUrl || '-'}
-            c={commonInputItemSave}
-            skey="ttsServerUrl"
-          />
-          <Divider />
-          <SettingInputItem
-            name="TTS Server token"
-            theme={catConfigData.theme}
-            v={catConfigData.ttsServerToken || '-'}
-            c={commonInputItemSave}
-            skey="ttsServerToken"
-          />
-          <Divider />
-          <Button onClick={openQrLogin} color="orange">
-            扫码登陆
-          </Button>
-          <Button onClick={syncUserInfo} color="orange">
-            通过登陆信息更新弹幕姬
-          </Button>
-          {/* <ColorSelectContainer c={commonInputItemSave}/> */}
+        <div className={styles.content}>
+          <div className={styles.shell}>
+            <div className={styles.header}>
+              <div>
+                <h1 className={styles.title}>Control Panel</h1>
+                <p className={styles.subtitle}>猫猫弹幕姬 · Tauri Edition</p>
+              </div>
+              <div className={styles.statusPill}>
+                房间: {catConfigData.roomid || '-'} · 主题: {catConfigData.theme || 'light'}
+              </div>
+            </div>
+
+            <div className={styles.setting}>
+              <div className={styles.sectionCard}>
+                <h3 className={styles.sectionTitle}>LIVE</h3>
+                <SettingInputItem
+                  name="房间号"
+                  theme={catConfigData.theme}
+                  v={catConfigData.roomid}
+                  c={commonInputItemSave}
+                  skey="roomid"
+                />
+                <SettingSelectItem
+                  name="最近使用房间号"
+                  theme={catConfigData.theme}
+                  v={catConfigData.roomid || '-'}
+                  c={selectRoom}
+                  skey="recentroomid"
+                  key={catConfigData.recentroomid}
+                  options={catConfigData.recentroomid}
+                />
+                <SettingInputItem
+                  name="更新直播间标题"
+                  theme={catConfigData.theme}
+                  v={catConfigData.roomtitle}
+                  c={commonInputItemSave}
+                  skey="roomtitle"
+                />
+                <SettingInputItem
+                  theme={catConfigData.theme}
+                  name="弹幕阴影"
+                  v={catConfigData.dmTs || '1px 1px 1px #fff'}
+                  c={commonInputItemSave}
+                  skey="dmTs"
+                />
+                <SettingSwitchItem
+                  name="弹幕窗口置顶"
+                  theme={catConfigData.theme}
+                  v={catConfigData.alwaysOnTop}
+                  c={commonSwitchItemSave}
+                  skey="alwaysOnTop"
+                />
+                <SettingInputItem
+                  name="设置弹幕保存路径"
+                  theme={catConfigData.theme}
+                  v={catConfigData.danmuDir}
+                  c={commonInputItemSave}
+                  skey="danmuDir"
+                />
+              </div>
+
+              <div className={styles.sectionCard}>
+                <h3 className={styles.sectionTitle}>APPEARANCE</h3>
+                <SettingSelectItem
+                  name="主题"
+                  theme={catConfigData.theme}
+                  v={catConfigData.theme}
+                  c={commonSelectItemSave}
+                  skey="theme"
+                  options={[
+                    {
+                      value: 'light',
+                      label: '浅色',
+                    },
+                    {
+                      value: 'dark',
+                      label: '深色',
+                    },
+                    {
+                      value: 'wave',
+                      label: '波浪',
+                    },
+                    {
+                      value: 'miku',
+                      label: '初音',
+                    },
+                  ]}
+                />
+                <SliderSelectItem
+                  name="设置透明度"
+                  theme={catConfigData.theme}
+                  v={catConfigData.opacity}
+                  c={commonInputItemSave}
+                  skey="opacity"
+                />
+                <SettingSwitchItem
+                  name="TTS感谢礼物"
+                  theme={catConfigData.theme}
+                  v={catConfigData.ttsGift || false}
+                  c={commonSwitchItemSave}
+                  skey="ttsGift"
+                />
+                <SettingSwitchItem
+                  name="TTS阅读弹幕"
+                  theme={catConfigData.theme}
+                  v={catConfigData.ttsDanmu || false}
+                  c={commonSwitchItemSave}
+                  skey="ttsDanmu"
+                />
+                <SettingSwitchItem
+                  name="允许检测更新"
+                  theme={catConfigData.allowUpdate}
+                  v={catConfigData.allowUpdate || false}
+                  c={commonSwitchItemSave}
+                  skey="allowUpdate"
+                />
+                <SettingSwitchItem
+                  name="使用国内服务器下载更新"
+                  theme={catConfigData.theme}
+                  v={catConfigData.mirror || false}
+                  c={commonSwitchItemSave}
+                  skey="mirror"
+                />
+                <SettingInputItem
+                  name="设置更新代理服务器"
+                  theme={catConfigData.theme}
+                  v={catConfigData.port_server}
+                  c={commonInputItemSave}
+                  skey="port_server"
+                />
+              </div>
+
+              <div className={styles.sectionCard}>
+                <h3 className={styles.sectionTitle}>AUTH / TTS</h3>
+                <SettingInputItem
+                  name="SESSDATA"
+                  theme={catConfigData.theme}
+                  v={catConfigData.SESSDATA || '-'}
+                  c={commonInputItemSave}
+                  skey="SESSDATA"
+                />
+                <SettingInputItem
+                  name="csrf"
+                  theme={catConfigData.theme}
+                  v={catConfigData.csrf || '-'}
+                  c={commonInputItemSave}
+                  skey="csrf"
+                />
+                <SettingInputItem
+                  name="TTS KEY"
+                  theme={catConfigData.theme}
+                  v={catConfigData.ttsKey || '-'}
+                  c={commonInputItemSave}
+                  skey="ttsKey"
+                />
+                <SettingInputItem
+                  name="TTS Server Url"
+                  theme={catConfigData.theme}
+                  v={catConfigData.ttsServerUrl || '-'}
+                  c={commonInputItemSave}
+                  skey="ttsServerUrl"
+                />
+                <SettingInputItem
+                  name="TTS Server token"
+                  theme={catConfigData.theme}
+                  v={catConfigData.ttsServerToken || '-'}
+                  c={commonInputItemSave}
+                  skey="ttsServerToken"
+                />
+                <div className={styles.actions}>
+                  <Button onClick={openQrLogin} colorScheme="blue" className={styles.actionBtn}>
+                    扫码登陆
+                  </Button>
+                  <Button onClick={syncUserInfo} colorScheme="cyan" className={styles.actionBtn}>
+                    同步登录信息
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <AlertDialog
@@ -848,8 +813,8 @@ const Setting = () => {
         onClose={onClose}
       >
         <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+          <AlertDialogContent className={theme === 'dark' ? styles.dialogDark : styles.dialogLight}>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold" className={styles.dialogHeader}>
               更新提示
             </AlertDialogHeader>
 
@@ -899,8 +864,8 @@ const Setting = () => {
         onClose={onUpdateClose}
       >
         <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+          <AlertDialogContent className={theme === 'dark' ? styles.dialogDark : styles.dialogLight}>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold" className={styles.dialogHeader}>
               更新中
             </AlertDialogHeader>
 
@@ -932,8 +897,8 @@ const Setting = () => {
         motionPreset="none"
       >
         <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+          <AlertDialogContent className={theme === 'dark' ? styles.dialogDark : styles.dialogLight}>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold" className={styles.dialogHeader}>
               {state.loginStatus}
             </AlertDialogHeader>
 

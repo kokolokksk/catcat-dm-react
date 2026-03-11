@@ -29,3 +29,11 @@ npm-debug.log.*
 *.sass.d.ts
 *.scss.d.ts
 ./.electron-cache/**
+
+# Tauri build artifacts
+src-tauri/target/**
+src-tauri/gen/**
+
+# Local package manager cache/logs
+.npm/
+.pnpm-store/

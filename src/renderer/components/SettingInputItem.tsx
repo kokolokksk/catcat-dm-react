@@ -36,8 +36,7 @@ const SettingInputItem = (prop: any | undefined) => {
     ) : (
       <Flex justifyContent="center" alignItems="center">
         <Button
-          className=" rounded-full "
-          style={{ borderRadius: '9999px', width: '25px' }}
+          style={{ borderRadius: '8px', width: '30px', minWidth: '30px' }}
           size="sm"
           color="green.500"
           {...getEditButtonProps()}
@@ -52,25 +51,24 @@ const SettingInputItem = (prop: any | undefined) => {
     <div className={styles.setting_input_item}>
       <p className={styles.line} />
       <Editable
-        textAlign="center"
+        textAlign="left"
         defaultValue={data.v || '-'}
         key={data.v}
-        fontSize="xl"
-        width="80%"
+        fontSize="sm"
+        width="100%"
         isPreviewFocusable={false}
         onSubmit={(text) => data.c(data.skey, text)}
       >
-        {/* Here is the custom input */}
-        <Flex>
-          {data.name}:
+        <Flex alignItems="center">
+          <span className={styles.rowLabel}>{data.name}</span>
           <EditablePreview
-            fontFamily="consolas"
-            color={theme === 'dark' ? 'orange' : 'teal'}
-            maxWidth="50%"
-            overflowWrap="initial"
+            fontFamily="'Avenir Next','PingFang SC','Microsoft YaHei',sans-serif"
+            color={theme === 'dark' ? '#7ec7ff' : '#2a6699'}
+            flex="1"
             overflow="hidden"
+            whiteSpace="nowrap"
+            textOverflow="ellipsis"
           />
-          {/* width='50%' overflow='hidden' display='inline' */}
           <Input as={EditableInput} />
           <EditableControls />
         </Flex>

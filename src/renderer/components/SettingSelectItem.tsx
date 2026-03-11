@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, Select, useColorMode } from '@chakra-ui/react';
+import { FormControl, FormLabel, Select } from '@chakra-ui/react';
 import styles from '../styles/setting.module.scss';
 
 const SettingSwitchItem = (prop: any | undefined) => {
@@ -44,28 +44,26 @@ const SettingSwitchItem = (prop: any | undefined) => {
       <p className={styles.line} />
       <FormControl display="flex" alignItems="center">
         <FormLabel
-          htmlFor="email-alerts"
           mb="0"
-          fontSize={20}
-          fontFamily="consolas"
+          className={styles.rowLabel}
         >
           {data.name}
         </FormLabel>
         <Select
-          color="orange"
+          color={theme === 'dark' ? '#d9e8ff' : '#1f3557'}
+          bg={theme === 'dark' ? '#1a2432' : '#f6fbff'}
+          borderColor={theme === 'dark' ? '#314664' : '#c8daef'}
           style={{ cursor: 'pointer' }}
-          id="email-alerts"
-          defaultValue={v}
+          value={v || ''}
           onChange={(text) => c(skey, text)}
           size="sm"
-          width={100}
-          colorScheme={theme === 'dark' ? 'orange' : 'teal'}
+          width="220px"
         >
           {dynamicOptions.map((option: { value: string; label: string }) => (
             <option
               style={{ cursor: 'pointer' }}
               value={option.value}
-              selected={option.value === v}
+              key={option.value}
             >
               {option.label}
             </option>

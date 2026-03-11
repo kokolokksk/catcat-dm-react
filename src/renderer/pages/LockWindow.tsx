@@ -36,7 +36,7 @@ class LockWindow extends Component {
     const { titlebaIgnoreClass } = this.state;
     return (
       <>
-        <div>
+        <div className={style.lockRoot}>
           <div
             aria-hidden="true"
             className={`${titlebaIgnoreClass}`}

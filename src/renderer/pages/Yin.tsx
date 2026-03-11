@@ -1,6 +1,7 @@
 import { Component, ReactNode } from 'react';
 import { BiliBiliDanmu, MuaConfig } from 'renderer/@types/catcat';
 import MMD from '../components/mmd';
+import styles from '../styles/yin.module.scss';
 
 type StateType = {
   pause: boolean;
@@ -10,6 +11,7 @@ type StateType = {
   scList: { list: Array<BiliBiliDanmu>; autoHeight: number };
   comeInList: Array<BiliBiliDanmu>;
   muaConfig: MuaConfig;
+  theme: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -20,6 +22,10 @@ interface Yin {
   props: PropType;
 }
 class Yin extends Component {
+  state = {
+    theme: 'light',
+  };
+
   constructor(props: PropType) {
     super(props);
     console.info('Yin');
@@ -28,13 +34,24 @@ class Yin extends Component {
   componentDidMount(): void {
     console.log('Yin');
     new MMD().render();
+    const theme = window.electron.store.get('theme');
+    if (theme) {
+      this.setState({ theme });
+    }
+    window.theme.change((_event: any, data: any) => {
+      this.setState({
+        theme: Array.isArray(data) ? data[0] : data,
+      });
+    });
   }
 
   render(): ReactNode {
+    const { theme } = this.state;
     return (
-      <>
-        <div id="three" style={{ width: '20vw', height: '20vh' }} />
-      </>
+      <div className={theme === 'dark' ? styles.rootDark : styles.root}>
+        <div id="three" className={styles.three} />
+        <div className={styles.badge}>Yin Overlay</div>
+      </div>
     );
   }
 }

@@ -1,0 +1,23 @@
+[package]
+name = "catcat-dm-react-tauri"
+version = "0.1.0"
+description = "CatCat DM Tauri"
+authors = ["you"]
+edition = "2021"
+
+[lib]
+name = "catcat_dm_react_tauri_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+arboard = "3"
+base64 = "0.22"
+chrono = "0.4"
+open = "5"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2", features = ["macos-private-api"] }

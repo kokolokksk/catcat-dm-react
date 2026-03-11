@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "CatCatDM",
+  "version": "2.0.1",
+  "identifier": "monster.loli.catcatdm",
+  "build": {
+    "beforeDevCommand": "npm run start:renderer:tauri",
+    "beforeBuildCommand": "npm run build:renderer",
+    "devUrl": "http://localhost:1212",
+    "frontendDist": "../release/app/dist/renderer"
+  },
+  "app": {
+    "macOSPrivateApi": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Setting Window",
+        "width": 1360,
+        "height": 900,
+        "minWidth": 1180,
+        "minHeight": 760,
+        "transparent": true,
+        "decorations": true,
+        "resizable": true,
+        "url": "index.html?main"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/icon.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

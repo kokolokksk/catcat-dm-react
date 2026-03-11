@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
-  Badge,
   Button,
   Link,
   Modal,
@@ -15,12 +14,11 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import About from '../pages/About';
-import '../styles/slider-menu.css';
 import styles from '../styles/slider_menu.module.scss';
-import abStyles from '../styles/about.module.scss';
 import CatCatSign from './CatCatSign';
 import MenuItem from './MenuItem';
-import axios from 'axios';
+import localAvatar from '../assets/icon.png';
+import { cacheAvatarSrc } from '../tauri/http';
 
 // eslint-disable-next-line import/order
 
@@ -30,6 +28,7 @@ const SliderMenu = (prop: any | undefined) => {
    ...prop
   }
   const { roomid } = dataProp;
+  const [avatarSrc, setAvatarSrc] = React.useState(localAvatar);
   const menuList = ['o(=•ェ•=)m', '启动', '直播画面', '关于', '=3='];
   const data = {
     color: {
@@ -65,10 +64,6 @@ const SliderMenu = (prop: any | undefined) => {
   };
   const { isOpen, onOpen, onClose } = useDisclosure()
   const initialRef = React.useRef<HTMLButtonElement|null>(null)
-  const pRef = React.useRef<HTMLVideoElement|null>(null);
-  const [state , setState] = React.useState({
-    playUrl: '',
-  })
   let love =0 ;
   const toast = useToast();
   const openLove = async () => {
@@ -90,21 +85,38 @@ const SliderMenu = (prop: any | undefined) => {
   }
   const startDanmuWindow = ()=> {
     window.electron.ipcRenderer.sendMessage('createDmWindow',[])
-    setTimeout( () => {
-      window.electron.ipcRenderer.sendMessage('createLockWindow',[])
-    }, 1000)
-
-  }
-  const startPluginWindow = ()=> {
-    window.electron.ipcRenderer.sendMessage('createPluginWindow',[])
-  }
-  const createYinWindow = ()=> {
-    window.electron.ipcRenderer.sendMessage('createYinWindow',[])
   }
   const startLivePreview = ()=> {
     window.electron.ipcRenderer.sendMessage('createLivePreview',[])
   }
   const { theme } = dataProp;
+  React.useEffect(() => {
+    let canceled = false;
+    const url = dataProp.faceImg;
+    if (!url) {
+      setAvatarSrc(localAvatar);
+      return () => {
+        canceled = true;
+      };
+    }
+
+    cacheAvatarSrc(url)
+      .then((src) => {
+        if (!canceled) {
+          setAvatarSrc(src || localAvatar);
+        }
+      })
+      .catch(() => {
+        if (!canceled) {
+          setAvatarSrc(localAvatar);
+        }
+      });
+
+    return () => {
+      canceled = true;
+    };
+  }, [dataProp.faceImg]);
+
   // eslint-disable-next-line no-nested-ternary
   const liveColor = dataProp.live_status===0?'bg-gray-500' : dataProp.live_status===1?'bg-green-600':'bg-orange-300' ;
   console.info(liveColor);
@@ -125,18 +137,24 @@ const SliderMenu = (prop: any | undefined) => {
       <>
 
       <div className={sliderMenu}>
-
-          <div className="menu-photo">
-
-            <img className="photo" src={dataProp.faceImg} alt='' />
-            <p />
-            <div className={abStyles.value && abStyles.title}>
+          <div className={styles.profile}>
+            <img
+              className={styles.avatar}
+              src={avatarSrc}
+              alt=""
+              onError={(e) => {
+                const img = e.currentTarget as HTMLImageElement;
+                if (img.src !== localAvatar) img.src = localAvatar;
+              }}
+            />
+            <div className={styles.nickLine}>
               <Link target="_blank" href={`https://live.bilibili.com/${roomid}`} rel="noreferrer">
-                {dataProp.nickname}
+                <span className={styles.nickLink}>{dataProp.nickname}</span>
               </Link>
-            </div><div className={`${' w-2 h-2 rounded-full self-center' } ${liveColor}`}/>
+              <div className={`${' w-2 h-2 rounded-full self-center' } ${liveColor}`}/>
+            </div>
           </div>
-          <div className="menu-list">
+          <div className={styles.menuList}>
             <MenuItem menu = {data.menu_0} click = {openLove}/>
             <MenuItem menu = {data.menu_1} click = {startDanmuWindow}/>
             <MenuItem menu = {data.menu_2} click = {startLivePreview}/>
@@ -147,18 +165,19 @@ const SliderMenu = (prop: any | undefined) => {
         </div>
         <Modal autoFocus={false} isOpen={isOpen} onClose={onClose}>
             <ModalOverlay
-              bg='blackAlpha.300'
-              backdropFilter='blur(10px) hue-rotate(90deg)'
+              bg={theme === 'dark' ? 'blackAlpha.700' : 'blackAlpha.500'}
             />
-            <ModalContent>
-              <ModalHeader>关于</ModalHeader>
+            <ModalContent
+              className={theme === 'dark' ? styles.aboutModalDark : styles.aboutModalLight}
+            >
+              <ModalHeader className={styles.aboutHeader}>关于</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
                 <About />
               </ModalBody>
 
               <ModalFooter>
-                <Button colorScheme='blue' mr={3} onClick={onClose} ref={initialRef}>
+                <Button colorScheme='cyan' mr={3} onClick={onClose} ref={initialRef}>
                   关闭
                 </Button>
               </ModalFooter>

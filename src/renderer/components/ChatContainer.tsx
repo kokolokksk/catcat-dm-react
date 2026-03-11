@@ -54,7 +54,6 @@ const ChatContainer = (prop: any | undefined) => {
     }
   };
   const handleInputClick = () => {
-    alert(edit);
     setEdit(edit);
   };
   const handleKeyDown = (event: { keyCode: number }) => {
@@ -101,21 +100,37 @@ const ChatContainer = (prop: any | undefined) => {
         <Input
           style={
             theme === 'dark'
-              ? { background: '#00000052', color: '#ffffff' }
-              : { background: '#ffffff52', color: '#000000' }
+              ? {
+                  background: 'rgba(11,18,31,0.65)',
+                  color: '#e7f0ff',
+                  borderRadius: '10px',
+                  border: '1px solid #4f6a8d',
+                }
+              : {
+                  background: 'rgba(255,255,255,0.84)',
+                  color: '#1c3555',
+                  borderRadius: '10px',
+                  border: '1px solid #a8bfdc',
+                }
           }
-          placeholder="Say Something"
+          placeholder="发送弹幕..."
           value={value}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
         <InputRightElement>
           <Button
-            color="green.500"
+            color={theme === 'dark' ? '#d9ebff' : '#1f3f66'}
+            bg={theme === 'dark' ? '#2e4668' : '#dceaff'}
+            border={
+              theme === 'dark' ? '1px solid #5f7ea8' : '1px solid #a8bfdc'
+            }
+            _hover={{
+              bg: theme === 'dark' ? '#3b5a84' : '#cddff8',
+            }}
             onClick={handleClick}
-            style={{ height: '94%' }}
+            style={{ height: '92%', borderRadius: '8px' }}
           >
-            {' '}
             发送
           </Button>
         </InputRightElement>

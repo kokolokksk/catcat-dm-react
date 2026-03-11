@@ -1,8 +1,119 @@
-.slideMenuLight{
-  background-color: rgb(255, 255, 255);
-  color: rgb(31, 31, 31);
+.slideMenuLight,
+.slideMenuDark {
+  width: 248px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid #7ea0c8;
+  padding: 20px 14px 16px;
 }
-.slideMenuDark{
-  background-color: rgb(31, 31, 31);
-  color: rgb(255, 255, 255);
+
+.slideMenuLight {
+  background: #e9f1fb;
+  color: #1f2d42;
+}
+
+.slideMenuDark {
+  background: #202a38;
+  color: #e7eefb;
+  border-right-color: #536b8d;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 18px;
+}
+
+.avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 18px;
+  object-fit: cover;
+  border: 2px solid rgba(111, 151, 201, 0.28);
+}
+
+.slideMenuDark .avatar {
+  border-color: rgba(161, 196, 246, 0.36);
+}
+
+.nickLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nickLink {
+  max-width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menuList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 0 12px;
+}
+
+.menuItem {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.menuItem:hover {
+  background: #cfe0f5;
+  transform: translateX(2px);
+}
+
+.slideMenuDark .menuItem:hover {
+  background: #334358;
+}
+
+.menuIcon {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menuText {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.aboutModalLight {
+  border-radius: 14px !important;
+  background: #eef4fc !important;
+  border: 1px solid #90afd2 !important;
+  color: #21344f !important;
+}
+
+.aboutModalDark {
+  border-radius: 14px !important;
+  background: #1f2a39 !important;
+  border: 1px solid #5f7da4 !important;
+  color: #e8f1ff !important;
+}
+
+.aboutHeader {
+  border-bottom: 1px solid rgba(130, 172, 231, 0.26);
+  color: #a9cffc;
 }

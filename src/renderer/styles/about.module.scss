@@ -1,25 +1,43 @@
-
 .version {
   height: 100%;
-  padding-left: 15vw;
+  width: 100%;
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
 }
+
 .title {
-  color: #ad1290;
-  font-size: 18px;
-  font-weight: initial;
-  letter-spacing: .25px;
-  margin-top: 10px;
+  color: inherit;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  margin-top: 4px;
 }
-.items { margin-top: 8px; }
+
+.items {
+  margin-top: 12px;
+}
+
 .item {
   display: flex;
-  margin-bottom: 6px;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid currentColor;
 }
+
 .item .name {
-  //color: #6a6a6a;
-  margin-right: 6px;
+  margin-right: 8px;
+  color: inherit;
+  min-width: 72px;
+  opacity: 0.85;
 }
+
 .item .value {
-  //color: #35495e;
-  font-weight: bold;
+  color: inherit;
+  font-weight: 700;
 }

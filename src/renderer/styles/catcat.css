@@ -4,12 +4,12 @@
 */
 #of
 {
-    position: fixed;
-    font-size: 40px;
+    position: relative;
+    font-size: 32px;
     line-height: 1;
     -ms-transform: rotate(332deg);
     -webkit-transform: rotate(332deg);
     transform: rotate(324deg);
-    margin-left: 4vw;
-    bottom: 20vh;
+    margin-left: 6px;
+    margin-bottom: 20px;
 }

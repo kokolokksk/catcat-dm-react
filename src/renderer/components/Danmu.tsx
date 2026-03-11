@@ -2,6 +2,8 @@
 import { Divider, useColorMode } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import * as CONSTANT from '../@types/catcat/constan';
+import localAvatar from '../assets/icon.png';
+import { cacheAvatarSrc } from '../tauri/http';
 import styles from '../styles/danmuc.module.scss';
 import themes from '../styles/themes.module.scss';
 
@@ -19,11 +21,20 @@ const Danmu = (prop: any) => {
   const [avatarFace, setAvatarFace] = useState('');
   const [giftImg, setGiftImg] = useState('');
   const faceImg = '';
+  const [avatarSrc, setAvatarSrc] = useState(localAvatar);
   const [scBorder, setScBorder] = useState('');
   const theme = useColorMode();
   console.info(theme);
   const changeDisplay = () => {
     setIsDisplayble('none');
+  };
+  const onAvatarError = (e: any) => {
+    const img = e.currentTarget as HTMLImageElement;
+    if (img.src !== localAvatar) {
+      img.src = localAvatar;
+      return;
+    }
+    changeDisplay();
   };
   const changeGiftDisplay = () => {
     setIsGiftImgDisplayble('none');
@@ -64,6 +75,33 @@ const Danmu = (prop: any) => {
     // eslint-disable-next-line prettier/prettier
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    let canceled = false;
+    const url = data?.data?.avatarFace;
+    if (!url) {
+      setAvatarSrc(localAvatar);
+      return () => {
+        canceled = true;
+      };
+    }
+
+    cacheAvatarSrc(url)
+      .then((src) => {
+        if (!canceled) {
+          setAvatarSrc(src || localAvatar);
+        }
+      })
+      .catch(() => {
+        if (!canceled) {
+          setAvatarSrc(localAvatar);
+        }
+      });
+
+    return () => {
+      canceled = true;
+    };
+  }, [data?.data?.avatarFace]);
   let danmuContainer;
   let gbContainer;
   let themeBackColor;
@@ -110,8 +148,8 @@ const Danmu = (prop: any) => {
           alt=""
           className={styles.avatar}
           style={{ display: isDisplayble }}
-          onError={changeDisplay}
-          src={data.data.avatarFace}
+          onError={onAvatarError}
+          src={avatarSrc}
         />
         <Divider
           orientation="vertical"
@@ -146,8 +184,8 @@ const Danmu = (prop: any) => {
         alt=""
         className={styles.avatar}
         style={{ display: isDisplayble }}
-        onError={changeDisplay}
-        src={data.data.avatarFace}
+        onError={onAvatarError}
+        src={avatarSrc}
       />
       <Divider
         orientation="vertical"
@@ -210,8 +248,8 @@ const Danmu = (prop: any) => {
         alt=""
         className={styles.avatar}
         style={{ display: isDisplayble }}
-        onError={changeDisplay}
-        src={data.data.avatarFace}
+        onError={onAvatarError}
+        src={avatarSrc}
       />
       <Divider
         orientation="vertical"
@@ -284,8 +322,8 @@ const Danmu = (prop: any) => {
         alt=""
         className={styles.avatar}
         style={{ display: isDisplayble }}
-        onError={changeDisplay}
-        src={data.data.avatarFace}
+        onError={onAvatarError}
+        src={avatarSrc}
       />
       <Divider
         orientation="vertical"

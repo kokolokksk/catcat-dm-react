@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { CloseIcon, LockIcon, MinusIcon, UnlockIcon } from '@chakra-ui/icons';
+import { CloseIcon, MinusIcon } from '@chakra-ui/icons';
 import style from '../styles/titlebar.module.css';
 
 const Titlebar = (prop: any | undefined) => {
@@ -48,13 +48,6 @@ const Titlebar = (prop: any | undefined) => {
   const handleMinusClick = () => {
     console.info('minus');
     window.electron.ipcRenderer.sendMessage('minusWindow', ['dm-minus']);
-  };
-  const ignoreMouse = async () => {
-    // const lastSetting = await window.electron.store.get('setIgnoreMouseEvents');
-    window.electron.ipcRenderer.sendMessage('setIgnoreMouseEvents', [true]);
-    //window.electron.store.set('setIgnoreMouseEvents', true);
-    titlebarCloseClass = style.classNone;
-    titlebarMinusClass = style.classNone;
   };
   return (
     <>

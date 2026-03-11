@@ -32,6 +32,7 @@ import BackgroundMiku from 'renderer/components/BackgroundMiku';
 import * as CONSTANT from 'renderer/@types/catcat/constan';
 import { MdCheckCircle, MdBlock, MdCopyAll, MdOpenInBrowser, MdLiveTv } from 'react-icons/md';
 import axios from 'axios';
+import { invoke } from '@tauri-apps/api/core';
 import {
   catConfigItem,
   getNewSessionId,
@@ -397,7 +398,6 @@ class DanmuWindow extends React.Component {
   };
 
   writeDanmuToFile = (dm: BiliBiliDanmu, roomId: number, danmuDir: string) => {
-    // interface: upload danmu to server
     if (dm.content) {
       if (!dm.fansName) {
         dm.fansName = '';
@@ -406,27 +406,15 @@ class DanmuWindow extends React.Component {
         dm.fansLevel = 0;
       }
       const datetime = dayjs().format('YYYY-MM-DD HH:mm:ss');
-      const date = dayjs().format('YYYY-MM-DD');
-      console.log(danmuDir);
       if (danmuDir) {
-        const regex =
-          /^[a-zA-Z]:\\([^\\:*<>|"?\r\n/]+\\)*([^\\:*<>|"?\r\n/]+)?$/;
-        if (regex.test(danmuDir)) {
-          if (!window.fs.existsSync(danmuDir)) {
-            window.fs.mkdirSync(danmuDir);
-          }
-          if (danmuDir.endsWith('\\' || '/')) {
-            // eslint-disable-next-line no-param-reassign
-            danmuDir = danmuDir.substring(0, danmuDir.length - 1);
-          }
-          window.fs.appendFile(
-            `${danmuDir}/${roomId}-danmu-${date}.txt`,
-            `${datetime} ${dm.nickname}[${dm.fansName}${dm.fansLevel}](${dm.uid}) : ${dm.content}\n`,
-            (err) => {
-              if (err) throw err;
-            }
-          );
-        }
+        const line = `${datetime} ${dm.nickname}[${dm.fansName}${dm.fansLevel}](${dm.uid}) : ${dm.content}\n`;
+        void invoke('append_danmu_file', {
+          danmuDir,
+          roomId,
+          line,
+        }).catch((err) => {
+          CatLog.error(err);
+        });
       }
     }
   };
@@ -726,139 +714,152 @@ class DanmuWindow extends React.Component {
             } as React.CSSProperties
           }
         >
-          <div className={styles.m_bg_top} />
-          <div style={{ width: '100%', height: '5vh', display: 'flex' }}>
+          <div className={styles.headerBar}>
             <div className={styles.online}>
               {`人气: `}
-              <span style={{ color: 'orange' }}>{count || 0}</span>
+              <span className={styles.metricValue}>{count || 0}</span>
             </div>
             <div className={styles.comeinLastMinute}>
               <span>进入/分钟：</span>
-              <span style={{ color: 'orange' }}>{comeInLastMinute || 0}</span>
+              <span className={styles.metricValue}>
+                {comeInLastMinute || 0}
+              </span>
             </div>
           </div>
-          <SuperChatBar scList={scList} theme={muaConfig.theme} />
-          <div className={styles.c_bg}>
-            <div
-              style={{
-                // transform: `translateY(${allDmList.autoHeight}px)`,
-                transition: 'transform 1s ease-in-out',
-                transformOrigin: '-24px',
-              }}
-            >
-              <TransitionGroup>
-                <div
-                  ref={(ref) => {
-                    this.listHeightRef = ref;
-                  }}
-                >
-                  {allDmList.list.map((danmu: BiliBiliDanmu) => (
-                    <CSSTransition
-                      key={`danmu${danmu.keyy}`}
-                      timeout={1}
-                      classNames="item"
-                    >
-                      <Popover
-                        onOpen={() => {
-                          this.onDanmuPopOpen(danmu);
-                        }}
-                        onClose={() => {
-                          this.onDanmuPopClose(danmu);
-                        }}
+          <div className={styles.contentPane}>
+            <SuperChatBar scList={scList} theme={muaConfig.theme} />
+            <div className={styles.c_bg}>
+              <div
+                className={styles.listWrap}
+                style={{
+                  transition: 'transform 1s ease-in-out',
+                  transformOrigin: '-24px',
+                }}
+              >
+                <TransitionGroup>
+                  <div
+                    ref={(ref) => {
+                      this.listHeightRef = ref;
+                    }}
+                  >
+                    {allDmList.list.map((danmu: BiliBiliDanmu) => (
+                      <CSSTransition
+                        key={`danmu${danmu.keyy}`}
+                        timeout={1}
+                        classNames="item"
                       >
-                        <PopoverTrigger>
-                          <a href="#" className="flex">
-                            <Danmu
-                              theme={themeMode}
-                              nickname={danmu.nickname}
-                              content={danmu.content}
-                              data={danmu}
-                            />
-                          </a>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                          <PopoverArrow />
-                          <PopoverCloseButton />
-                          <PopoverHeader>{danmu.nickname}</PopoverHeader>
-                          <PopoverBody zIndex={9}>
-                            <List spacing={3}>
-                              <ListItem>
-                                <Button
-                                  leftIcon={<MdBlock />}
-                                  className=" cursor-pointer hover:bg-gray-300"
-                                  onClick={() => {
-                                    this.onDanmuPopClick(danmu, '1');
-                                  }}
-                                >
-                                  拉黑
-                                </Button>
-                                <Button
-                                  leftIcon={<MdBlock />}
-                                  className=" cursor-pointer hover:bg-gray-300"
-                                  onClick={() => {
-                                    this.onDanmuPopClick(danmu, '2');
-                                  }}
-                                >
-                                  封禁
-                                </Button>
-                                <Button
-                                  leftIcon={<MdBlock />}
-                                  className=" cursor-pointer hover:bg-gray-300"
-                                  onClick={() => {
-                                    this.onDanmuPopClick(danmu, '3');
-                                  }}
-                                >
-                                  屏蔽
-                                </Button>
-                              </ListItem>
-                              <Divider />
-                              <ListItem>
-                                <Button
-                                  leftIcon={<MdCopyAll />}
-                                  className=" cursor-pointer hover:bg-gray-300"
-                                  onClick={() => {
-                                    this.onDanmuPopClick(danmu, '4');
-                                  }}
-                                >
-                                  复制昵称
-                                </Button>
-                                <Button
-                                  leftIcon={<MdCopyAll />}
-                                  className=" cursor-pointer hover:bg-gray-300"
-                                  onClick={() => {
-                                    this.onDanmuPopClick(danmu, '5');
-                                  }}
-                                >
-                                  复制弹幕
-                                </Button>
-                              </ListItem>
-                              <Divider />
-                              <ListItem>
-                                <Button
-                                  leftIcon={<MdOpenInBrowser />}
-                                  className=" cursor-pointer hover:bg-gray-300"
-                                  onClick={() => {
-                                    this.onDanmuPopClick(danmu, '6');
-                                  }}
-                                >
-                                  <Link target="_blank" href={'https://space.bilibili.com/'+danmu.uid} rel="noreferrer">
-                                    打开主页
-                                  </Link>
-                                </Button>
-                              </ListItem>
-                            </List>
-                          </PopoverBody>
-                        </PopoverContent>
-                      </Popover>
-                    </CSSTransition>
-                  ))}
-                </div>
-              </TransitionGroup>
+                        <Popover
+                          onOpen={() => {
+                            this.onDanmuPopOpen(danmu);
+                          }}
+                          onClose={() => {
+                            this.onDanmuPopClose(danmu);
+                          }}
+                        >
+                          <PopoverTrigger>
+                            <a href="#" className="flex">
+                              <Danmu
+                                theme={themeMode}
+                                nickname={danmu.nickname}
+                                content={danmu.content}
+                                data={danmu}
+                              />
+                            </a>
+                          </PopoverTrigger>
+                          <PopoverContent className={styles.dmPopover}>
+                            <PopoverArrow />
+                            <PopoverCloseButton />
+                            <PopoverHeader className={styles.dmPopoverHeader}>
+                              {danmu.nickname}
+                            </PopoverHeader>
+                            <PopoverBody zIndex={9}>
+                              <List spacing={3}>
+                                <ListItem>
+                                  <Button
+                                    leftIcon={<MdBlock />}
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      this.onDanmuPopClick(danmu, '1');
+                                    }}
+                                  >
+                                    拉黑
+                                  </Button>
+                                  <Button
+                                    leftIcon={<MdBlock />}
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      this.onDanmuPopClick(danmu, '2');
+                                    }}
+                                  >
+                                    封禁
+                                  </Button>
+                                  <Button
+                                    leftIcon={<MdBlock />}
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      this.onDanmuPopClick(danmu, '3');
+                                    }}
+                                  >
+                                    屏蔽
+                                  </Button>
+                                </ListItem>
+                                <Divider />
+                                <ListItem>
+                                  <Button
+                                    leftIcon={<MdCopyAll />}
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      this.onDanmuPopClick(danmu, '4');
+                                    }}
+                                  >
+                                    复制昵称
+                                  </Button>
+                                  <Button
+                                    leftIcon={<MdCopyAll />}
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      this.onDanmuPopClick(danmu, '5');
+                                    }}
+                                  >
+                                    复制弹幕
+                                  </Button>
+                                </ListItem>
+                                <Divider />
+                                <ListItem>
+                                  <Button
+                                    leftIcon={<MdOpenInBrowser />}
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      this.onDanmuPopClick(danmu, '6');
+                                    }}
+                                  >
+                                    <Link
+                                      target="_blank"
+                                      href={`https://space.bilibili.com/${danmu.uid}`}
+                                      rel="noreferrer"
+                                    >
+                                      打开主页
+                                    </Link>
+                                  </Button>
+                                </ListItem>
+                              </List>
+                            </PopoverBody>
+                          </PopoverContent>
+                        </Popover>
+                      </CSSTransition>
+                    ))}
+                  </div>
+                </TransitionGroup>
+              </div>
             </div>
-          </div>
-          <>
             <ComeInDisplay data={comeInList} />
-          </>
+          </div>
           <div className={styles.chatContainer}>
             <ChatContainer config={muaConfig} theme={themeMode} />
           </div>

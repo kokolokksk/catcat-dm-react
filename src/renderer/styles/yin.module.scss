@@ -1,0 +1,34 @@
+.root,
+.rootDark {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background: #e8f1fb;
+}
+
+.three {
+  width: 100vw;
+  height: 100vh;
+}
+
+.badge {
+  position: fixed;
+  right: 14px;
+  top: 14px;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  color: #243e62;
+  border: 1px solid #91b0d4;
+  background: #f5faff;
+}
+
+.rootDark {
+  background: #1d2839;
+}
+
+.rootDark .badge {
+  color: #d7ebff;
+  border-color: #6888b2;
+  background: #2b3a50;
+}

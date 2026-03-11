@@ -1,9 +1,28 @@
-.lockIgnore {
-  right: 60px;
-  margin-right: -10px;
-  width:24px;
-  height: 4vh;
-  padding: 5px;
-  display:flex;
-  color: rgba(0, 0, 0, 0.454) !important;
+.lockRoot {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 10px;
 }
+
+.lockIgnore {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d7e7ff !important;
+  border: 1px solid rgba(140, 176, 226, 0.44);
+  background: linear-gradient(160deg, rgba(10, 25, 43, 0.82), rgba(16, 36, 61, 0.78));
+  box-shadow: 0 8px 18px rgba(8, 13, 22, 0.45);
+  transition: all 0.15s ease;
+}
+
+.lockIgnore:hover {
+  transform: translateY(-1px);
+  border-color: rgba(159, 201, 255, 0.68);
+}
+

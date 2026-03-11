@@ -23,7 +23,7 @@ const About = () => {
           </div>
           <div className={styles.item}>
             <div className={styles.name}>GitHub地址:</div>
-            <div className={styles.value && styles.title}>
+            <div className={styles.value}>
               <Link target="_blank" href={CONSTANT.REPO_URL} rel="noreferrer">
                 -{'>'}CatCatDm{'<'}-
               </Link>

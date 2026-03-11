@@ -29,10 +29,8 @@ const SliderSelectItem = (prop: any | undefined) => {
       <p className={styles.line} />
       <FormControl display="flex" alignItems="center">
         <FormLabel
-          htmlFor="email-alerts"
           mb="0"
-          fontSize={20}
-          fontFamily="consolas"
+          className={styles.rowLabel}
         >
           {data.name}
         </FormLabel>
@@ -42,8 +40,8 @@ const SliderSelectItem = (prop: any | undefined) => {
             defaultValue={defaultValue}
             min={0}
             max={100}
-            width={250}
-            colorScheme="teal"
+            width={260}
+            colorScheme={theme === 'dark' ? 'blue' : 'cyan'}
             onChange={(vv) => {
               setSliderValue(vv);
               c(skey, vv / 100);

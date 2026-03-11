@@ -41,7 +41,13 @@
     "start:main": "cross-env NODE_ENV=development electronmon -r ts-node/register/transpile-only .",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "test": "jest"
+    "start:renderer:tauri": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true SKIP_MAIN_PROCESS=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
+    "test": "jest",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "tauri:build:mac:intel": "tauri build --target x86_64-apple-darwin",
+    "tauri:build:mac:arm64": "tauri build --target aarch64-apple-darwin",
+    "tauri:build:mac:universal": "tauri build --target universal-apple-darwin"
   },
   "browserslist": [],
   "prettier": {
@@ -89,6 +95,7 @@
     }
   },
   "dependencies": {
+    "@tauri-apps/api": "^2.0.0",
     "@chakra-ui/icons": "^2.0.2",
     "@chakra-ui/react": "^2.2.1",
     "@chakra-ui/theme": "^2.1.0",
@@ -127,6 +134,7 @@
     "webpack-merge": "^5.8.0"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/jest-dom": "^5.16.4",
@@ -237,7 +245,7 @@
   "collective": {
     "url": ""
   },
-  "devEngines": {
+  "engines": {
     "node": ">=14.x",
     "npm": ">=7.x"
   },

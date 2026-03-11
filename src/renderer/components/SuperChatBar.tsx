@@ -14,11 +14,14 @@ import { TransitionGroup } from 'react-transition-group';
 import { BiliBiliDanmu } from 'renderer/@types/catcat';
 import style from '../styles/super_chat_bar.module.scss';
 import danmucStyle from '../styles/danmuc.module.scss';
+import localAvatar from '../assets/icon.png';
+import { cacheAvatarSrc } from '../tauri/http';
 
 const MiniSuperChat = (prop: any | undefined) => {
   const { data } = prop;
   const [scLength, setScLength] = useState('100%');
   const [isDisplayble, setIsDisplayble] = useState(true);
+  const [avatarSrc, setAvatarSrc] = useState(localAvatar);
 
   const { theme, data: dm } = prop;
   let { superChatContainer } = style;
@@ -43,6 +46,32 @@ const MiniSuperChat = (prop: any | undefined) => {
       }
     }, 1000);
   }, []);
+  useEffect(() => {
+    let canceled = false;
+    const url = data?.origin?.data?.user_info?.face;
+    if (!url) {
+      setAvatarSrc(localAvatar);
+      return () => {
+        canceled = true;
+      };
+    }
+
+    cacheAvatarSrc(url)
+      .then((src) => {
+        if (!canceled) {
+          setAvatarSrc(src || localAvatar);
+        }
+      })
+      .catch(() => {
+        if (!canceled) {
+          setAvatarSrc(localAvatar);
+        }
+      });
+
+    return () => {
+      canceled = true;
+    };
+  }, [data?.origin?.data?.user_info?.face]);
   switch (theme) {
     case 'light':
       superChatContainer = style.superChatContainer;
@@ -99,7 +128,13 @@ const MiniSuperChat = (prop: any | undefined) => {
             <img
               alt=""
               className={danmucStyle.avatar}
-              src={data.origin.data.user_info.face}
+              src={avatarSrc}
+              onError={(e) => {
+                const img = e.currentTarget as HTMLImageElement;
+                if (img.src !== localAvatar) {
+                  img.src = localAvatar;
+                }
+              }}
             />
             <Divider
               orientation="horizontal"

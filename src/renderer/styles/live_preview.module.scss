@@ -1,0 +1,78 @@
+.root,
+.rootDark {
+  width: 100%;
+  height: 100vh;
+  padding: 20px;
+}
+
+.panel {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  min-width: 0;
+  border-radius: 16px;
+  border: 1px solid #8caed6;
+  box-shadow: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.head {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  border-bottom: 1px solid #8caed6;
+}
+
+.title {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.status {
+  font-size: 12px;
+}
+
+.root {
+  background: #eaf2fb;
+}
+
+.root .panel {
+  background: #f7fbff;
+}
+
+.root .head {
+  color: #2a3f5f;
+}
+
+.root .status {
+  color: #5377a6;
+}
+
+.rootDark {
+  background: #1a2433;
+}
+
+.rootDark .panel {
+  background: #243348;
+  border-color: #4f6a8d;
+}
+
+.rootDark .head {
+  border-bottom-color: #4f6a8d;
+  color: #c8defa;
+}
+
+.rootDark .status {
+  color: #9ec9ff;
+}
+
+.video {
+  width: 100%;
+  height: calc(100% - 48px);
+  object-fit: cover;
+  background: #000;
+}

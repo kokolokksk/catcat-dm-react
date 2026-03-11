@@ -11,15 +11,12 @@ const SettingSwitchItem = (prop: any | undefined) => {
       <p className={styles.line} />
       <FormControl display="flex" alignItems="center">
         <FormLabel
-          htmlFor="email-alerts"
           mb="0"
-          fontSize={20}
-          fontFamily="consolas"
+          className={styles.rowLabel}
         >
           {data.name}
         </FormLabel>
         <Switch
-          id="email-alerts"
           key={data.v}
           defaultChecked={data.v}
           onChange={(text) => data.c(data.skey, text)}
