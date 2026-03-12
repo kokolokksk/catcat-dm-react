@@ -1,8 +1,5 @@
 import path from 'path';
-import { fileURLToPath } from 'url';
-
-const currentFilePath = fileURLToPath(import.meta.url);
-const currentDirPath = path.dirname(currentFilePath);
+const currentDirPath = __dirname;
 
 const rootPath = path.join(currentDirPath, '../..');
 

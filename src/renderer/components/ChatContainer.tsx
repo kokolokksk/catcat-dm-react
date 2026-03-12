@@ -102,25 +102,27 @@ const ChatContainer = (prop: any | undefined) => {
             theme === 'dark'
                 ? {
                     background:
-                      'linear-gradient(180deg, rgba(10,18,30,0.78), rgba(16,27,43,0.78))',
+                      'linear-gradient(180deg, rgba(10,18,30,0.82), rgba(18,31,49,0.8))',
                     color: '#e7f0ff',
                     borderRadius: '16px',
                     border: '1px solid rgba(96, 128, 171, 0.8)',
                     height: '68px',
                     paddingLeft: '46px',
                     paddingRight: '102px',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+                    boxShadow:
+                      'inset 0 1px 0 rgba(255,255,255,0.06), 0 10px 24px rgba(6, 15, 27, 0.12)',
                   }
                 : {
                     background:
-                      'linear-gradient(180deg, rgba(255,255,255,0.98), rgba(244,248,253,0.94))',
+                      'linear-gradient(180deg, rgba(255,255,255,0.99), rgba(244,248,253,0.94))',
                     color: '#1c3555',
                     borderRadius: '16px',
                     border: '1px solid rgba(168, 191, 220, 0.92)',
                     height: '68px',
                     paddingLeft: '46px',
                     paddingRight: '102px',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.72)',
+                    boxShadow:
+                      'inset 0 1px 0 rgba(255,255,255,0.72), 0 10px 22px rgba(109, 139, 176, 0.1)',
                   }
           }
           _placeholder={{
@@ -129,7 +131,7 @@ const ChatContainer = (prop: any | undefined) => {
                 ? 'rgba(207, 224, 247, 0.52)'
                 : 'rgba(91, 117, 154, 0.58)',
           }}
-          placeholder="发送弹幕，进入直播间即时展示..."
+          placeholder="输入弹幕发送..."
           value={value}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
@@ -151,10 +153,14 @@ const ChatContainer = (prop: any | undefined) => {
             onClick={handleClick}
             style={{
               height: '54px',
-              width: '78px',
+              width: '86px',
               borderRadius: '14px',
               fontWeight: 700,
-              letterSpacing: '0.04em',
+              letterSpacing: '0.08em',
+              boxShadow:
+                theme === 'dark'
+                  ? '0 10px 20px rgba(27, 47, 73, 0.24)'
+                  : '0 10px 18px rgba(126, 165, 212, 0.22)',
             }}
           >
             发送

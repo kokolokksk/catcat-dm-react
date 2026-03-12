@@ -9,45 +9,63 @@ import {
   PopoverHeader,
   PopoverTrigger,
 } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BiliBiliDanmu } from 'renderer/@types/catcat';
-import style from '../styles/super_chat_bar.module.scss';
 import danmucStyle from '../styles/danmuc.module.scss';
 import localAvatar from '../assets/icon.png';
 import { cacheAvatarSrc } from '../tauri/http';
 
-const MiniSuperChat = (prop: any | undefined) => {
-  const { data } = prop;
-  const [scLength, setScLength] = useState('100%');
-  const [isDisplayble, setIsDisplayble] = useState(true);
-  const [avatarSrc, setAvatarSrc] = useState(localAvatar);
+const themeMap = {
+  light: danmucStyle.superChatContainerLight,
+  dark: danmucStyle.superChatContainerDark,
+  wave: danmucStyle.superChatContainerWave,
+  miku: danmucStyle.superChatContainerMiku,
+  default: danmucStyle.superChatContainer,
+};
 
-  const { theme, data: dm } = prop;
-  let { superChatContainer } = style;
-  let hoverClass = 'hover:bg-red-200';
+const MiniSuperChat = (prop: {
+  data: BiliBiliDanmu;
+  theme: string;
+  nickname: string;
+  content: string;
+}) => {
+  const { data, theme, nickname, content } = prop;
+  const [scLength, setScLength] = useState('100%');
+  const [visible, setVisible] = useState(true);
+  const [avatarSrc, setAvatarSrc] = useState(localAvatar);
+  const priceText = useMemo(
+    () => `${Math.max((data.price || 0) / 1000, 0)}¥`,
+    [data.price]
+  );
+
   useEffect(() => {
-    let x = 100;
+    let width = 100;
     let time = 30;
-    const a = setInterval(() => {
+    const timer = window.setInterval(() => {
       try {
-        if (dm.origin.data.time) {
-          time = dm.origin.data.time;
+        if (data?.origin && (data.origin as any)?.data?.time) {
+          time = (data.origin as any).data.time;
         }
       } catch (e) {
         console.error(e);
       }
-      x -= 100 / time;
-      setScLength(`${x}%`);
-      if (x <= 0) {
-        setScLength('0vw');
-        setIsDisplayble(false);
-        clearInterval(a);
+
+      width -= 100 / time;
+      setScLength(`${Math.max(width, 0)}%`);
+      if (width <= 0) {
+        setVisible(false);
+        window.clearInterval(timer);
       }
     }, 1000);
-  }, []);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [data]);
+
   useEffect(() => {
     let canceled = false;
-    const url = data?.origin?.data?.user_info?.face;
+    const url = data?.origin && (data.origin as any)?.data?.user_info?.face;
     if (!url) {
       setAvatarSrc(localAvatar);
       return () => {
@@ -70,60 +88,35 @@ const MiniSuperChat = (prop: any | undefined) => {
     return () => {
       canceled = true;
     };
-  }, [data?.origin?.data?.user_info?.face]);
-  switch (theme) {
-    case 'light':
-      superChatContainer = style.superChatContainer;
-      break;
-    case 'dark':
-      break;
-    case 'wave':
-      break;
-    case 'miku':
-      hoverClass = style.hoverClassMiku;
-      break;
-    default:
-      break;
+  }, [data]);
+
+  if (!visible) {
+    return null;
   }
+
+  const containerClass =
+    themeMap[theme as keyof typeof themeMap] || themeMap.default;
+  const progressColor =
+    data.color ||
+    (theme === 'miku'
+      ? 'linear-gradient(90deg, rgba(87, 214, 198, 0.95), rgba(48, 179, 167, 0.92))'
+      : 'linear-gradient(90deg, rgba(117, 168, 232, 0.96), rgba(83, 131, 205, 0.92))');
+
   return (
-    <>
-      <Popover>
-        <PopoverTrigger>
-          <div style={{ display: isDisplayble ? 'inline' : 'none' }}>
-            <div
-              className={`${superChatContainer} ${hoverClass} ${' rounded-full shadow-lg cursor-pointer '}`}
-              style={{
-                overflow: 'hidden',
-                backgroundColor: '#fff',
-              }}
-            >
-              <div
-                style={{
-                  backgroundColor: dm.color,
-                  width: scLength,
-                  height: '50px',
-                  display: 'flex',
-                }}
-              />
-              <div style={{ position: 'absolute', width: '24vw' }}>
-                {dm.price / 1000}¥
-              </div>
-            </div>
-          </div>
-        </PopoverTrigger>
-        <PopoverContent>
-          <PopoverArrow />
-          <PopoverCloseButton />
-          <PopoverHeader
-            flexWrap="wrap"
-            display="flex"
-            width="100%"
-            alignItems="center"
+    <Popover>
+      <PopoverTrigger>
+        <button
+          type="button"
+          className={`${containerClass} ${danmucStyle.superChatMini}`}
+        >
+          <div
+            className={danmucStyle.superChatMeter}
             style={{
-              backgroundColor: data.origin.data.background_color,
-              justifyContent: 'center',
+              width: scLength,
+              background: progressColor,
             }}
-          >
+          />
+          <div className={danmucStyle.superChatMain}>
             <img
               alt=""
               className={danmucStyle.avatar}
@@ -135,87 +128,66 @@ const MiniSuperChat = (prop: any | undefined) => {
                 }
               }}
             />
-            <Divider
-              orientation="horizontal"
-              color="transparent"
-              margin={0}
-              padding={0}
-              borderBottomColor="transparent"
-            />
-            <span style={{ fontSize: '1rem' }}>{data.nickname}</span>
-          </PopoverHeader>
-          <PopoverBody
-            style={{
-              fontSize: '1.2rem',
-              backgroundColor: data.origin.data.message_font_color as string,
+            <Divider orientation="vertical" className={danmucStyle.divider} />
+            <div className={danmucStyle.superChatContent}>
+              <div className={danmucStyle.messageMeta}>
+                <span className={danmucStyle.nickname}>{nickname}</span>
+                <span className={danmucStyle.messageTag}>SUPER CHAT</span>
+              </div>
+              <div className={danmucStyle.danmuContent}>{content}</div>
+            </div>
+            <div className={danmucStyle.priceBadge}>
+              <small>¥</small>
+              <b>{Math.max((data.price || 0) / 1000, 0)}</b>
+            </div>
+          </div>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className={danmucStyle.superChatPopover}>
+        <PopoverArrow />
+        <PopoverCloseButton />
+        <PopoverHeader className={danmucStyle.superChatPopoverHeader}>
+          <img
+            alt=""
+            className={danmucStyle.avatar}
+            src={avatarSrc}
+            onError={(e) => {
+              const img = e.currentTarget as HTMLImageElement;
+              if (img.src !== localAvatar) {
+                img.src = localAvatar;
+              }
             }}
-          >
-            {data.content}
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
-    </>
+          />
+          <span>{nickname}</span>
+          <span className={danmucStyle.superChatPriceText}>{priceText}</span>
+        </PopoverHeader>
+        <PopoverBody className={danmucStyle.superChatPopoverBody}>
+          {content}
+        </PopoverBody>
+      </PopoverContent>
+    </Popover>
   );
 };
 
-const SuperChatBar = (prop: any | undefined) => {
+const SuperChatBar = (prop: { theme: string; scList: { list: BiliBiliDanmu[] } }) => {
   const { theme, scList } = prop;
-  console.info(theme);
-  let { superChatBarClass } = style;
-  let titlebarCloseClass = style.titlebarClose;
-  let titlebarMinusClass = style.titlebarMinus;
-  switch (theme) {
-    case 'light':
-      superChatBarClass = style.superChatBarClass;
-      titlebarCloseClass = style.titlebarCloseLight;
-      titlebarMinusClass = style.titlebarMinusLight;
-      break;
-    case 'dark':
-      superChatBarClass = style.superChatBarClass;
-      titlebarCloseClass = style.titlebarCloseDark;
-      titlebarMinusClass = style.titlebarMinusDark;
-      break;
-    case 'wave':
-      superChatBarClass = style.superChatBarClass;
-      titlebarCloseClass = style.titlebarCloseWave;
-      titlebarMinusClass = style.titlebarMinusWave;
-      break;
-    case 'miku':
-      superChatBarClass = style.superChatBarClass;
-      titlebarCloseClass = style.titlebarCloseMiku;
-      titlebarMinusClass = style.titlebarMinusMiku;
-      break;
-    default:
-      superChatBarClass = style.superChatBarClass;
-      titlebarCloseClass = style.titlebarClose;
-      titlebarMinusClass = style.titlebarMinus;
-      break;
+
+  if (!scList?.list?.length) {
+    return null;
   }
+
   return (
-    <>
-      <div className={superChatBarClass}>
-        <div
-          style={{
-            flexDirection: 'row',
-            display: 'flex',
-            position: 'absolute',
-            top: '5vh',
-            left: 0,
-            width: '100%',
-          }}
-        >
-          {scList.list.map((danmu: BiliBiliDanmu) => (
-            <MiniSuperChat
-              key={`sc-${danmu.id || danmu.keyy || danmu.timestamp}-${danmu.uid}`}
-              theme={theme}
-              nickname={danmu.nickname}
-              content={danmu.content}
-              data={danmu}
-            />
-          ))}
-        </div>
-      </div>
-    </>
+    <div className={danmucStyle.superChatRail}>
+      {scList.list.map((danmu: BiliBiliDanmu) => (
+        <MiniSuperChat
+          key={`sc-${danmu.id || danmu.keyy || danmu.timestamp}-${danmu.uid}`}
+          theme={theme}
+          nickname={danmu.nickname}
+          content={danmu.content || ''}
+          data={danmu}
+        />
+      ))}
+    </div>
   );
 };
 

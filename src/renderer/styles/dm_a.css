@@ -1,19 +1,21 @@
-/* .remove-btn {
-  margin-right: 0.5rem;
-}
-
 .item-enter {
   opacity: 0;
+  transform: translateY(10px) scale(0.985);
 }
+
 .item-enter-active {
   opacity: 1;
-  transition: opacity 500ms ease-in;
+  transform: translateY(0) scale(1);
+  transition: opacity 220ms ease, transform 220ms ease;
 }
+
 .item-exit {
   opacity: 1;
-  transition: opacity 500ms ease-out;
+  transform: translateY(0) scale(1);
 }
+
 .item-exit-active {
   opacity: 0;
-  transition: opacity 500ms ease-in;
-} */
+  transform: translateY(-8px) scale(0.985);
+  transition: opacity 180ms ease, transform 180ms ease;
+}

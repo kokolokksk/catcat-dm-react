@@ -15,6 +15,10 @@ use tauri::Theme;
 use tauri::WebviewUrl;
 use tauri::WebviewWindowBuilder;
 use tauri::WindowEvent;
+use tauri::window::Color;
+
+#[cfg(target_os = "macos")]
+use objc2_app_kit::{NSColor, NSWindow};
 
 struct AppState {
   store: Mutex<Map<String, Value>>,
@@ -113,6 +117,25 @@ fn register_window_state_tracking(
   });
 }
 
+#[cfg(target_os = "macos")]
+fn configure_macos_transparent_window(window: &tauri::WebviewWindow) -> Result<(), String> {
+  window
+    .set_background_color(Some(Color(0, 0, 0, 0)))
+    .map_err(|e| e.to_string())?;
+  window.set_shadow(false).map_err(|e| e.to_string())?;
+  window
+    .with_webview(|webview| unsafe {
+      let ns_window: &NSWindow = &*webview.ns_window().cast();
+      ns_window.setOpaque(false);
+      let clear = NSColor::clearColor();
+      ns_window.setBackgroundColor(Some(&clear));
+      ns_window.setHasShadow(false);
+      ns_window.setMovableByWindowBackground(true);
+    })
+    .map_err(|e| e.to_string())?;
+  Ok(())
+}
+
 fn build_window(
   app: &tauri::AppHandle,
   state: &tauri::State<'_, AppState>,
@@ -137,6 +160,7 @@ fn build_window(
     .title(title)
     .inner_size(width, height)
     .min_inner_size(min_width, min_height)
+    .transparent(_transparent)
     .decorations(decorations)
     .resizable(resizable)
     .always_on_top(always_on_top);
@@ -151,6 +175,15 @@ fn build_window(
   }
 
   let window = builder.build().map_err(|e| e.to_string())?;
+  if _transparent {
+    window
+      .set_background_color(Some(Color(0, 0, 0, 0)))
+      .map_err(|e| e.to_string())?;
+  }
+  #[cfg(target_os = "macos")]
+  if label == "dm" && _transparent {
+    configure_macos_transparent_window(&window)?;
+  }
   let static_label = match label {
     "dm" => "dm",
     "live-preview" => "live-preview",
@@ -409,9 +442,9 @@ fn ipc_send_message(
         &state,
         "dm",
         "dmWindow",
-        455.0,
+        575.0,
         624.0,
-        360.0,
+        480.0,
         420.0,
         "Danmu Window",
         true,

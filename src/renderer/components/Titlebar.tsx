@@ -1,13 +1,11 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { CloseIcon, MinusIcon } from '@chakra-ui/icons';
 import style from '../styles/titlebar.module.css';
 
 const Titlebar = (prop: any | undefined) => {
-  const { theme, opacity } = prop;
+  const { theme, opacity, showControls = true } = prop;
   let titlebarClass = style.titlebar;
   let titlebarCloseClass = style.titlebarClose;
   let titlebarMinusClass = style.titlebarMinus;
-  let titlebaIgnoreClass = style.titlebarIgnore;
   let backVar = 'rgba(var(--root-color-rgb)';
   switch (theme) {
     case 'light':
@@ -38,7 +36,6 @@ const Titlebar = (prop: any | undefined) => {
       titlebarClass = style.titlebar;
       titlebarCloseClass = style.titlebarClose;
       titlebarMinusClass = style.titlebarMinus;
-      titlebaIgnoreClass = style.titlebarIgnore;
       break;
   }
   const handleClick = () => {
@@ -56,34 +53,32 @@ const Titlebar = (prop: any | undefined) => {
         data-tauri-drag-region
         style={
           {
-            backgroundColor: `${backVar},${opacity})`,
+            backgroundColor: showControls ? `${backVar},${opacity})` : 'transparent',
           } as React.CSSProperties
         }
       >
-        <div className={style.dragArea} data-tauri-drag-region />
-        {/* <div
-          aria-hidden="true"
-          className={`${titlebaIgnoreClass}`}
-          onClick={ignoreMouse}
-        >
-          <LockIcon width={3} height={3} />
-        </div> */}
         <div
-          aria-hidden="true"
-          className={titlebarMinusClass}
-          data-tauri-drag-region={false}
-          onClick={handleMinusClick}
-        >
-          <MinusIcon width={3} height={3} />
-        </div>
-        <div
-          aria-hidden="true"
-          className={`${titlebarCloseClass}`}
-          data-tauri-drag-region={false}
-          onClick={handleClick}
-        >
-          <CloseIcon width={3} height={3} />
-        </div>
+          className={
+            showControls ? style.dragArea : `${style.dragArea} ${style.dragAreaFull}`
+          }
+          data-tauri-drag-region
+        />
+        {showControls ? (
+          <>
+            <div
+              aria-hidden="true"
+              className={titlebarMinusClass}
+              data-tauri-drag-region={false}
+              onClick={handleMinusClick}
+            />
+            <div
+              aria-hidden="true"
+              className={`${titlebarCloseClass}`}
+              data-tauri-drag-region={false}
+              onClick={handleClick}
+            />
+          </>
+        ) : null}
       </div>
     </>
   );

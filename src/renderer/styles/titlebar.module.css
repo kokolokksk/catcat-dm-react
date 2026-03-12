@@ -112,6 +112,10 @@
   width: calc(100% - 56px);
 }
 
+.dragAreaFull {
+  width: 100%;
+}
+
 .titlebarMinusLight {
   position: fixed;
   right: 35px;

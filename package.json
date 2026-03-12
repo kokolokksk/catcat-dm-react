@@ -1,7 +1,7 @@
 {
   "name": "catcat-dm-react",
   "productName": "猫猫弹幕姬",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "猫猫弹幕姬",
   "author": "Loveloliii <loli@loli.monster>",
   "license": "MIT",
@@ -31,7 +31,7 @@
     "patch": "npx patch-package",
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
     "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts",
-    "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
+    "build:renderer": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "package": "npx patch-package && ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder -p always",
